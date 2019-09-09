@@ -1,0 +1,38 @@
+{
+    "name": "fredmansky/eventsky",
+    "description": "Craft plugin for event management and attendee registration",
+    "type": "craft-plugin",
+    "version": "0.0.1",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "events",
+        "eventsky",
+        "event management"
+    ],
+    "support": {
+    },
+    "authors": [
+        {
+            "name": "Fredmansky",
+            "homepage": "https://fredmansky.at/"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.2.0"
+    },
+    "autoload": {
+        "psr-4": {
+          "fredmansky\\eventsky\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Eventsky",
+        "handle": "eventsky",
+        "hasCpSettings": true,
+        "hasCpSection": true,
+        "class": "fredmansky\\eventsky\\Eventsky"
+    }
+}
