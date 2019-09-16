@@ -21,6 +21,9 @@
  * @since     0.0.1
  */
 return [
+    // ----------------------
+    // ----- Templates ------
+    // ----------------------
     'translate.events.title' => 'Events',
     'translate.events.cpTitle' => 'Events',
 
@@ -32,7 +35,17 @@ return [
 
     'translate.eventTypes.title' => 'Event Types',
     'translate.eventTypes.cpTitle' => 'Event Types',
+    'translate.eventTypes.new' => 'New Event Type',
 
     'translate.settings.title' => 'Settings',
     'translate.settings.cpTitle' => 'Settings',
+    
+    // -------------------
+    // ----- Events ------
+    // -------------------
+    
+    'translate.elements.Event.displayName' => 'Event',
+    'translate.elements.Event.pluralDisplayName' => 'Events',
+    'translate.elements.Event.sideBar.allEvents' => 'All Events',
+    'translate.elements.Event.search.description' => 'Description',
 ];
