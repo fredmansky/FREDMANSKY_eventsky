@@ -1,5 +1,14 @@
-{% extends "_layouts/cp" %}
+{% extends "_layouts/elementindex" %}
 
 {% set selectedSubnavItem = 'events' %}
-
 {% set title = "translate.events.title" | t('eventsky') %}
+{% set elementType = 'fredmansky\\eventsky\\elements\\Event' %}
+
+{# {% do view.registerTranslations('app', ['New entry']) %}#}
+
+
+{# {% if sectionHandle is defined %}
+    {% js %}
+        window.defaultSectionHandle = '{{ sectionHandle }}';
+    {% endjs %}
+{% endif %} #}
