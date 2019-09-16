@@ -66,6 +66,13 @@ class Install extends Migration
                 '{{%eventsky_tickets}}',
                 [
                     'id' => $this->primaryKey(),
+                    'typeId' => $this->integer()->notNull(),
+                    'authorId' => $this->integer()->notNull(),
+                    'description' => $this->text(),
+                    'startDate' => $this->dateTime()->notNull(),
+                    'endDate' => $this->dateTime(),
+                    'dateCreated' => $this->dateTime()->notNull(),
+                    'dateUpdated' => $this->dateTime()->notNull(),
                 ]
             );
         }
