@@ -48,4 +48,13 @@ return [
     'translate.elements.Event.pluralDisplayName' => 'Events',
     'translate.elements.Event.sideBar.allEvents' => 'All Events',
     'translate.elements.Event.search.description' => 'Description',
+
+    // ------------------------
+    // ----- Event Types ------
+    // ------------------------
+
+//    'translate.models.Event.displayName' => 'Event',
+//    'translate.elements.Event.pluralDisplayName' => 'Events',
+//    'translate.elements.Event.sideBar.allEvents' => 'All Events',
+//    'translate.elements.Event.search.description' => 'Description',
 ];
