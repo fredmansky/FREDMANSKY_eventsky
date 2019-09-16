@@ -13,12 +13,14 @@ namespace fredmansky\eventsky;
 
 use Craft;
 use craft\base\Plugin;
+use craft\events\RegisterUrlRulesEvent;
 use craft\services\Plugins;
 use craft\events\PluginEvent;
 
 use craft\events\RegisterCpNavItemsEvent;
 use craft\web\twig\variables\Cp;
 
+use craft\web\UrlManager;
 use yii\base\Event;
 
 /**
@@ -35,6 +37,8 @@ use yii\base\Event;
  * @package   Eventsky
  * @since     0.0.1
  *
+ *
+ * @property mixed $cpNavItem
  */
 class Eventsky extends Plugin
 {
@@ -148,5 +152,18 @@ class Eventsky extends Plugin
         return \Craft::$app->getView()->renderTemplate('eventsky/settings', [
             'settings' => $this->getSettings()
         ]);
+    }
+
+    // Private Methods
+    // =========================================================================
+
+    private function initRoutes()
+    {
+        Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                $routes = include 'routes.php';
+                $event->rules = array_merge($event->rules, $routes);
+            }
+        );
     }
 }
