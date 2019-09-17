@@ -8,6 +8,7 @@ namespace fredmansky\eventsky\elements;
 
 use Craft;
 use craft\base\Element;
+use craft\elements\actions\Delete;
 use craft\elements\actions\Edit;
 use craft\elements\actions\Restore;
 use craft\elements\actions\SetStatus;
@@ -21,10 +22,12 @@ use yii\db\Exception;
 /**
  * Ticket represents a ticket element.
  *
+ * @property User|null $author the entry's author
  * @author Fredmanksy GmbH
  */
 class Ticket extends Element
 {
+
     // Constants
     // =========================================================================
 
@@ -69,6 +72,17 @@ class Ticket extends Element
     public static function hasStatuses(): bool
     {
         return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function statuses(): array
+    {
+      return [
+        self::STATUS_ENABLED => Craft::t('app', 'Enabled'),
+        self::STATUS_DISABLED => Craft::t('app', 'Disabled')
+      ];
     }
 
     /**
@@ -128,6 +142,13 @@ class Ticket extends Element
             'failMessage' => Craft::t('app', 'Entries not restored.'),
         ]);
 
+        // Delete
+        $actions[] = $elementsService->createAction([
+          'type' => Delete::class,
+          'confirmationMessage' => Craft::t('app', 'Are you sure you want to delete the selected entries?'),
+          'successMessage' => Craft::t('app', 'Entries deleted.'),
+        ]);
+
         return $actions;
     }
 
@@ -137,8 +158,10 @@ class Ticket extends Element
     protected static function defineSortOptions(): array
     {
         return [
-//            'title' => \Craft::t('app', 'Title'),
-            'description' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.elements.Ticket.search.description')),
+          'title' => \Craft::t('app', 'Title'),
+          'event' => \Craft::t('eventsky', 'EVENT'),
+          'ticketType' => \Craft::t('eventsky', 'TICKET TYPE'),
+          'createdAt' => \Craft::t('eventsky', 'CREATED AT'),
         ];
     }
 
@@ -148,8 +171,11 @@ class Ticket extends Element
     protected static function defineTableAttributes(): array
     {
         return [
-            'title' => \Craft::t('app', 'Title'),
-            'description' => \Craft::t('eventsky', 'TEST'),
+          'title' => \Craft::t('app', 'Title'),
+          'event' => \Craft::t('eventsky', 'EVENT'),
+          'ticketType' => \Craft::t('eventsky', 'TICKET TYPE'),
+          'createdAt' => \Craft::t('eventsky', 'CREATED AT'),
+          'ticketId' => \Craft::t('eventsky', 'TICKET ID'),
         ];
     }
 

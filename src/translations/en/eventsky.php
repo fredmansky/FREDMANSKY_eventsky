@@ -43,9 +43,16 @@ return [
     // -------------------
     // ----- Events ------
     // -------------------
-    
     'translate.elements.Event.displayName' => 'Event',
     'translate.elements.Event.pluralDisplayName' => 'Events',
     'translate.elements.Event.sideBar.allEvents' => 'All Events',
     'translate.elements.Event.search.description' => 'Description',
+
+    // -------------------
+    // ----- Tickets ------
+    // -------------------
+    'translate.elements.Ticket.displayName' => 'Ticket',
+    'translate.elements.Ticket.pluralDisplayName' => 'Tickets',
+    'translate.elements.Ticket.sideBar.allTickets' => 'All Events',
+    'translate.elements.Ticket.search.description' => 'Description',
 ];
