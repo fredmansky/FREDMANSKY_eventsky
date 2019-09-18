@@ -15,6 +15,7 @@ use craft\elements\actions\SetStatus;
 use craft\elements\actions\View;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\User;
+use craft\helpers\UrlHelper;
 use DateTime;
 use fredmansky\eventsky\elements\db\TicketQuery;
 use yii\db\Exception;
@@ -27,6 +28,50 @@ use yii\db\Exception;
  */
 class Ticket extends Element
 {
+    // Properties
+    // =========================================================================
+
+    /**
+     * @var int|null Ticket Type ID
+     */
+    public $ticketTypeId;
+
+    /**
+     * @var int|null Event ID
+     */
+    public $eventId;
+
+    /**
+     * @var int|null Author ID
+     */
+    public $authorId;
+
+    /**
+     * @var string Title
+     */
+    public $title;
+
+    /**
+     * @var string Description
+     */
+    public $description;
+
+    /**
+     * @var User|null
+     */
+    private $_author;
+
+    /** @var \DateTime */
+    public $startDate;
+
+    /** @var \DateTime */
+    public $endDate;
+
+    /** @var \DateTime */
+    // public $dateCreated;
+
+    /** @var \DateTime */
+    // public $dateUpdated;
 
     // Constants
     // =========================================================================
@@ -48,6 +93,11 @@ class Ticket extends Element
     public static function pluralDisplayName(): string
     {
         return Craft::t('eventsky', 'translate.elements.Ticket.pluralDisplayName');
+    }
+
+    public static function refHandle()
+    {
+      return 'ticket';
     }
 
     /**
@@ -80,10 +130,36 @@ class Ticket extends Element
     public static function statuses(): array
     {
       return [
-        self::STATUS_ENABLED => Craft::t('app', 'Enabled'),
+        self::STATUS_ENABLED  => Craft::t('app', 'Enabled'),
         self::STATUS_DISABLED => Craft::t('app', 'Disabled')
       ];
     }
+
+
+  /**
+   * @param int|null $siteId
+   * @param int|null $ticketId
+   * @param int|null $ticketTypeId
+   * @param int|null $eventId
+   * @param string|null $description
+   * @param DateTime|null $startDate
+   * @param DateTime|null $endDate
+   * @return Ticket
+   * @throws \Exception
+   */
+    public static function create(int $siteId = null, int $ticketId = null, int $ticketTypeId = null, int $eventId = null, string $description = null, dateTime $startDate = null, dateTime $endDate = null): Ticket
+    {
+      $element                = new self();
+      $element->ticketTypeId  = $ticketTypeId ?? TicketType::getInstance()->ticketTypes->getTicketTypeById();
+      $element->eventId       = $eventId ?? Event::getInstance()->events->getEventById();
+      $element->authorId      = \Craft::$app->user->getId();
+      $element->description   = $description;
+      $element->startDate     = $startDate;
+      $element->endDate       = $endDate;
+
+      return $element;
+    }
+
 
     /**
      * @inheritdoc
@@ -101,9 +177,9 @@ class Ticket extends Element
     {
         return [
             [
-                'key' => '*',
-                'label' =>  Craft::t('eventsky', 'translate.elements.Ticket.sideBar.allTickets'),
-                'criteria' => []
+                'key'       => '*',
+                'label'     =>  Craft::t('eventsky', 'translate.elements.Ticket.sideBar.allTickets'),
+                'criteria'  => []
             ],
         ];
     }
@@ -118,35 +194,35 @@ class Ticket extends Element
 
         // Edit
         $actions[] = $elementsService->createAction([
-            'type' => Edit::class,
-            'label' => Craft::t('app', 'Edit entry'),
+            'type'                  => Edit::class,
+            'label'                 => Craft::t('app', 'Edit entry'),
         ]);
 
         // View
         $actions[] = $elementsService->createAction([
-            'type' => View::class,
-            'label' => Craft::t('app', 'View entry'),
+            'type'                  => View::class,
+            'label'                 => Craft::t('app', 'View entry'),
         ]);
 
         // Set status
         $actions[] = [
-            'type' => SetStatus::class,
-            'allowDisabledForSite' => true,
+            'type'                  => SetStatus::class,
+            'allowDisabledForSite'  => true,
         ];
 
         // Restore
         $actions[] = $elementsService->createAction([
-            'type' => Restore::class,
-            'successMessage' => Craft::t('app', 'Entries restored.'),
+            'type'                  => Restore::class,
+            'successMessage'        => Craft::t('app', 'Entries restored.'),
             'partialSuccessMessage' => Craft::t('app', 'Some entries restored.'),
-            'failMessage' => Craft::t('app', 'Entries not restored.'),
+            'failMessage'           => Craft::t('app', 'Entries not restored.'),
         ]);
 
         // Delete
         $actions[] = $elementsService->createAction([
-          'type' => Delete::class,
-          'confirmationMessage' => Craft::t('app', 'Are you sure you want to delete the selected entries?'),
-          'successMessage' => Craft::t('app', 'Entries deleted.'),
+          'type'                    => Delete::class,
+          'confirmationMessage'     => Craft::t('app', 'Are you sure you want to delete the selected entries?'),
+          'successMessage'          => Craft::t('app', 'Entries deleted.'),
         ]);
 
         return $actions;
@@ -158,10 +234,10 @@ class Ticket extends Element
     protected static function defineSortOptions(): array
     {
         return [
-          'title' => \Craft::t('app', 'Title'),
-          'event' => \Craft::t('eventsky', 'EVENT'),
-          'ticketType' => \Craft::t('eventsky', 'TICKET TYPE'),
-          'createdAt' => \Craft::t('eventsky', 'CREATED AT'),
+          'title'       => \Craft::t('app', 'Title'),
+          'event'       => \Craft::t('eventsky', 'EVENT'),
+          'ticketType'  => \Craft::t('eventsky', 'TICKET TYPE'),
+          'createdAt'   => \Craft::t('eventsky', 'CREATED AT'),
         ];
     }
 
@@ -171,36 +247,21 @@ class Ticket extends Element
     protected static function defineTableAttributes(): array
     {
         return [
-          'title' => \Craft::t('app', 'Title'),
-          'event' => \Craft::t('eventsky', 'EVENT'),
-          'ticketType' => \Craft::t('eventsky', 'TICKET TYPE'),
-          'createdAt' => \Craft::t('eventsky', 'CREATED AT'),
-          'ticketId' => \Craft::t('eventsky', 'TICKET ID'),
+          'title'       => \Craft::t('app', 'Title'),
+          'event'       => \Craft::t('eventsky', 'EVENT'),
+          'ticketType'  => \Craft::t('eventsky', 'TICKET TYPE'),
+          'createdAt'   => \Craft::t('eventsky', 'CREATED AT'),
+          'ticketId'    => \Craft::t('eventsky', 'TICKET ID'),
         ];
     }
 
-    // Properties
-    // =========================================================================
-
-    /**
-     * @var string Description
-     */
-    public $description;
-
-    /**
-     * @var int|null Type ID
-     */
-    public $typeId;
-
-    /**
-     * @var int|null Author ID
-     */
-    public $authorId;
-
-     /**
-      * @var User|null
-      */
-     private $_author;
+      /**
+       * @return array
+       */
+      protected static function defineSearchableAttributes(): array
+      {
+        return ['id', 'title', 'event', 'startDate', 'ticketType'];
+      }
 
      // Public Methods
      // =========================================================================
@@ -213,6 +274,11 @@ class Ticket extends Element
          return \Craft::$app->user->checkPermission('edit-ticket:'.$this->getType()->id);
      }
 
+      public function getCpEditUrl()
+      {
+        return UrlHelper::cpUrl('eventsky/tickets/' . $this->id);
+      }
+
 
     /*
      * @inheritdoc
@@ -221,15 +287,15 @@ class Ticket extends Element
     {
         $html = \Craft::$app->getView()->renderTemplateMacro('_includes/forms', 'textField', [
             [
-                'label' => \Craft::t('app', 'Title'),
-                'siteId' => $this->siteId,
-                'id' => 'title',
-                'name' => 'title',
-                'value' => $this->title,
-                'errors' => $this->getErrors('title'),
-                'first' => true,
+                'label'     => \Craft::t('app', 'Title'),
+                'siteId'    => $this->siteId,
+                'id'        => 'title',
+                'name'      => 'title',
+                'value'     => $this->title,
+                'errors'    => $this->getErrors('title'),
+                'first'     => true,
                 'autofocus' => true,
-                'required' => true
+                'required'  => true
             ]
         ]);
 
@@ -241,26 +307,72 @@ class Ticket extends Element
     }
 
     /**
-     * @inheritdoc
+     * @param bool $isNew
      * @throws Exception
      */
     public function afterSave(bool $isNew)
     {
+        $insertData = [
+          'ticketTypeId'  => $this->ticketTypeId,
+          'eventId'       => $this->eventId,
+          'authorId'      => $this->authorId,
+          'description'   => $this->description,
+          'startDate'     => $this->startDate->toDateTimeString(),
+          'endDate'       => $this->endDate->toDateTimeString(),
+        ];
+
         if ($isNew) {
+            $insertData['id'] = $this->id;
+
             \Craft::$app->db->createCommand()
-                ->insert('{{%eventsky_tickets}}', [
-                    'id' => $this->id,
-                    'description' => $this->description,
-                ])
-                ->execute();
+              ->insert('{{%eventsky_tickets}}', $insertData)
+              ->execute();
         } else {
             \Craft::$app->db->createCommand()
-                ->update('{{%eventsky_tickets}}', [
-                    'description' => $this->description,
-                ], ['id' => $this->id])
-                ->execute();
+              ->update('{{%eventsky_tickets}}', $insertData, ['id' => $this->id])
+              ->execute();
         }
 
         parent::afterSave($isNew);
     }
+
+    // Protected Methods
+    // =========================================================================
+
+    /*
+    public function getFieldLayout()
+    {
+      if ($this->ticketId) {
+        return $this->getTicket()->getFieldLayout();
+      }
+
+      return null;
+    }*/
+
+    /*
+  protected function route()
+  {
+    if (!$this->enabled) {
+      return null;
+    }
+
+    // Make sure the section is set to have URLs for this site
+    $siteId       = \Craft::$app->getSites()->getCurrentSite()->id;
+    $siteSettings = $this->getCalendar()->getSiteSettingsForSite($siteId);
+
+    if (!isset($siteSettings) || !$siteSettings->hasUrls) {
+      return null;
+    }
+
+    return [
+      'templates/render',
+      [
+        'template'  => $siteSettings->template,
+        'variables' => [
+          'event' => $this,
+        ],
+      ],
+    ];
+  }*/
+
 }

@@ -55,4 +55,12 @@ return [
     'translate.elements.Ticket.pluralDisplayName' => 'Tickets',
     'translate.elements.Ticket.sideBar.allTickets' => 'All Events',
     'translate.elements.Ticket.search.description' => 'Description',
+
+    // -------------------
+    // ----- Ticket Types ------
+    // -------------------
+    'translate.elements.TicketType.displayName' => 'Ticket Type',
+    'translate.elements.TicketType.pluralDisplayName' => 'Ticket Types',
+    'translate.elements.TicketType.sideBar.allTicketTypes' => 'All Ticket Types',
+    'translate.elements.TicketType.search.description' => 'Description',
 ];

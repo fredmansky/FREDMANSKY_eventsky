@@ -7,6 +7,7 @@
 namespace fredmansky\eventsky\migrations;
 
 use craft\db\Migration;
+use craft\helpers\MigrationHelper;
 
 class Install extends Migration
 {
@@ -16,6 +17,7 @@ class Install extends Migration
     public function safeUp() : bool
     {
         $this->createTables();
+        $this->createForeignKeys();
         return true;
     }
 
@@ -24,6 +26,7 @@ class Install extends Migration
      */
     public function safeDown() : bool
     {
+        $this->dropForeignKeys();
         $this->dropTables();
         return true;
     }
@@ -41,7 +44,7 @@ class Install extends Migration
                 '{{%eventsky_events}}',
                 [
                     'id' => $this->primaryKey(),
-                    'typeId' => $this->integer()->notNull(),
+                    'ticketTypeId' => $this->integer()->notNull(),
                     'authorId' => $this->integer()->notNull(),
                     'description' => $this->text(),
                     'image' => $this->integer(),
@@ -66,9 +69,10 @@ class Install extends Migration
                 '{{%eventsky_tickets}}',
                 [
                     'id' => $this->primaryKey(),
-                    'typeId' => $this->integer()->notNull(),
-                    'authorId' => $this->integer()->notNull(),
-                    'description' => $this->text(),
+                    'ticketTypeId' => $this->integer()->notNull(),
+                    'eventId' => $this->integer()->notNull(),
+                    'authorId' => $this->integer(),
+                    'description' => $this->string(),
                     'startDate' => $this->dateTime()->notNull(),
                     'endDate' => $this->dateTime(),
                     'dateCreated' => $this->dateTime()->notNull(),
@@ -91,6 +95,7 @@ class Install extends Migration
                 '{{%eventsky_tickettypes}}',
                 [
                     'id' => $this->primaryKey(),
+                    'description' => $this->string(),
                 ]
             );
         }
@@ -100,6 +105,8 @@ class Install extends Migration
                 '{{%eventsky_events_tickettypes}}',
                 [
                     'id' => $this->primaryKey(),
+                    'name' => $this->text(),
+                    'description' => $this->text(),
                 ]
             );
         }
@@ -111,8 +118,26 @@ class Install extends Migration
     protected function createForeignKeys()
     {
         $this->addForeignKey(
-            $this->db->getForeignKeyName('{{%%eventsky_events}}', 'id'),
-      '{{%%eventsky_events}}', 'id', '{{%elements}}', 'id', 'CASCADE', null);
+            $this->db->getForeignKeyName('{{%eventsky_events}}', 'id'),
+      '{{%eventsky_events}}', 'id', '{{%elements}}', 'id', 'CASCADE', null);
+
+        $this->addForeignKey(
+            $this->db->getForeignKeyName('{{%eventsky_tickets}}', 'eventId'),
+      '{{%eventsky_tickets}}', 'eventId', '{{%eventsky_events}}', 'id', 'CASCADE', null);
+
+        $this->addForeignKey(
+            $this->db->getForeignKeyName('{{%eventsky_tickets}}', 'ticketTypeId'),
+      '{{%eventsky_tickets}}', 'ticketTypeId', '{{%eventsky_tickettypes}}', 'id', 'CASCADE', null);
+
+    }
+
+    protected function dropForeignKeys()
+    {
+      MigrationHelper::dropAllForeignKeysOnTable('{{%eventsky_events}}', $this);
+      MigrationHelper::dropAllForeignKeysOnTable('{{%eventsky_tickets}}', $this);
+      MigrationHelper::dropAllForeignKeysOnTable('{{%eventsky_eventtypes}}', $this);
+      MigrationHelper::dropAllForeignKeysOnTable('{{%eventsky_tickettypes}}', $this);
+      MigrationHelper::dropAllForeignKeysOnTable('{{%eventsky_events_tickettypes}}', $this);
     }
 
     /**
