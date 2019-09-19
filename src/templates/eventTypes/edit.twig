@@ -4,12 +4,14 @@
 {% set title = "translate.eventTypes.title" | t('eventsky') %}
 
 {% block actionButton %}
-    <a href="{{ url('eventsky/eventTypes/new') }}" class="btn submit add icon">{{ "translate.eventTypes.new" | t('eventsky') }}</a>
+    <a href="{{ url('eventsky/eventTypes/save') }}" class="btn submit add icon">{{ "translate.eventTypes.save" | t('eventsky') }}</a>
 {% endblock %}
 
 {% block content %}
     EVENT TYPES EDIT
     {{ dump(eventType) }}
+
+    <input type="hidden" name="action" value="eventsky/eventTypes/save">
 {% endblock %}
 
 

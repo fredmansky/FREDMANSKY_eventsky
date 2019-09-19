@@ -245,7 +245,7 @@ class Eventsky extends Plugin
     {
       return [
         'eventsky/eventTypes' => 'eventsky/event-types/index',
-        'eventsky/eventTypes/<eventHandle:{handle}>' => 'eventsky/event-types/edit',
+        'eventsky/eventTypes/<eventTypeId:\d+>' => 'eventsky/event-types/edit',
       ];
     }
 

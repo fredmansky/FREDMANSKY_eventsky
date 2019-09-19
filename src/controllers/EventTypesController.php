@@ -14,6 +14,7 @@ use Craft;
 //use craft\models\Section;
 //use craft\models\Section_SiteSettings;
 use fredmansky\eventsky\elements\EventType;
+use fredmansky\eventsky\elements\Event;
 use fredmansky\eventsky\elements\db\EventTypeQuery;
 use yii\helpers\VarDumper;
 use craft\helpers\UrlHelper;
@@ -21,7 +22,7 @@ use craft\web\Controller;
 use yii\web\ForbiddenHttpException;
 
 //use yii\web\BadRequestHttpException;
-//use yii\web\NotFoundHttpException;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
@@ -66,41 +67,38 @@ class EventTypesController extends Controller
   /**
    * Edit an event type.
    *
-   * @param string|null $eventHandle
+   * @param int|null $eventTypeId
    * @param EventType|null $eventType
    * @return Response
+   * @throws NotFoundHttpException
    */
-    public function actionEdit(string $eventHandle = null, EventType $eventType = null): Response
+    public function actionEdit(int $eventTypeId = null, EventType $eventType = null): Response
     {
       $variables = [
-        'eventTypeHAndle' => $eventHandle,
+        'eventTypeId' => $eventTypeId,
+        'eventType' => $eventType,
         'newEventType' => false
       ];
 
-      if ($eventHandle !== null) {
-        if ($eventType === null) {
-
-          $eventType = EventType::find()->id(1);
-          // VarDumper::dump($eventType, $depth = 5, $highlight = true);
+      if (empty($variables['eventType'])) {
+        if ($eventTypeId !== null) {
+          $eventType = EventType::find()->id($eventTypeId);
 
           if (!$eventType) {
             throw new NotFoundHttpException('Event Type not found');
           }
-        }
 
-        if ($eventType->title !== null) {
-          $variables['title'] = trim($eventType->title) ?: Craft::t('app', 'Edit Event Type');
-        }
-      } else {
-        if ($eventType === null) {
-          $eventType = new EventType();
+          $variables['eventType'] = $eventType;
+          if ($eventType->title !== null) {
+            $variables['title'] = trim($eventType->title) ?: Craft::t('app', 'Edit Event Type');
+          }
+        } else {
+          $variables['eventType'] = new EventType();
           $variables['newEventType'] = true;
+
+          $variables['title'] = Craft::t('app', 'Create a new Event Type');
         }
-
-        $variables['title'] = Craft::t('app', 'Create a new Event Type');
       }
-
-      $variables['eventType'] = $eventType;
 
       $variables['crumbs'] = [
         [
@@ -114,6 +112,37 @@ class EventTypesController extends Controller
       ];
 
       return $this->renderTemplate('eventsky/eventTypes/edit', $variables);
+    }
+
+    public function actionSave()
+    {
+      $this->requirePostRequest();
+
+      $eventType = new EventType();
+
+      $request = Craft::$app->getRequest();
+
+      $eventType->id = $request->getBodyParam('eventTypeId');
+      $eventType->title = $request->getBodyParam('title');
+      $eventType->description = $request->getBodyParam('description');
+
+      // Save it
+      // TODO: Event Type Service to save Event Type
+      /*
+      if (EventTypesService::saveEventType($eventType)) {
+        Craft::$app->getSession()->setNotice(Craft::t('eventTypes', 'Event type saved.'));
+
+        return $this->redirectToPostedUrl($eventType);
+      }
+
+      Craft::$app->getSession()->setError(Craft::t('eventTypes', 'Couldn’t save event type.'));
+
+      // Send the eventType back to the template
+      Craft::$app->getUrlManager()->setRouteParams([
+        'eventType' => $eventType
+      ]);*/
+
+      return null;
     }
 
     /**
