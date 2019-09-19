@@ -1,5 +1,4 @@
-{# {% extends "_layouts/cp" %} #}
-{% extends "_layouts/elementindex" %}
+{% extends "_layouts/cp" %}
 
 {% set selectedSubnavItem = 'ticketTypes' %}
 {% set title = "translate.ticketTypes.title" | t('eventsky') %}
@@ -9,5 +8,3 @@
     <a href="{{ url('ticketTypes/new') }}" class="btn submit add icon">{{ "New ticket type"|t('app') }}</a>
     {{ parent() }}
 {% endblock %}
-
-{% do view.registerTranslations('app', ['New entry']) %}
