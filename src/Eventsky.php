@@ -85,6 +85,8 @@ class Eventsky extends Plugin
         $this->hasCpSettings = true;
         $this->hasCpSection = true;
 
+        $this->installEventListeners();
+
         // Do something after we're installed
         Event::on(
             Plugins::class,
@@ -154,9 +156,103 @@ class Eventsky extends Plugin
         ]);
     }
 
+    /**
+     * Install our event listeners.
+     */
+    protected function installEventListeners()
+    {
+      $request = Craft::$app->getRequest();
+      // Add in our event listeners that are needed for every request
+      // $this->installGlobalEventListeners();
+      // Install only for non-console site requests
+      /*if ($request->getIsSiteRequest() && !$request->getIsConsoleRequest()) {
+        $this->installSiteEventListeners();
+      }*/
+      // Install only for non-console Control Panel requests
+      /*if ($request->getIsCpRequest() && !$request->getIsConsoleRequest()) {
+        $this->installCpEventListeners();
+      }*/
+      $this->installCpEventListeners();
+
+
+      // Handler: EVENT_AFTER_INSTALL_PLUGIN
+      /*Event::on(
+      /*Event::on(
+        Plugins::class,
+        Plugins::EVENT_AFTER_INSTALL_PLUGIN,
+        function (PluginEvent $event) {
+          if ($event->plugin === $this) {
+            // Invalidate our caches after we've been installed
+            $this->clearAllCaches();
+            // Send them to our welcome screen
+            $request = Craft::$app->getRequest();
+            if ($request->isCpRequest) {
+              Craft::$app->getResponse()->redirect(UrlHelper::cpUrl(
+                'webperf/dashboard',
+                [
+                  'showWelcome' => true,
+                ]
+              ))->send();
+            }
+          }
+        }
+      );*/
+    }
+
+
+  /**
+     * Install site event listeners for Control Panel requests only
+     */
+    protected function installCpEventListeners()
+    {
+      // Handler: UrlManager::EVENT_REGISTER_CP_URL_RULES
+      Event::on(
+        UrlManager::class,
+        UrlManager::EVENT_REGISTER_CP_URL_RULES,
+        function (RegisterUrlRulesEvent $event) {
+          Craft::debug(
+            'UrlManager::EVENT_REGISTER_CP_URL_RULES',
+            __METHOD__
+          );
+          // Register our Control Panel routes
+          $event->rules = array_merge(
+            $event->rules,
+            $this->customAdminCpRoutes()
+          );
+        }
+      );
+      // Handler: UserPermissions::EVENT_REGISTER_PERMISSIONS
+      /*Event::on(
+        UserPermissions::class,
+        UserPermissions::EVENT_REGISTER_PERMISSIONS,
+        function (RegisterUserPermissionsEvent $event) {
+          Craft::debug(
+            'UserPermissions::EVENT_REGISTER_PERMISSIONS',
+            __METHOD__
+          );
+          // Register our custom permissions
+          $event->permissions[Craft::t('webperf', 'Webperf')] = $this->customAdminCpPermissions();
+        }
+      );*/
+    }
+
+    /**
+     * Return the custom Control Panel routes
+     *
+     * @return array
+     */
+    protected function customAdminCpRoutes(): array
+    {
+      return [
+        'eventsky/eventTypes' => 'eventsky/event-types/index',
+        'eventsky/eventTypes/<eventHandle:{handle}>' => 'eventsky/event-types/edit',
+      ];
+    }
+
     // Private Methods
     // =========================================================================
 
+  /*
     private function initRoutes()
     {
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_SITE_URL_RULES,
@@ -165,5 +261,5 @@ class Eventsky extends Plugin
                 $event->rules = array_merge($event->rules, $routes);
             }
         );
-    }
+    }*/
 }

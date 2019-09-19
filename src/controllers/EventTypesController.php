@@ -13,6 +13,10 @@ use Craft;
 //use craft\models\EntryType;
 //use craft\models\Section;
 //use craft\models\Section_SiteSettings;
+use fredmansky\eventsky\elements\EventType;
+use fredmansky\eventsky\elements\db\EventTypeQuery;
+use yii\helpers\VarDumper;
+use craft\helpers\UrlHelper;
 use craft\web\Controller;
 use yii\web\ForbiddenHttpException;
 
@@ -53,10 +57,63 @@ class EventTypesController extends Controller
      */
     public function actionIndex(array $variables = []): Response
     {
-        die(var_dump('TEST TEST TEST'));
         $variables['eventtypes'] = Craft::$app->getSections()->getAllSections();
+        // VarDumper::dump($variables, $depth = 20, $highlight = true);
 
-        return $this->renderTemplate('settings/sections/_index', $variables);
+        return $this->renderTemplate('eventsky/eventTypes/index', $variables);
+    }
+
+  /**
+   * Edit an event type.
+   *
+   * @param string|null $eventHandle
+   * @param EventType|null $eventType
+   * @return Response
+   */
+    public function actionEdit(string $eventHandle = null, EventType $eventType = null): Response
+    {
+      $variables = [
+        'eventTypeHAndle' => $eventHandle,
+        'newEventType' => false
+      ];
+
+      if ($eventHandle !== null) {
+        if ($eventType === null) {
+
+          $eventType = EventType::find()->id(1);
+          // VarDumper::dump($eventType, $depth = 5, $highlight = true);
+
+          if (!$eventType) {
+            throw new NotFoundHttpException('Event Type not found');
+          }
+        }
+
+        if ($eventType->title !== null) {
+          $variables['title'] = trim($eventType->title) ?: Craft::t('app', 'Edit Event Type');
+        }
+      } else {
+        if ($eventType === null) {
+          $eventType = new EventType();
+          $variables['newEventType'] = true;
+        }
+
+        $variables['title'] = Craft::t('app', 'Create a new Event Type');
+      }
+
+      $variables['eventType'] = $eventType;
+
+      $variables['crumbs'] = [
+        [
+          'label' => Craft::t('app', 'Eventsky'),
+          'url' => UrlHelper::url('eventsky')
+        ],
+        [
+          'label' => Craft::t('app', 'Event Types'),
+          'url' => UrlHelper::url('eventsky/eventTypes')
+        ],
+      ];
+
+      return $this->renderTemplate('eventsky/eventTypes/edit', $variables);
     }
 
     /**

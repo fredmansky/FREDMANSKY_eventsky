@@ -75,6 +75,7 @@ class Install extends Migration
                 '{{%eventsky_eventtypes}}',
                 [
                     'id' => $this->primaryKey(),
+                    'description' => $this->text(),
                 ]
             );
         }

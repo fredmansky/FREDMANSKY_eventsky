@@ -1,0 +1,31 @@
+{% extends "_layouts/cp" %}
+
+{% set selectedSubnavItem = 'eventTypes' %}
+{% set title = "translate.eventTypes.title" | t('eventsky') %}
+
+{% block actionButton %}
+    <a href="{{ url('eventsky/eventTypes/new') }}" class="btn submit add icon">{{ "translate.eventTypes.new" | t('eventsky') }}</a>
+{% endblock %}
+
+{% block content %}
+    EVENT TYPES EDIT
+    {{ dump(eventType) }}
+{% endblock %}
+
+
+{% js %}
+    var adminTable = new Craft.AdminTable({
+    tableSelector: '#sections',
+    noItemsSelector: '#nosections',
+    deleteAction: 'sections/delete-section',
+    confirmDeleteMessage: '{{ "Are you sure you want to delete “{name}” and all its entries?"|t('app') }}',
+    onDeleteItem: function()
+    {
+    // Hide the Entries tab if that was the last one
+    if (adminTable.totalItems == 0)
+    {
+    $('#nav-entries').remove();
+    }
+    }
+    });
+{% endjs %}
