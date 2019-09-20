@@ -23,8 +23,13 @@ class TicketTypeQuery extends ElementQuery
 
     public $id;
 
+    public function id($value)
+    {
+      $this->id = $value;
+      return $this;
+    }
 
-    // Public Methods
+  // Public Methods
     // =========================================================================
 
     protected function beforePrepare(): bool

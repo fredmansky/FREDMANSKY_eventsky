@@ -18,6 +18,7 @@ use craft\elements\User;
 use craft\helpers\UrlHelper;
 use DateTime;
 use fredmansky\eventsky\elements\db\TicketQuery;
+use fredmansky\eventsky\models\TicketType;
 use yii\db\Exception;
 
 /**

@@ -17,7 +17,7 @@ class Install extends Migration
     public function safeUp() : bool
     {
         $this->createTables();
-        $this->createForeignKeys();
+        //$this->createForeignKeys();
         return true;
     }
 
@@ -26,8 +26,8 @@ class Install extends Migration
      */
     public function safeDown() : bool
     {
-        $this->dropForeignKeys();
         $this->dropTables();
+        // $this->dropForeignKeys();
         return true;
     }
 
@@ -95,7 +95,6 @@ class Install extends Migration
                 '{{%eventsky_tickettypes}}',
                 [
                     'id' => $this->primaryKey(),
-                    'description' => $this->string(),
                 ]
             );
         }

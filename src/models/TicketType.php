@@ -13,6 +13,8 @@ use craft\helpers\UrlHelper;
 use craft\validators\HandleValidator;
 use craft\validators\UniqueValidator;
 use fredmansky\eventsky\elements\Ticket;
+use fredmansky\eventsky\elements\db\EventQuery;
+use fredmansky\eventsky\elements\db\TicketTypeQuery;
 
 /**
  * EntryType model class.
@@ -121,6 +123,16 @@ class TicketType extends Model
   {
     return (string)$this->handle ?: static::class;
   }
+
+  /**
+   * @inheritdoc
+   * @return TicketQuery The newly created [[TicketQuery]] instance.
+   */
+  public static function find(): ElementQueryInterface
+  {
+    return new TicketTypeQuery(static::class);
+  }
+
 
   /**
    * Returns the entry’s CP edit URL.
