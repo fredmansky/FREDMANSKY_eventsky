@@ -8,58 +8,41 @@
 {% endblock %}
 
 {% block content %}
-    EVENT TYPES INDEX
-    {{ dump(eventtypes) }}
-{#    <div id="nosections"{% if sections %} class="hidden"{% endif %}>#}
-{#        <p>{{ "No sections exist yet." | t('app') }}</p>#}
-{#    </div>#}
+    <div id="noeventtypes"{% if eventtypes %} class="hidden"{% endif %}>
+        <p>{{ "No event types exist yet." | t('eventsky') }}</p>
+    </div>
 
-{#    {% if sections|length %}#}
-{#        <table id="sections" class="data fullwidth collapsible">#}
-{#            <thead>#}
-{#            <th scope="col">{{ "Name"|t('app') }}</th>#}
-{#            <th scope="col">{{ "Handle"|t('app') }}</th>#}
-{#            <th scope="col">{{ "Type"|t('app') }}</th>#}
-{#            <th scope="col">{{ "Entry Types"|t('app')}}</th>#}
-{#            <td class="thin"></td>#}
-{#            </thead>#}
-{#            <tbody>#}
-{#            {% for section in sections %}#}
-{#                <tr data-id="{{ section.id }}" data-name="{{ section.name|t('site') }}">#}
-{#                    <th scope="row" data-title="{{ 'Name'|t('app') }}"><a href="{{ url('settings/sections/' ~ section.id) }}">{{ section.name|t('site') }}</a></th>#}
-{#                    <td data-title="{{ 'Handle'|t('app') }}"><code>{{ section.handle }}</code></td>#}
-{#                    <td data-title="{{ 'Type'|t('app') }}">{{ section.type|title|t('app') }}</td>#}
-{#                    <td data-title="{{ 'Entry Types'|t('app') }}">#}
-{#                        {% if section.type == 'single' and section.getEntryTypes()|length == 1 %}#}
-{#                            {% set entryType = section.getEntryTypes()[0] %}#}
-{#                            <a href="{{ entryType.getCpEditUrl() }}">{{ "Edit entry type"|t('app') }}</a>#}
-{#                        {% else %}#}
-{#                            <a href="{{ url('settings/sections/' ~ section.id ~ '/entrytypes') }}">{{ "Edit entry types ({count})"|t('app', { count: section.getEntryTypes()|length }) }}</a>#}
-{#                            <a class="menubtn" title="{{ 'Entry Types'|t('app') }}"></a>#}
-{#                            <div class="menu">#}
-{#                                <ul>#}
-{#                                    {% for entryType in section.getEntryTypes() %}#}
-{#                                        <li><a href="{{ entryType.getCpEditUrl() }}">{{ entryType.name|t('site') }}</a></li>#}
-{#                                    {% endfor %}#}
-{#                                </ul>#}
-{#                            </div>#}
-{#                        {% endif %}#}
-{#                    </td>#}
-{#                    <td class="thin"><a class="delete icon" title="{{ 'Delete'|t('app') }}" role="button"></a></td>#}
-{#                </tr>#}
-{#            {% endfor %}#}
-{#            </tbody>#}
-{#        </table>#}
-{#    {% endif %}#}
+    {% if eventtypes | length %}
+        <table id="eventtypes" class="data fullwidth collapsible">
+            <thead>
+            <th scope="col">{{ "translate.eventTypes.name" | t('eventsky') }}</th>
+            <th scope="col">{{ "translate.eventTypes.handle" | t('eventsky') }}</th>
+            <th scope="col">{{ "translate.eventTypes.fieldLayout" | t('eventsky')}}</th>
+            <td class="thin"></td>
+            </thead>
+            <tbody>
+            {% for eventtype in eventtypes %}
+                <tr data-id="{{ eventtype.id }}" data-name="{{ eventtype.name | t('site') }}">
+                    <th scope="row" data-title="{{ 'translate.eventTypes.name' | t('eventsky') }}"><a href="{{ url('settings/sections/' ~ eventtype.id) }}">{{ eventtype.name | t('site') }}</a></th>
+                    <td data-title="{{ 'translate.eventTypes.handle' | t('eventsky') }}"><code>{{ eventtype.handle }}</code></td>
+                    <td data-title="{{ 'translate.eventTypes.fieldLayout' | t('eventsky') }}">
+                        {% set eventType = eventtype.getEntryTypes()[0] %}
+                        <a href="{{ eventType.getCpEditUrl() }}">{{ "translate.eventTypes.fieldLayout.edit" | t('eventsky') }}</a>
+                    </td>
+                    <td class="thin"><a class="delete icon" title="{{ 'translate.eventTypes.delete' | t('eventsky') }}" role="button"></a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 {% endblock %}
-
 
 {% js %}
     var adminTable = new Craft.AdminTable({
-    tableSelector: '#sections',
-    noItemsSelector: '#nosections',
+    tableSelector: '#eventtypes',
+    noItemsSelector: '#noeventtypes',
     deleteAction: 'sections/delete-section',
-    confirmDeleteMessage: '{{ "Are you sure you want to delete “{name}” and all its entries?"|t('app') }}',
+    confirmDeleteMessage: '{{ "translate.eventTypes.deleteMessage" | t('eventsky') }}',
     onDeleteItem: function()
     {
     // Hide the Entries tab if that was the last one

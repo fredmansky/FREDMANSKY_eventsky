@@ -59,7 +59,6 @@ class EventTypesController extends Controller
     public function actionIndex(array $variables = []): Response
     {
         $variables['eventtypes'] = Craft::$app->getSections()->getAllSections();
-        // VarDumper::dump($variables, $depth = 20, $highlight = true);
 
         return $this->renderTemplate('eventsky/eventTypes/index', $variables);
     }

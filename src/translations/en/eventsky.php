@@ -53,8 +53,10 @@ return [
     // ----- Event Types ------
     // ------------------------
 
-//    'translate.models.Event.displayName' => 'Event',
-//    'translate.elements.Event.pluralDisplayName' => 'Events',
-//    'translate.elements.Event.sideBar.allEvents' => 'All Events',
-//    'translate.elements.Event.search.description' => 'Description',
+    'translate.eventTypes.name' => 'Name',
+    'translate.eventTypes.handle' => 'Handle',
+    'translate.eventTypes.fieldLayout' => 'Field layout',
+    'translate.eventTypes.fieldLayout.edit' => 'Edit field layout',
+    'translate.eventTypes.delete' => 'Delete',
+    'translate.eventTypes.deleteMessage' => 'Are you sure you want to delete “{ name }” and all its events?',
 ];
