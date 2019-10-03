@@ -24,7 +24,7 @@ use yii\db\Exception;
  *
  * @author Fredmanksy GmbH
  */
-class EventType extends Element
+class EventTypeTODELETE extends Element
 {
     // Constants
     // =========================================================================

@@ -86,28 +86,28 @@ class EventType extends Model
     public function rules()
     {
         $rules = parent::rules();
-        $rules[] = [['id', 'fieldLayoutId'], 'number', 'integerOnly' => true];
-        $rules[] = [['name', 'handle'], 'required'];
-        $rules[] = [['name', 'handle'], 'string', 'max' => 255];
-        $rules[] = [
-            ['handle'],
-            HandleValidator::class,
-            'reservedWords' => ['id', 'dateCreated', 'dateUpdated', 'uid', 'title']
-        ];
-        $rules[] = [
-            ['name'],
-            UniqueValidator::class,
-            'targetClass' => EntryTypeRecord::class,
-            'targetAttribute' => ['name', 'sectionId'],
-            'comboNotUnique' => Craft::t('yii', '{attribute} "{value}" has already been taken.'),
-        ];
-        $rules[] = [
-            ['handle'],
-            UniqueValidator::class,
-            'targetClass' => EntryTypeRecord::class,
-            'targetAttribute' => ['handle', 'sectionId'],
-            'comboNotUnique' => Craft::t('yii', '{attribute} "{value}" has already been taken.'),
-        ];
+//        $rules[] = [['id', 'fieldLayoutId'], 'number', 'integerOnly' => true];
+//        $rules[] = [['name', 'handle'], 'required'];
+//        $rules[] = [['name', 'handle'], 'string', 'max' => 255];
+//        $rules[] = [
+//            ['handle'],
+//            HandleValidator::class,
+//            'reservedWords' => ['id', 'dateCreated', 'dateUpdated', 'uid', 'title']
+//        ];
+//        $rules[] = [
+//            ['name'],
+//            UniqueValidator::class,
+//            'targetClass' => EntryTypeRecord::class,
+//            'targetAttribute' => ['name', 'sectionId'],
+//            'comboNotUnique' => Craft::t('yii', '{attribute} "{value}" has already been taken.'),
+//        ];
+//        $rules[] = [
+//            ['handle'],
+//            UniqueValidator::class,
+//            'targetClass' => EntryTypeRecord::class,
+//            'targetAttribute' => ['handle', 'sectionId'],
+//            'comboNotUnique' => Craft::t('yii', '{attribute} "{value}" has already been taken.'),
+//        ];
 
         return $rules;
     }

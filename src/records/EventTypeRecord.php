@@ -17,9 +17,4 @@ class EventTypeRecord extends ActiveRecord
     {
         return $this->hasOne(FieldLayout::class, ['id' => 'fieldLayoutId']);
     }
-
-    public function rules()
-    {
-        return [];
-    }
 }

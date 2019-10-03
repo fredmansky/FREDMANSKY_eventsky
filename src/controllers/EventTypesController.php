@@ -8,10 +8,10 @@ namespace fredmansky\eventsky\controllers;
 
 use Craft;
 
-use fredmansky\eventsky\elements\EventType;
 use fredmansky\eventsky\elements\Event;
 use fredmansky\eventsky\elements\db\EventTypeQuery;
 use fredmansky\eventsky\Eventsky;
+use fredmansky\eventsky\models\EventType;
 use yii\helpers\VarDumper;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
@@ -33,9 +33,7 @@ class EventTypesController extends Controller
   
     public function init()
     {
-        // All section actions require an admin
         $this->requireAdmin();
-
         parent::init();
     }
     
@@ -48,14 +46,44 @@ class EventTypesController extends Controller
         return $this->renderTemplate('eventsky/eventTypes/index', $data);
     }
 
-    public function actionEdit(int $eventTypeId)
+    public function actionEdit(int $eventTypeId = null, EventTypeTODELETE $eventType = null): Response
     {
-        $eventType = Eventsky::$plugin->eventType->byId($eventTypeId);
-        if (!$eventType) throw new NotFoundHttpException();
-        
         $data = [
-            'eventType' => $eventType,
+            'eventTypeId' => $eventTypeId,
+            'brandNewSection' => false,
         ];
+
+        if ($eventTypeId !== null) {
+            if ($eventType === null) {
+                $eventType = Eventsky::$plugin->eventType->byId($eventTypeId);
+
+                if (!$eventType) {
+                    throw new NotFoundHttpException('EventType not found');
+                }
+            }
+
+            $data['title'] = trim($eventType->name) ?: Craft::t('app', 'Edit Section');
+        } else {
+            if ($eventType === null) {
+                $eventType = new EventType();
+                $data['brandNewSection'] = true;
+            }
+            $data['title'] = Craft::t('app', 'Create a new section');
+        }
+
+        $data['eventType'] = $eventType;
+
+        $variables['crumbs'] = [
+            [
+                'label' => Craft::t('app', 'Settings'),
+                'url' => UrlHelper::url('settings')
+            ],
+            [
+                'label' => Craft::t('app', 'Sections'),
+                'url' => UrlHelper::url('settings/sections')
+            ],
+        ];
+
         return $this->renderTemplate('eventsky/eventTypes/edit', $data);
     }
 
