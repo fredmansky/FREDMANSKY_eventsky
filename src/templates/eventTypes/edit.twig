@@ -4,12 +4,16 @@
 {% set title = "translate.eventTypes.title" | t('eventsky') %}
 
 {% block actionButton %}
-    <a href="{{ url('eventsky/eventTypes/save') }}" class="btn submit add icon">{{ "translate.eventTypes.save" | t('eventsky') }}</a>
+    <a href="{{ url('eventsky/eventTypes/save') }}" class="btn submit">{{ "translate.eventTypes.save" | t('eventsky') }}</a>
 {% endblock %}
 
 {% block content %}
     EVENT TYPES EDIT
-    {{ dump(eventType) }}
+    {{ dump(eventType.getFieldLayout()) }}
+
+    {% include "_includes/fieldlayoutdesigner" with {
+      fieldLayout: eventType.getFieldLayout(),
+    } only %}
 
     <input type="hidden" name="action" value="eventsky/eventTypes/save">
 {% endblock %}
