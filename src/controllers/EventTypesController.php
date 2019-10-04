@@ -46,7 +46,7 @@ class EventTypesController extends Controller
         return $this->renderTemplate('eventsky/eventTypes/index', $data);
     }
 
-    public function actionEdit(int $eventTypeId = null, EventTypeTODELETE $eventType = null): Response
+    public function actionEdit(int $eventTypeId = null, EventType $eventType = null): Response
     {
         $data = [
             'eventTypeId' => $eventTypeId,
