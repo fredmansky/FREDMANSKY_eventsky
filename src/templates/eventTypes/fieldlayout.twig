@@ -2,11 +2,10 @@
 {% extends "_layouts/cp" %}
 
 {% set selectedSubnavItem = 'eventTypes' %}
-{% set title = "translate.eventTypes.title" | t('eventsky') %}
 {% set fullPageForm = true %}
 
 {% set crumbs = [
-    { label: "translate.eventTypes.title" | t('eventsky'), url: url('eventsky/eventTypes') }
+    { label: "translate.eventTypes.new.fieldLayout" | t('eventsky'), url: url('eventsky/eventTypes') }
 ] %}
 
 {% import "_includes/forms" as forms %}

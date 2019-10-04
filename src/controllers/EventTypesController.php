@@ -40,7 +40,7 @@ class EventTypesController extends Controller
     public function actionIndex(array $variables = []): Response
     {
         $data = [
-            'eventTypes' => Eventsky::$plugin->eventType->all(),
+            'eventTypes' => Eventsky::$plugin->eventType->getAllEventTypes(),
         ];
 
         return $this->renderTemplate('eventsky/eventTypes/index', $data);
@@ -50,7 +50,7 @@ class EventTypesController extends Controller
     {
         $data = [
             'eventTypeId' => $eventTypeId,
-            'brandNewSection' => false,
+            'brandNewEventType' => false,
         ];
 
         if ($eventTypeId !== null) {
@@ -62,17 +62,17 @@ class EventTypesController extends Controller
                 }
             }
 
-            $data['title'] = trim($eventType->name) ?: Craft::t('app', 'Edit Section');
+            $data['title'] = trim($eventType->name) ?: Craft::t('eventsky', 'translate.eventTypes.edit');
         } else {
             if ($eventType === null) {
                 $eventType = new EventType();
-                $data['brandNewSection'] = true;
+                $data['brandNewEventType'] = true;
             }
-            $data['title'] = Craft::t('app', 'Create a new section');
+            $data['title'] = Craft::t('eventsky', 'translate.eventTypes.new');
         }
 
         $data['eventType'] = $eventType;
-
+/*
         $variables['crumbs'] = [
             [
                 'label' => Craft::t('app', 'Settings'),
@@ -83,8 +83,21 @@ class EventTypesController extends Controller
                 'url' => UrlHelper::url('settings/sections')
             ],
         ];
-
+*/
         return $this->renderTemplate('eventsky/eventTypes/edit', $data);
+    }
+
+    public function actionFieldLayout(int $eventTypeId)
+    {
+        $eventType = Eventsky::$plugin->eventType->byId($eventTypeId);
+        if (!$eventType) {
+            throw new NotFoundHttpException('EventType not found');
+        }
+
+        return $this->renderTemplate('eventsky/eventTypes/fieldlayout', [
+            'eventType' => $eventType,
+            'title' => \Craft::t('eventsky', 'translate.eventType.fieldLayout.headline', ['name' => $eventType->name]),
+        ]);
     }
 
 }

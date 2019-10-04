@@ -7,6 +7,7 @@ use craft\db\ActiveRecord;
 use craft\db\Query;
 use fredmansky\eventsky\models\EventType;
 use fredmansky\eventsky\records\EventTypeRecord;
+use yii\db\ActiveQuery;
 
 class EventTypeService extends Component
 {
@@ -17,7 +18,7 @@ class EventTypeService extends Component
         parent::init();
     }
     
-    public function getAllSections()
+    public function getAllEventTypes()
     {
         if ($this->eventTypes !== null) {
             return $this->$eventTypes;
@@ -43,51 +44,15 @@ class EventTypeService extends Component
 
     public function byId(int $id): ?ActiveRecord
     {
-        return EventTypeRecord::find()
+        return $this->createEventTypeQuery()
             ->where(['=', 'id', $id])
             ->with(['fieldLayout'])
             ->one();
     }
 
-    private function createEventTypeQuery(): Query
+    private function createEventTypeQuery(): ActiveQuery
     {
-        // todo: remove schema version condition after next beakpoint
-        $condition = null;
-        $joinCondition = '[[structures.id]] = [[sections.structureId]]';
-        $schemaVersion = Craft::$app->getInstalledSchemaVersion();
-        if (version_compare($schemaVersion, '3.1.19', '>=')) {
-            $condition = ['sections.dateDeleted' => null];
-            $joinCondition = [
-                'and',
-                $joinCondition,
-                ['structures.dateDeleted' => null]
-            ];
-        }
-
-        $query = (new Query())
-            ->select([
-                'sections.id',
-                'sections.structureId',
-                'sections.name',
-                'sections.handle',
-                'sections.type',
-                'sections.enableVersioning',
-                'sections.uid',
-                'structures.maxLevels',
-            ])
-            ->leftJoin('{{%structures}} structures', $joinCondition)
-            ->from(['{{%sections}} sections'])
-            ->where($condition)
+        return EventTypeRecord::find()
             ->orderBy(['name' => SORT_ASC]);
-
-        // todo: remove schema version conditions after next beakpoint
-        if (version_compare($schemaVersion, '3.2.1', '>=')) {
-            $query->addSelect('sections.propagationMethod');
-        }
-        if (version_compare($schemaVersion, '3.2.6', '>=')) {
-            $query->addSelect('sections.previewTargets');
-        }
-
-        return $query;
     }
 }

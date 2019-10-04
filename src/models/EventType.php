@@ -9,6 +9,7 @@ namespace fredmansky\eventsky\models;
 use Craft;
 use craft\base\Model;
 use craft\behaviors\FieldLayoutBehavior;
+use craft\gql\types\DateTime;
 use craft\helpers\UrlHelper;
 use craft\validators\HandleValidator;
 use craft\validators\UniqueValidator;
@@ -28,30 +29,15 @@ class EventType extends Model
     // Properties
     // =========================================================================
 
-    /**
-     * @var int|null ID
-     */
     public $id;
-
-    /**
-     * @var int|null Field layout ID
-     */
     public $fieldLayoutId;
-
-    /**
-     * @var string|null Name
-     */
     public $name;
-
-    /**
-     * @var string|null Handle
-     */
     public $handle;
-
-    /**
-     * @var string UID
-     */
     public $uid;
+    public $isRegistrationEnabled;
+    public $isWaitingListEnabled;
+    public $dateCreated;
+    public $dateUpdated;
 
     // Public Methods
     // =========================================================================
