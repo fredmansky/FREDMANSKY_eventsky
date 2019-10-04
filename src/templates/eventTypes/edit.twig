@@ -8,129 +8,130 @@
     <input type="hidden" name="action" value="sections/save-section">
     {{ redirectInput('settings/sections') }}
 
-    {% if eventType.id %}<input type="hidden" name="sectionId" value="{{ eventType.id }}">{% endif %}
+    {% if eventType.id %}<input type="hidden" name="eventTypeId" value="{{ eventType.id }}">{% endif %}
 
     <div id="eventtype-settings">
-      {{ forms.textField({
-          first: true,
-          label: "Name"|t('app'),
-          instructions: "What this eventType will be called in the CP."|t('app'),
-          id: 'name',
-          name: 'name',
-          value: eventType.name,
-          errors: eventType.getErrors('name'),
-          autofocus: true,
-          required: true,
-      }) }}
+        {{ forms.textField({
+            first: true,
+            label: "Name"|t('app'),
+            instructions: "What this eventType will be called in the CP."|t('app'),
+            id: 'name',
+            name: 'name',
+            value: eventType.name,
+            errors: eventType.getErrors('name'),
+            autofocus: true,
+            required: true,
+        }) }}
 
-      {{ forms.textField({
-          label: "Handle"|t('app'),
-          instructions: "How you’ll refer to this section in the templates."|t('app'),
-          id: 'handle',
-          name: 'handle',
-          class: 'code',
-          autocorrect: false,
-          autocapitalize: false,
-          value: eventType.handle,
-          errors: eventType.getErrors('handle'),
-          required: true
-      }) }}
+        {{ forms.textField({
+            label: "Handle"|t('app'),
+            instructions: "How you’ll refer to this event type in the templates."|t('app'),
+            id: 'handle',
+            name: 'handle',
+            class: 'code',
+            autocorrect: false,
+            autocapitalize: false,
+            value: eventType.handle,
+            errors: eventType.getErrors('handle'),
+            required: true
+        }) }}
 
-      <hr>
+        <hr>
 
-      {% set siteRows = [] %}
-      {% set siteErrors = eventType.getErrors('siteSettings') %}
+        {% set siteRows = [] %}
+        {% set siteErrors = eventType.getErrors('eventTypeSites') %}
 
-      {#{% for site in craft.app.sites.getAllSites() %}
-          {% set siteSettings = eventType.siteSettings[site.id] ?? null %}
-          {% if siteSettings %}
-              {% for attribute, errors in siteSettings.getErrors() %}
-                  {% set siteErrors = siteErrors|merge(errors) %}
-              {% endfor %}
-          {% endif %}
-          {% set siteRows = siteRows|merge({
-              (site.handle): {
-                  heading: site.name|t('site')|e,
-                  enabled: include('_includes/forms/lightswitch', {
-                      name: 'sites['~site.handle~'][enabled]',
-                      on: brandNewEvent or siteSettings,
-                      value: site.id,
-                      small: true
-                  }),
-                  singleUri: {
-                      value: (eventType.type == 'single' and siteSettings and siteSettings.uriFormat != '__home__') ? siteSettings.uriFormat,
-                      hasErrors: (eventType.type == 'single' and siteSettings ? siteSettings.hasErrors('uriFormat'))
-                  },
-                  uriFormat: {
-                      value: siteSettings ? siteSettings.uriFormat,
-                      hasErrors: (eventType.type != 'single' and siteSettings ? siteSettings.hasErrors('uriFormat'))
-                  },
-                  template: {
-                      value: siteSettings ? siteSettings.template,
-                      hasErrors: siteSettings ? siteSettings.hasErrors('template'),
-                  },
-                  enabledByDefault: siteSettings ? siteSettings.enabledByDefault : true,
-              }
-          }) %}
-      {% endfor %}#}
+        {% for site in craft.app.sites.getAllSites() %}
+            {% set eventTypeSite = eventType.eventTypeSites[site.id] ?? null %}
+            {% if eventTypeSite %}
+                {% for attribute, errors in eventTypeSite.getErrors() %}
+                    {% set siteErrors = siteErrors|merge(errors) %}
+                {% endfor %}
+            {% endif %}
+            {% set siteRows = siteRows|merge({
+                (site.handle): {
+                    heading: site.name|t('site')|e,
+                    enabled: include('_includes/forms/lightswitch', {
+                        name: 'sites['~site.handle~'][enabled]',
+                        on: brandNewEventType or eventTypeSite,
+                        value: site.id,
+                        small: true,
+                    }),
+                    uriFormat: {
+                        value: eventTypeSite ? eventTypeSite.uriFormat,
+                        hasErrors: eventTypeSite ? eventTypeSite.hasErrors('uriFormat'),
+                    },
+                    template: {
+                        value: eventTypeSite ? eventTypeSite.template,
+                        hasErrors: eventTypeSite ? eventTypeSite.hasErrors('template'),
+                    },
+                    enabledByDefault: eventTypeSite ? eventTypeSite.enabledByDefault : true,
+                }
+            }) %}
+        {% endfor %}
 
-      {{ forms.editableTableField({
-          label: "Site Settings"|t('app'),
-          instructions: "Choose which sites this section should be available in, and configure the site-specific settings."|t('app'),
-          id: 'sites',
-          name: 'sites',
-          cols: {
-              heading: {
-                  type: 'heading',
-                  heading: "Site"|t('app'),
-                  class: 'thin'
-              },
-              enabled: {
-                  type: 'heading',
-                  class: 'thin'~(not craft.app.getIsMultiSite() ? ' hidden')
-              },
-              singleUri: {
-                  type: 'singleline',
-                  heading: "URI"|t('app'),
-                  info: "What the entry URI should be for the site. Leave blank if this is the homepage."|t('app'),
-                  placeholder: "Leave blank if this is the homepage"|t('app'),
-                  code: true,
-                  class: 'type-single hidden'
-              },
-              template: {
-                  type: 'template',
-                  heading: "Template"|t('app'),
-                  info: "Which template should be loaded when an entry’s URL is requested."|t('app'),
-                  code: true
-              },
-          },
-          rows: siteRows,
-          staticRows: true,
-          errors: siteErrors|unique
-      }) }}
+        {{ forms.editableTableField({
+            label: "Site Settings"|t('app'),
+            instructions: "Choose which sites this section should be available in, and configure the site-specific settings."|t('app'),
+            id: 'sites',
+            name: 'sites',
+            cols: {
+                heading: {
+                    type: 'heading',
+                    heading: "Site"|t('app'),
+                    class: 'thin'
+                },
+                enabled: {
+                    type: 'heading',
+                    class: 'thin'~(not craft.app.getIsMultiSite() ? ' hidden')
+                },
+                uriFormat: {
+                    type: 'singleline',
+                    heading: "Entry URI Format"|t('app'),
+                    info: "What entry URIs should look like for the site. Leave blank if entries don't have URLs."|t('app'),
+                    placeholder: "Leave blank if entries don't have URLs"|t('app'),
+                    code: true,
+                    class: 'type-channel type-structure'
+                },
+                template: {
+                    type: 'template',
+                    heading: "Template"|t('app'),
+                    info: "Which template should be loaded when an entry’s URL is requested."|t('app'),
+                    code: true
+                },
+                enabledByDefault: {
+                    type: 'lightswitch',
+                    heading: "Default Status"|t('app'),
+                    class: 'thin type-channel type-structure'
+                }
+            },
+            rows: siteRows,
+            staticRows: true,
+            errors: siteErrors|unique
+        }) }}
 
-      {#{% if CraftEdition == CraftPro %}
-          {{ forms.editableTableField({
-              label: 'Preview Targets'|t('app'),
-              instructions: 'Additional locations that should be available for previewing entries in this section.',
-              id: 'previewTargets',
-              name: 'previewTargets',
-              cols: {
-                  label: {
-                      type: 'singleline',
-                      heading: 'Label'|t('app'),
-                  },
-                  urlFormat: {
-                      type: 'singleline',
-                      heading: 'URL Format'|t('app'),
-                      info: 'The URL/URI to use for this target.'|t('app'),
-                      code: true,
-                  }
-              },
-              rows: eventType.previewTargets,
-              errors: eventType.getErrors('previewTargets')
-          }) }}
-      {% endif %}#}
+        {#{% if CraftEdition == CraftPro %}
+            {{ forms.editableTableField({
+                label: 'Preview Targets'|t('app'),
+                instructions: 'Additional locations that should be available for previewing entries in this section.',
+                id: 'previewTargets',
+                name: 'previewTargets',
+                cols: {
+                    label: {
+                        type: 'singleline',
+                        heading: 'Label'|t('app'),
+                    },
+                    urlFormat: {
+                        type: 'singleline',
+                        heading: 'URL Format'|t('app'),
+                        info: 'The URL/URI to use for this target.'|t('app'),
+                        code: true,
+                    }
+                },
+                rows: eventType.previewTargets,
+                errors: eventType.getErrors('previewTargets')
+            }) }}
+        {% endif %}#}
 
     </div>
     <div id="eventtype-fieldlayout" class="hidden">

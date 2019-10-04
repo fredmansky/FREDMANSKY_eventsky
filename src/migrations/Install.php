@@ -68,6 +68,21 @@ class Install extends Migration
             ]);
         }
 
+        if (!$this->db->tableExists('{{%eventsky_eventtypes_sites}}')) {
+            $this->createTable('{{%eventsky_eventtypes_sites}}', [
+                'id' => $this->primaryKey(),
+                'eventtypeId' => $this->integer()->notNull(),
+                'siteId' => $this->integer()->notNull(),
+                'hasUrls' => $this->boolean(),
+                'uriFormat' => $this->string(255),
+                'template' => $this->string(255),
+                'enabledByDefault' => $this->boolean(),
+                'dateCreated' => $this->dateTime()->notNull(),
+                'dateUpdated' => $this->dateTime()->notNull(),
+                'uid' => $this->uid(),
+            ]);
+        }
+
         if (!$this->db->tableExists('{{%eventsky_tickettypes}}')) {
             $this->createTable('{{%eventsky_tickettypes}}', [
                 'id' => $this->primaryKey(),
@@ -83,8 +98,10 @@ class Install extends Migration
 
     protected function createForeignKeys()
     {
-        $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_events}}',              'id'),                  '{{%%eventsky_events}}',            'id',               '{{%elements}}',        'id',   'CASCADE', null);
-        $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes}}',          'fieldLayoutId'),       '{{%%eventsky_eventtypes}}',        'fieldLayoutId',    '{{%fieldlayouts}}',    'id',   'CASCADE', null);
+        $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_events}}', 'id'), '{{%%eventsky_events}}', 'id', '{{%elements}}', 'id', 'CASCADE', null);
+        $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes}}', 'fieldLayoutId'), '{{%%eventsky_eventtypes}}', 'fieldLayoutId', '{{%fieldlayouts}}', 'id', 'CASCADE', null);
+        $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes_sites}}', 'siteId'), '{{%%eventsky_eventtypes_sites}}', 'siteId', '{{%sites}}', 'id', 'CASCADE', null);
+        $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes_sites}}', 'eventtypeId'), '{{%%eventsky_eventtypes_sites}}', 'eventtypeId', '{{%eventsky_eventtypes}}', 'id', 'CASCADE', null);
     }
 
     protected function dropTables()

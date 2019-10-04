@@ -55,7 +55,7 @@ class EventTypesController extends Controller
 
         if ($eventTypeId !== null) {
             if ($eventType === null) {
-                $eventType = Eventsky::$plugin->eventType->byId($eventTypeId);
+                $eventType = Eventsky::$plugin->eventType->getEventTypeById($eventTypeId);
 
                 if (!$eventType) {
                     throw new NotFoundHttpException('EventType not found');

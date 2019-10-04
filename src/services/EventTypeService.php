@@ -6,11 +6,14 @@ use craft\base\Component;
 use craft\db\ActiveRecord;
 use craft\db\Query;
 use fredmansky\eventsky\models\EventType;
+use fredmansky\eventsky\models\EventTypeSite;
 use fredmansky\eventsky\records\EventTypeRecord;
+use fredmansky\eventsky\records\EventTypeSiteRecord;
 use yii\db\ActiveQuery;
 
 class EventTypeService extends Component
 {
+    /** @var array */
     private $eventTypes;
 
     public function init()
@@ -18,7 +21,7 @@ class EventTypeService extends Component
         parent::init();
     }
     
-    public function getAllEventTypes()
+    public function getAllEventTypes(): array
     {
         if ($this->eventTypes !== null) {
             return $this->$eventTypes;
@@ -27,27 +30,29 @@ class EventTypeService extends Component
         $results = $this->createEventTypeQuery()
             ->all();
 
-        $this->eventTypes = [];
-
-        foreach ($results as $result) {
-//            if (!empty($result['previewTargets'])) {
-//                $result['previewTargets'] = Json::decode($result['previewTargets']);
-//            } else {
-//                $result['previewTargets'] = [];
-//            }
-
-            $this->eventTypes[] = new EventType($result);
-        }
-
+        $this->eventTypes = array_map(function() {
+            return new EventType($result);
+        }, $results);
         return $this->eventTypes;
     }
 
-    public function byId(int $id): ?ActiveRecord
+    public function getEventTypeById(int $id): ?ActiveRecord
     {
         return $this->createEventTypeQuery()
             ->where(['=', 'id', $id])
             ->with(['fieldLayout'])
             ->one();
+    }
+
+    public function getEventTypeSites(int $eventTypeId): array
+    {
+        $eventTypeSites = EventTypeSiteRecord::find()
+            ->where(['=', 'eventtypeId', $eventTypeId])
+            ->all();
+
+        return array_map(function($eventType) {
+            return new EventTypeSite($eventType);
+        }, $eventTypeSites);
     }
 
     private function createEventTypeQuery(): ActiveQuery
