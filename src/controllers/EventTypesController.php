@@ -72,32 +72,25 @@ class EventTypesController extends Controller
         }
 
         $data['eventType'] = $eventType;
-/*
-        $variables['crumbs'] = [
+
+        $data['crumbs'] = [
             [
-                'label' => Craft::t('app', 'Settings'),
-                'url' => UrlHelper::url('settings')
-            ],
-            [
-                'label' => Craft::t('app', 'Sections'),
+                'label' => Craft::t('eventsky', 'translate.eventTypes.cpTitle'),
                 'url' => UrlHelper::url('settings/sections')
             ],
         ];
-*/
+
+        $data['tabs'] = [
+            'settings' => [
+                'label' => Craft::t('eventsky', 'translate.eventType.tab.settings'),
+                'url' => '#eventtype-settings'
+            ],
+            'fieldLayout' => [
+                'label' => Craft::t('eventsky', 'translate.eventType.tab.fieldlayout'),
+                'url' => '#eventtype-fieldlayout'
+            ]
+        ];
+
         return $this->renderTemplate('eventsky/eventTypes/edit', $data);
     }
-
-    public function actionFieldLayout(int $eventTypeId)
-    {
-        $eventType = Eventsky::$plugin->eventType->byId($eventTypeId);
-        if (!$eventType) {
-            throw new NotFoundHttpException('EventType not found');
-        }
-
-        return $this->renderTemplate('eventsky/eventTypes/fieldlayout', [
-            'eventType' => $eventType,
-            'title' => \Craft::t('eventsky', 'translate.eventType.fieldLayout.headline', ['name' => $eventType->name]),
-        ]);
-    }
-
 }

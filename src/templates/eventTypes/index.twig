@@ -17,17 +17,13 @@
             <thead>
             <th scope="col">{{ "translate.eventTypes.name" | t('eventsky') }}</th>
             <th scope="col">{{ "translate.eventTypes.handle" | t('eventsky') }}</th>
-            <th scope="col">{{ "translate.eventTypes.fieldLayout" | t('eventsky') }}</th>
             <td class="thin"></td>
             </thead>
             <tbody>
             {% for eventType in eventTypes %}
                 <tr data-id="{{ eventType.id }}" data-name="{{ eventType.name | t('site') }}">
-                    <th scope="row" data-title="{{ 'translate.eventTypes.name' | t('eventsky') }}"><a href="{{ url('eventsky/eventTypes/' ~ eventType.id) }}">{{ eventType.name | t('site') }}</a></th>
+                    <th scope="row" data-title="{{ 'translate.eventTypes.name' | t('eventsky') }}"><a href="{{ eventType.getCpEditUrl() }}">{{ eventType.name | t('site') }}</a></th>
                     <td data-title="{{ 'translate.eventTypes.handle' | t('eventsky') }}"><code>{{ eventType.handle }}</code></td>
-                    <td data-title="{{ 'translate.eventTypes.fieldLayout' | t('eventsky') }}">
-                        <a href="{{ eventType.getCpEditUrl() }}">{{ "translate.eventTypes.fieldLayout.edit" | t('eventsky') }}</a>
-                    </td>
                     <td class="thin"><a class="delete icon" title="{{ 'translate.eventTypes.delete' | t('eventsky') }}" role="button"></a></td>
                 </tr>
             {% endfor %}

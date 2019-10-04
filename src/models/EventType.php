@@ -115,6 +115,6 @@ class EventType extends Model
      */
     public function getCpEditUrl(): string
     {
-        return UrlHelper::cpUrl('eventsky/eventtype/' . $this->id . '/fieldlayout');
+        return UrlHelper::cpUrl('eventsky/eventtype/' . $this->id);
     }
 }

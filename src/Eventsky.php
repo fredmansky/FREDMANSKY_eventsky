@@ -53,8 +53,8 @@ class Eventsky extends Plugin
         $item['subnav'] = [
             'events' => ['label' => Craft::t('eventsky', 'translate.events.cpTitle'), 'url' => 'eventsky/events'],
             'tickets' => ['label' => Craft::t('eventsky', 'translate.tickets.cpTitle'), 'url' => 'eventsky/tickets'],
-            'eventTypes' => ['label' => Craft::t('eventsky', 'translate.eventTypes.cpTitle'), 'url' => 'eventsky/eventTypes'],
-            'ticketTypes' => ['label' => Craft::t('eventsky', 'translate.ticketTypes.cpTitle'), 'url' => 'eventsky/ticketTypes'],
+            'eventTypes' => ['label' => Craft::t('eventsky', 'translate.eventTypes.cpTitle'), 'url' => 'eventsky/eventtypes'],
+            'ticketTypes' => ['label' => Craft::t('eventsky', 'translate.ticketTypes.cpTitle'), 'url' => 'eventsky/tickettypes'],
             'settings' => ['label' => Craft::t('eventsky', 'translate.settings.cpTitle'), 'url' => 'eventsky/settings'],
         ];
         return $item;

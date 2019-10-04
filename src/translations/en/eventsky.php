@@ -61,5 +61,7 @@ return [
     'translate.eventType.fieldLayout.headline' => 'Field layout of event type “{name}”',
     'translate.eventTypes.fieldLayout.edit' => 'Edit field layout',
     'translate.eventTypes.delete' => 'Delete',
+    'translate.eventType.tab.settings' => 'Settings',
+    'translate.eventType.tab.fieldlayout' => 'Field Layout',
     'translate.eventTypes.deleteMessage' => 'Are you sure you want to delete “{ name }” and all its events?',
 ];
