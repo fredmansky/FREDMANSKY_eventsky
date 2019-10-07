@@ -30,7 +30,7 @@ class EventTypeService extends Component
         $results = $this->createEventTypeQuery()
             ->all();
 
-        $this->eventTypes = array_map(function() {
+        $this->eventTypes = array_map(function($result) {
             return new EventType($result);
         }, $results);
         return $this->eventTypes;
