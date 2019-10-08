@@ -35,7 +35,6 @@ return [
 
     'translate.eventTypes.title' => 'Event Types',
     'translate.eventTypes.cpTitle' => 'Event Types',
-    'translate.eventTypes.new' => 'New Event Type',
 
     'translate.settings.title' => 'Settings',
     'translate.settings.cpTitle' => 'Settings',
@@ -73,11 +72,19 @@ return [
     'translate.elements.Ticket.sideBar.allTickets' => 'All Events',
     'translate.elements.Ticket.search.description' => 'Description',
 
-    // -------------------
-    // ----- Ticket Types ------
-    // -------------------
-    'translate.elements.TicketType.displayName' => 'Ticket Type',
-    'translate.elements.TicketType.pluralDisplayName' => 'Ticket Types',
-    'translate.elements.TicketType.sideBar.allTicketTypes' => 'All Ticket Types',
-    'translate.elements.TicketType.search.description' => 'Description',
+    // ------------------------
+    // ----- Ticket Types -----
+    // ------------------------
+
+    'translate.ticketTypes.name' => 'Name',
+    'translate.ticketTypes.handle' => 'Handle',
+    'translate.ticketTypes.new' => 'Create a new event type',
+    'translate.ticketTypes.edit' => 'Edit event type',
+    'translate.ticketTypes.fieldLayout' => 'Field layout',
+    'translate.ticketTypes.fieldLayout.edit' => 'Edit field layout',
+    'translate.ticketTypes.delete' => 'Delete',
+    'translate.ticketTypes.deleteMessage' => 'Are you sure you want to delete “{ name }” and all its events?',
+    'translate.ticketType.tab.settings' => 'Settings',
+    'translate.ticketType.tab.fieldlayout' => 'Field Layout',
+    'translate.ticketType.fieldLayout.headline' => 'Field layout of event type “{name}”',
 ];

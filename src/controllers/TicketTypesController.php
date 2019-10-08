@@ -1,134 +1,89 @@
 <?php
+/**
+ * @link https://fredmansky.at/
+ * @copyright Copyright (c) Fredmansky GmbH
+ */
 
-namespace fredmansky\eventsky;
-
-use fredmansky\eventsky\elements\Event;
-use fredmansky\eventsky\elements\Ticket;
-use fredmansky\eventsky\models\TicketType;
+namespace fredmansky\eventsky\controllers;
 
 use Craft;
-use craft\web\Controller;
 
-use yii\base\Exception;
+use fredmansky\eventsky\elements\Ticket;
+use fredmansky\eventsky\elements\db\TicketTypeQuery;
+use fredmansky\eventsky\Eventsky;
+use fredmansky\eventsky\models\TicketType;
+use yii\helpers\VarDumper;
+use craft\helpers\UrlHelper;
+use craft\web\Controller;
+use yii\web\ForbiddenHttpException;
+
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
+
 
 class TicketTypesController extends Controller
 {
-  // Public Methods
-  // =========================================================================
 
   public function init()
   {
-    // $this->requirePermission('events-manageTicketTypes');
-
+    $this->requireAdmin();
     parent::init();
   }
 
-  /**
-   * Ticket types index.
-   *
-   * @param array $variables
-   * @return Response The rendering result
-   */
   public function actionIndex(array $variables = []): Response
   {
-    $variables['tickettypes'] = Craft::$app->getSections()->getAllSections();
-    // VarDumper::dump($variables, $depth = 20, $highlight = true);
-    return $this->renderTemplate('eventsky/ticketTypes/index', $variables);
+    $data = [
+      'ticketTypes' => Eventsky::$plugin->ticketType->getAllTicketTypes(),
+    ];
+
+    return $this->renderTemplate('eventsky/ticketTypes/index', $data);
   }
 
   public function actionEdit(int $ticketTypeId = null, TicketType $ticketType = null): Response
   {
-    $variables = [
+    $data = [
       'ticketTypeId' => $ticketTypeId,
-      'ticketType' => $ticketType,
-      'newTicketType' => false
+      'brandNewTicketType' => false,
     ];
 
-    if (empty($variables['ticketType'])) {
-      if ($ticketType !== null) {
-        $ticketType = TicketType::find()->id($ticketTypeId);
+    if ($ticketTypeId !== null) {
+      if ($ticketType === null) {
+        $ticketType = Eventsky::$plugin->ticketType->getTicketTypeById($ticketTypeId);
+
         if (!$ticketType) {
-          throw new NotFoundHttpException('Ticket Type not found');
+          throw new NotFoundHttpException('TicketType not found');
         }
-        $variables['ticketType'] = $ticketType;
-        if ($ticketType->title !== null) {
-          $variables['title'] = trim($ticketType->title) ?: Craft::t('app', 'Edit Ticket Type');
-        }
-      } else {
-        $variables['ticketType'] = new TicketType();
-        $variables['newTicketType'] = true;
-        $variables['title'] = Craft::t('app', 'Create a new Ticket Type');
       }
+
+      $data['title'] = trim($ticketType->name) ?: Craft::t('eventsky', 'translate.ticketTypes.edit');
+    } else {
+      if ($ticketType === null) {
+        $ticketType = new TicketType();
+        $data['brandNewTicketType'] = true;
+      }
+      $data['title'] = Craft::t('eventsky', 'translate.ticketTypes.new');
     }
 
-    $variables['crumbs'] = [
+    $data['ticketType'] = $ticketType;
+
+    $data['crumbs'] = [
       [
-        'label' => Craft::t('app', 'Eventsky'),
-        'url' => UrlHelper::url('eventsky')
-      ],
-      [
-        'label' => Craft::t('app', 'Ticket Types'),
-        'url' => UrlHelper::url('eventsky/ticketTypes')
+        'label' => Craft::t('eventsky', 'translate.ticketTypes.cpTitle'),
+        'url' => UrlHelper::url('settings/sections')
       ],
     ];
-    return $this->renderTemplate('eventsky/ticketTypes/edit', $variables);
+
+    $data['tabs'] = [
+      'settings' => [
+        'label' => Craft::t('eventsky', 'translate.ticketType.tab.settings'),
+        'url' => '#tickettype-settings'
+      ],
+      'fieldLayout' => [
+        'label' => Craft::t('eventsky', 'translate.ticketType.tab.fieldlayout'),
+        'url' => '#tickettype-fieldlayout'
+      ]
+    ];
+
+    return $this->renderTemplate('eventsky/ticketTypes/edit', $data);
   }
-
-  public function actionSave()
-  {
-    $this->requirePostRequest();
-
-    $ticketType = new TicketType();
-    $request = Craft::$app->getRequest();
-    $ticketType->id = $request->getBodyParam('eventTypeId');
-    $ticketType->title = $request->getBodyParam('title');
-
-    // Save it
-    // TODO: Event Type Service to save Event Type
-    // Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'Ticket type saved.'));
-    // return $this->redirectToPostedUrl($ticketType);
-  }
-
-  /**
-   * @return Response
-   * @throws Exception
-   * @throws \Throwable
-   * @throws \craft\errors\MissingComponentException
-   * @throws \yii\web\BadRequestHttpException
-   */
-  public function actionDelete(): Response
-  {
-    $this->requirePostRequest();
-    $this->requireAcceptsJson();
-
-    $ticketTypeId = Craft::$app->getRequest()->getRequiredParam('id');
-    $ticketType = TicketType::find()->id($ticketTypeId);
-
-    if (!$ticketType) {
-      throw new Exception(Craft::t('eventsky', 'No ticket type exists with the ID “{id}”.', ['id' => $ticketTypeId]));
-    }
-
-    if (!Craft::$app->getElements()->deleteElement($ticketType)) {
-      if (Craft::$app->getRequest()->getAcceptsJson()) {
-        $this->asJson(['success' => false]);
-      }
-
-      Craft::$app->getSession()->setError(Craft::t('eventsky', 'Couldn’t delete ticket type.'));
-      Craft::$app->getUrlManager()->setRouteParams([
-        'ticketType' => $ticketType,
-      ]);
-
-      return null;
-    }
-
-    if (Craft::$app->getRequest()->getAcceptsJson()) {
-      return $this->asJson(['success' => true]);
-    }
-
-    Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'Ticket Type deleted.'));
-
-    return $this->redirectToPostedUrl($ticketType);
-  }
-
 }

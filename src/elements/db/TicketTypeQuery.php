@@ -10,7 +10,6 @@ use Craft;
 use craft\db\Query;
 use craft\elements\db\ElementQuery;
 use craft\helpers\Db;
-use fredmansky\eventsky\elements\Ticket;
 
 /**
  * Class TicketTypeQuery
@@ -21,7 +20,15 @@ class TicketTypeQuery extends ElementQuery
     // Properties
     // =========================================================================
 
+    public $title;
+    public $description;
     public $id;
+
+    public function description($value)
+    {
+      $this->description = $value;
+      return $this;
+    }
 
     public function id($value)
     {
@@ -29,31 +36,27 @@ class TicketTypeQuery extends ElementQuery
       return $this;
     }
 
-  // Public Methods
+    // Public Methods
     // =========================================================================
 
     protected function beforePrepare(): bool
     {
         // join in the products table
-        $this->joinElementTable('eventsky_tickettypes');
+        $this->joinElementTable('eventsky_ticketTypes');
 
         // select the price column
         $this->query->select([
-            'eventsky_tickettypes.id',
+            'eventsky_ticketTypes.id',
+            'eventsky_ticketTypes.description',
         ]);
 
-        $this->addWhere('id', 'eventsky_tickettypes.id');
+        if ($this->description) {
+          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.description', $this->description));
+        }
 
+        if ($this->id) {
+          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.id', $this->id));
+        }
         return parent::beforePrepare();
-    }
-
-    // Private Methods
-    // =========================================================================
-
-    private function addWhere(string $property, string $column)
-    {
-      if ($this->{$property}) {
-        $this->subQuery->andWhere(Db::parseParam($column, $this->{$property}));
-      }
     }
 }

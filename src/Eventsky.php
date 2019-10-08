@@ -22,6 +22,7 @@ use craft\web\twig\variables\Cp;
 
 use craft\web\UrlManager;
 use fredmansky\eventsky\services\EventTypeService;
+use fredmansky\eventsky\services\TicketTypeService;
 use fredmansky\vidsky\services\Video;
 use yii\base\Event;
 
@@ -42,6 +43,7 @@ class Eventsky extends Plugin
         $this->installEventListeners();
         $this->setComponents([
             'eventType' => EventTypeService::class,
+            'ticketType' => TicketTypeService::class,
         ]);
     }
 

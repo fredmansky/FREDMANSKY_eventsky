@@ -97,6 +97,14 @@ class Install extends Migration
         if (!$this->db->tableExists('{{%eventsky_tickettypes}}')) {
             $this->createTable('{{%eventsky_tickettypes}}', [
                 'id' => $this->primaryKey(),
+                'name' => $this->string(255),
+                'handle' => $this->string(255),
+                'fieldLayoutId' => $this->integer()->notNull(),
+                'isRegistrationEnabled' => $this->boolean(),
+                'isWaitingListEnabled' => $this->boolean(),
+                'dateCreated' => $this->dateTime()->notNull(),
+                'dateUpdated' => $this->dateTime()->notNull(),
+                'uid' => $this->uid(),
             ]);
         }
 
@@ -113,6 +121,8 @@ class Install extends Migration
         $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes}}', 'fieldLayoutId'), '{{%%eventsky_eventtypes}}', 'fieldLayoutId', '{{%fieldlayouts}}', 'id', 'CASCADE', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes_sites}}', 'siteId'), '{{%%eventsky_eventtypes_sites}}', 'siteId', '{{%sites}}', 'id', 'CASCADE', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes_sites}}', 'eventtypeId'), '{{%%eventsky_eventtypes_sites}}', 'eventtypeId', '{{%eventsky_eventtypes}}', 'id', 'CASCADE', null);
+        $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_tickets}}', 'id'), '{{%%eventsky_tickets}}', 'id', '{{%elements}}', 'id', 'CASCADE', null);
+        $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_tickettypes}}', 'fieldLayoutId'), '{{%%eventsky_tickettypes}}', 'fieldLayoutId', '{{%fieldlayouts}}', 'id', 'CASCADE', null);
     }
 
     protected function dropTables()
@@ -122,5 +132,7 @@ class Install extends Migration
         $this->dropTableIfExists('{{%eventsky_eventtypes}}');
         $this->dropTableIfExists('{{%eventsky_tickettypes}}');
         $this->dropTableIfExists('{{%eventsky_events_tickettypes}}');
+        $this->dropTableIfExists('{{%eventsky_tickets}}');
+        $this->dropTableIfExists('{{%eventsky_tickettypes}}');
     }
 }

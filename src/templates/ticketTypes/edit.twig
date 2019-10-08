@@ -1,0 +1,65 @@
+{% extends "_layouts/cp" %}
+{% set fullPageForm = true %}
+
+{% import "_includes/forms" as forms %}
+{% set selectedSubnavItem = 'ticketTypes' %}
+
+{% block content %}
+    <input type="hidden" name="action" value="sections/save-section">
+    {{ redirectInput('settings/sections') }}
+
+    {% if ticketType.id %}<input type="hidden" name="ticketTypeId" value="{{ ticketType.id }}">{% endif %}
+
+    <div id="eventtype-settings">
+        {{ forms.textField({
+            first: true,
+            label: "Name"|t('app'),
+            instructions: "What this ticket type will be called in the CP."|t('app'),
+            id: 'name',
+            name: 'name',
+            value: ticketType.name,
+            errors: ticketType.getErrors('name'),
+            autofocus: true,
+            required: true,
+        }) }}
+
+        {{ forms.textField({
+            label: "Handle"|t('app'),
+            instructions: "How you’ll refer to this ticket type in the templates."|t('app'),
+            id: 'handle',
+            name: 'handle',
+            class: 'code',
+            autocorrect: false,
+            autocapitalize: false,
+            value: ticketType.handle,
+            errors: ticketType.getErrors('handle'),
+            required: true
+        }) }}
+
+        <hr>
+
+    </div>
+    <div id="tickettype-fieldlayout" class="hidden">
+        {% include "_includes/fieldlayoutdesigner" with {
+            fieldLayout: craft.app.fields.getLayoutByType('fredmansky\\eventsky\\elements\\Ticket')
+        } only %}
+    </div>
+{% endblock %}
+
+
+{% js %}
+    var adminTable = new Craft.AdminTable({
+    tableSelector: '#sections',
+    noItemsSelector: '#nosections',
+    deleteAction: 'sections/delete-section',
+    confirmDeleteMessage: '{{ "Are you sure you want to delete “{name}” and all its entries?"|t('app') }}',
+    onDeleteItem: function()
+    {
+    // Hide the Entries tab if that was the last one
+    if (adminTable.totalItems == 0)
+    {
+    $('#nav-entries').remove();
+    }
+    }
+    });
+{% endjs %}
