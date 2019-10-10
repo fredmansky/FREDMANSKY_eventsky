@@ -137,4 +137,15 @@ class EventTypesController extends Controller
         var_dump($eventType);
         die();
     }
+    
+    public function actionDelete(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        $eventTypeId = Craft::$app->getRequest()->getRequiredBodyParam('id');
+        Eventsky::$plugin->eventType->deleteEventTypeById($eventTypeId);
+
+        return $this->asJson(['success' => true]);
+    }
 }
