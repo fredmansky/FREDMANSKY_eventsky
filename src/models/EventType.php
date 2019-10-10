@@ -37,6 +37,7 @@ class EventType extends Model
     public $isWaitingListEnabled;
     public $dateCreated;
     public $dateUpdated;
+    public $dateDeleted;
 
     private $eventTypeSites;
 

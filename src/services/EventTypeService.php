@@ -2,6 +2,7 @@
 
 namespace fredmansky\eventsky\services;
 
+use Craft;
 use craft\base\Component;
 use craft\db\ActiveRecord;
 use craft\db\Query;
@@ -12,6 +13,7 @@ use craft\models\Site;
 use craft\records\FieldLayout;
 use fredmansky\eventsky\db\Table;
 use fredmansky\eventsky\events\EventTypeEvent;
+use fredmansky\eventsky\elements\Event;
 use fredmansky\eventsky\models\EventType;
 use fredmansky\eventsky\models\EventTypeSite;
 use fredmansky\eventsky\records\EventTypeRecord;
@@ -36,7 +38,9 @@ class EventTypeService extends Component
             return $this->eventTypes;
         }
 
+        $condition = ['eventsky_eventtypes.dateDeleted' => null];
         $results = $this->createEventTypeQuery()
+            ->where($condition)
             ->all();
 
         $this->eventTypes = array_map(function($result) {
@@ -52,8 +56,11 @@ class EventTypeService extends Component
             ->with(['fieldLayout'])
             ->one();
 
-        if (!$result) return null;
-        return new EventType($result);
+        if ($result) {
+            return new EventType($result);
+        }
+
+        return null;
     }
 
     /**
@@ -151,6 +158,54 @@ class EventTypeService extends Component
         }
 
         // @TODO add exceptions when saving is failing
+        return true;
+    }
+
+    public function deleteEventTypeById(int $id): bool
+    {
+        $eventType = $this->getEventTypeById($id);
+
+        if (!$eventType) {
+            return false;
+        }
+
+        return $this->deleteEventType($eventType);
+    }
+
+    public function deleteEventType(EventType $eventType): bool
+    {
+        // TODO: Delete the entry types (field layouts) first
+
+
+        $transaction = Craft::$app->getDb()->beginTransaction();
+        try {
+            // delete lingering events
+            $eventQuery = Event::find()
+                ->anyStatus()
+                ->typeId($eventType->id);
+
+            $elementsService = Craft::$app->getElements();
+
+            foreach (Craft::$app->getSites()->getAllSiteIds() as $siteId) {
+                foreach ($eventQuery->siteId($siteId)->each() as $event) {
+                    $elementsService->deleteElement($event);
+                }
+            }
+
+            // Delete the eventType
+            Craft::$app->getDb()->createCommand()
+                ->softDelete(Table::EVENT_TYPES, ['id' => $eventType->id])
+                ->execute();
+
+            $transaction->commit();
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+
+        // Clear caches
+        $this->eventTypes = null;
+
         return true;
     }
 

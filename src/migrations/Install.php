@@ -65,6 +65,7 @@ class Install extends Migration
                 'isWaitingListEnabled' => $this->boolean(),
                 'dateCreated' => $this->dateTime()->notNull(),
                 'dateUpdated' => $this->dateTime()->notNull(),
+                'dateDeleted' => $this->dateTime(),
                 'uid' => $this->uid(),
             ]);
         }

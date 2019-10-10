@@ -138,4 +138,15 @@ class EventTypesController extends Controller
 
         Eventsky::$plugin->eventType->saveEventType($eventType);
     }
+    
+    public function actionDelete(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        $eventTypeId = Craft::$app->getRequest()->getRequiredBodyParam('id');
+        Eventsky::$plugin->eventType->deleteEventTypeById($eventTypeId);
+
+        return $this->asJson(['success' => true]);
+    }
 }
