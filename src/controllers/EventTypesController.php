@@ -74,6 +74,8 @@ class EventTypesController extends Controller
 
         $data['eventType'] = $eventType;
 
+        $eventTypeSites = $eventType->getEventTypeSites();
+
         $data['crumbs'] = [
             [
                 'label' => Craft::t('eventsky', 'translate.eventTypes.cpTitle'),
@@ -134,7 +136,6 @@ class EventTypesController extends Controller
         $fieldLayout->type = Event::class;
         $eventType->setFieldLayout($fieldLayout);
 
-        var_dump($eventType);
-        die();
+        Eventsky::$plugin->eventType->saveEventType($eventType);
     }
 }

@@ -15,6 +15,11 @@ class EventTypeRecord extends ActiveRecord
         return Table::EVENT_TYPES;
     }
 
+    public function setFieldLayout(\craft\models\FieldLayout $fieldLayout)
+    {
+        $this->fieldLayoutId = $fieldLayout->id;
+    }
+
     public function getFieldLayout(): ActiveQueryInterface
     {
         return $this->hasOne(FieldLayout::class, ['id' => 'fieldLayoutId']);
@@ -22,6 +27,6 @@ class EventTypeRecord extends ActiveRecord
 
     public function getEventTypeSites(): ActiveQueryInterface
     {
-        return $this->hasMany(EventTypeSite::class, ['eventtypeId' => 'id']);
+        return $this->hasMany(EventTypeSiteRecord::class, ['eventtypeId' => 'id']);
     }
 }

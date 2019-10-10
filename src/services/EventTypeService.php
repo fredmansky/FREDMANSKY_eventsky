@@ -8,6 +8,7 @@ use craft\db\Query;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
 use craft\models\Section;
+use craft\models\Site;
 use craft\records\FieldLayout;
 use fredmansky\eventsky\db\Table;
 use fredmansky\eventsky\events\EventTypeEvent;
@@ -32,7 +33,7 @@ class EventTypeService extends Component
     public function getAllEventTypes(): array
     {
         if ($this->eventTypes !== null) {
-            return $this->$eventTypes;
+            return $this->eventTypes;
         }
 
         $results = $this->createEventTypeQuery()
@@ -44,14 +45,21 @@ class EventTypeService extends Component
         return $this->eventTypes;
     }
 
-    public function getEventTypeById(int $id): ?ActiveRecord
+    public function getEventTypeById(int $id): ?EventType
     {
-        return $this->createEventTypeQuery()
+        $result = $this->createEventTypeQuery()
             ->where(['=', 'id', $id])
             ->with(['fieldLayout'])
             ->one();
+
+        if (!$result) return null;
+        return new EventType($result);
     }
 
+    /**
+     * @param int $eventTypeId
+     * @return EventTypeSite[]
+     */
     public function getEventTypeSites(int $eventTypeId): array
     {
         $eventTypeSites = EventTypeSiteRecord::find()
@@ -92,20 +100,58 @@ class EventTypeService extends Component
         if (!$eventTypeRecord) {
             $eventTypeRecord = new EventTypeRecord();
         }
-        
-        $fieldLayout = \Craft::$app->getFields()->saveLayout($eventType->getFieldLayout());
-        $eventType->fieldLayoutId = $fieldLayout->id;
-        $eventType->setFieldLayout($fieldLayout);
-        
+
+        $fieldLayout = $eventType->getFieldLayout();
+        \Craft::$app->getFields()->saveLayout($fieldLayout);
+
+        $eventTypeRecord->fieldLayoutId = (int) $fieldLayout->id;
         $eventTypeRecord->name = $eventType->name;
         $eventTypeRecord->handle = $eventType->handle;
         $eventTypeRecord->fieldLayoutId = $eventType->fieldLayoutId;
         $eventTypeRecord->uid = $eventType->uid;
-        
+        $eventTypeRecord->isWaitingListEnabled = $eventType->isWaitingListEnabled;
+        $eventTypeRecord->isRegistrationEnabled = $eventType->isRegistrationEnabled;
+        $eventTypeRecord->setFieldLayout($fieldLayout);
+        $eventTypeRecord->save();
 
-        foreach($eventType->getEventTypeSites() as $eventTypeSite) {
-            EventTypeSiteRecord::find()->where([['=', 'eventtypeId', $eventType->id]]);
+        $eventTypeId = $eventTypeRecord->id;#
+
+        $allSiteIds = \Craft::$app->sites->getAllSiteIds();
+        $eventTypeSites = $eventType->getEventTypeSites();
+        foreach ($allSiteIds as $siteId) {
+            $found = false;
+            foreach ($eventTypeSites as $eventTypeSite) {
+                if ($eventTypeSite->siteId === $siteId) $found = true;
+            }
+            if (!$found) {
+                EventTypeSiteRecord::deleteAll(['siteId' => $siteId, 'eventtypeId' => $eventTypeId]);
+            }
         }
+
+
+        foreach($eventTypeSites as $eventTypeSite) {
+            $eventTypeSiteRecord = EventTypeSiteRecord::find()
+                ->where(['=', 'eventtypeId', $eventTypeId])
+                ->andWhere(['=', 'siteId', $eventTypeSite->siteId])
+                ->one();
+
+
+
+            if (!$eventTypeSiteRecord) {
+                $eventTypeSiteRecord = new EventTypeSiteRecord();
+            }
+
+            $eventTypeSiteRecord->eventtypeId = $eventTypeId;
+            $eventTypeSiteRecord->siteId = $eventTypeSite->siteId;
+            $eventTypeSiteRecord->hasUrls = $eventTypeSite->hasUrls;
+            $eventTypeSiteRecord->uriFormat = $eventTypeSite->uriFormat;
+            $eventTypeSiteRecord->enabledByDefault = $eventTypeSite->enabledByDefault;
+            $eventTypeSiteRecord->template = $eventTypeSite->template;
+            $eventTypeSiteRecord->save();
+        }
+
+        // @TODO add exceptions when saving is failing
+        return true;
     }
 
     private function createEventTypeQuery(): ActiveQuery
