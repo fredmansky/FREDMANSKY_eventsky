@@ -7,6 +7,7 @@
 namespace fredmansky\eventsky\migrations;
 
 use craft\db\Migration;
+use fredmansky\eventsky\db\Table;
 
 class Install extends Migration
 {
@@ -54,8 +55,8 @@ class Install extends Migration
             ]);
         }
 
-        if (!$this->db->tableExists('{{%eventsky_eventtypes}}')) {
-            $this->createTable('{{%eventsky_eventtypes}}', [
+        if (!$this->db->tableExists(Table::EVENT_TYPES)) {
+            $this->createTable(Table::EVENT_TYPES, [
                 'id' => $this->primaryKey(),
                 'name' => $this->string(255),
                 'handle' => $this->string(255),
@@ -101,14 +102,14 @@ class Install extends Migration
         $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_events}}', 'id'), '{{%%eventsky_events}}', 'id', '{{%elements}}', 'id', 'CASCADE', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes}}', 'fieldLayoutId'), '{{%%eventsky_eventtypes}}', 'fieldLayoutId', '{{%fieldlayouts}}', 'id', 'CASCADE', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes_sites}}', 'siteId'), '{{%%eventsky_eventtypes_sites}}', 'siteId', '{{%sites}}', 'id', 'CASCADE', null);
-        $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes_sites}}', 'eventtypeId'), '{{%%eventsky_eventtypes_sites}}', 'eventtypeId', '{{%eventsky_eventtypes}}', 'id', 'CASCADE', null);
+        $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes_sites}}', 'eventtypeId'), '{{%%eventsky_eventtypes_sites}}', 'eventtypeId', Table::EVENT_TYPES, 'id', 'CASCADE', null);
     }
 
     protected function dropTables()
     {
         $this->dropTableIfExists('{{%eventsky_events}}');
         $this->dropTableIfExists('{{%eventsky_tickets}}');
-        $this->dropTableIfExists('{{%eventsky_eventtypes}}');
+        $this->dropTableIfExists(Table::EVENT_TYPES);
         $this->dropTableIfExists('{{%eventsky_tickettypes}}');
         $this->dropTableIfExists('{{%eventsky_events_tickettypes}}');
     }

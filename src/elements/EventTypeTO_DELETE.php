@@ -15,6 +15,7 @@ use craft\elements\actions\View;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\User;
 use DateTime;
+use fredmansky\eventsky\db\Table;
 use fredmansky\eventsky\elements\db\EventQuery;
 use fredmansky\eventsky\elements\db\EventTypeQuery;
 use yii\db\Exception;
@@ -178,14 +179,14 @@ class EventTypeTODELETE extends Element
     {
         if ($isNew) {
             \Craft::$app->db->createCommand()
-                ->insert('{{%eventsky_eventtypes}}', [
+                ->insert(Table::EVENT_TYPES, [
                     'id' => $this->id,
                     'description' => $this->description,
                 ])
                 ->execute();
         } else {
             \Craft::$app->db->createCommand()
-                ->update('{{%eventsky_eventtypes}}', [
+                ->update(Table::EVENT_TYPES, [
                     'description' => $this->description,
                 ], ['id' => $this->id])
                 ->execute();

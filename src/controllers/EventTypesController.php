@@ -12,6 +12,7 @@ use fredmansky\eventsky\elements\Event;
 use fredmansky\eventsky\elements\db\EventTypeQuery;
 use fredmansky\eventsky\Eventsky;
 use fredmansky\eventsky\models\EventType;
+use fredmansky\eventsky\models\EventTypeSite;
 use yii\helpers\VarDumper;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
@@ -92,5 +93,48 @@ class EventTypesController extends Controller
         ];
 
         return $this->renderTemplate('eventsky/eventTypes/edit', $data);
+    }
+
+    public function actionSave()
+    {
+        $this->requirePostRequest();
+
+        $request = Craft::$app->getRequest();
+        $eventType = new EventType();
+
+        $eventType->id = $request->getBodyParam('eventTypeId');
+        $eventType->name = $request->getBodyParam('name');
+        $eventType->handle = $request->getBodyParam('handle');
+        $eventType->isRegistrationEnabled = $request->getBodyParam('isRegistrationEnabled');
+        $eventType->isWaitingListEnabled = $request->getBodyParam('isWaitingListEnabled');
+
+        $allEventTypeSites = [];
+        foreach (Craft::$app->getSites()->getAllSites() as $site) {
+            $postedSettings = $request->getBodyParam('sites.' . $site->handle);
+
+            // Skip disabled sites if this is a multi-site install
+            if (Craft::$app->getIsMultiSite() && empty($postedSettings['enabled'])) {
+                continue;
+            }
+            
+            $eventTypeSite = new EventTypeSite();
+            $eventTypeSite->siteId = $site->id;
+            $eventTypeSite->uriFormat = $postedSettings['uriFormat'] ?? null;
+            $eventTypeSite->enabledByDefault = (bool) $postedSettings['enabledByDefault'];
+            
+            if ($eventTypeSite->hasUrls = (bool) $eventTypeSite->uriFormat) {
+                $eventTypeSite->template = $postedSettings['template'];
+            }
+            $allEventTypeSites[$site->id] = $eventTypeSite;
+        }
+        
+        $eventType->setEventTypeSites($allEventTypeSites);
+
+        $fieldLayout = \Craft::$app->fields->assembleLayoutFromPost();
+        $fieldLayout->type = Event::class;
+        $eventType->setFieldLayout($fieldLayout);
+
+        var_dump($eventType);
+        die();
     }
 }

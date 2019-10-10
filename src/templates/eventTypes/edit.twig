@@ -5,8 +5,8 @@
 {% set selectedSubnavItem = 'eventTypes' %}
 
 {% block content %}
-    <input type="hidden" name="action" value="sections/save-section">
-    {{ redirectInput('settings/sections') }}
+    {{ actionInput('eventsky/event-types/save') }}
+    {{ redirectInput('eventsky/eventtypes') }}
 
     {% if eventType.id %}<input type="hidden" name="eventTypeId" value="{{ eventType.id }}">{% endif %}
 

@@ -28,9 +28,6 @@ use fredmansky\eventsky\Eventsky;
  */
 class EventType extends Model
 {
-    // Properties
-    // =========================================================================
-
     public $id;
     public $fieldLayoutId;
     public $name;
