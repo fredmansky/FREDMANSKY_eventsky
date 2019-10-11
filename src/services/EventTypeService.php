@@ -6,6 +6,7 @@ use Craft;
 use craft\base\Component;
 use craft\db\ActiveRecord;
 use craft\db\Query;
+use craft\events\EntryTypeEvent;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
 use craft\models\Section;
@@ -174,12 +175,10 @@ class EventTypeService extends Component
 
     public function deleteEventType(EventType $eventType): bool
     {
-        // TODO: Delete the entry types (field layouts) first
-
-
         $transaction = Craft::$app->getDb()->beginTransaction();
         try {
-            // delete lingering events
+
+            // delete events
             $eventQuery = Event::find()
                 ->anyStatus()
                 ->typeId($eventType->id);
@@ -188,8 +187,15 @@ class EventTypeService extends Component
 
             foreach (Craft::$app->getSites()->getAllSiteIds() as $siteId) {
                 foreach ($eventQuery->siteId($siteId)->each() as $event) {
+                    /** @var Event $event */
+                    $event->deletedWithEventType = true;
                     $elementsService->deleteElement($event);
                 }
+            }
+
+            // Delete the field layout
+            if ($eventType->fieldLayoutId) {
+                Craft::$app->getFields()->deleteLayoutById($eventType->fieldLayoutId);
             }
 
             // Delete the eventType
