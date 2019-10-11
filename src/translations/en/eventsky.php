@@ -48,4 +48,20 @@ return [
     'translate.elements.Event.pluralDisplayName' => 'Events',
     'translate.elements.Event.sideBar.allEvents' => 'All Events',
     'translate.elements.Event.search.description' => 'Description',
+
+    // ------------------------
+    // ----- Event Types ------
+    // ------------------------
+
+    'translate.eventTypes.name' => 'Name',
+    'translate.eventTypes.handle' => 'Handle',
+    'translate.eventTypes.new' => 'Create a new event type',
+    'translate.eventTypes.edit' => 'Edit event type',
+    'translate.eventTypes.fieldLayout' => 'Field layout',
+    'translate.eventType.fieldLayout.headline' => 'Field layout of event type “{name}”',
+    'translate.eventTypes.fieldLayout.edit' => 'Edit field layout',
+    'translate.eventTypes.delete' => 'Delete',
+    'translate.eventType.tab.settings' => 'Settings',
+    'translate.eventType.tab.fieldlayout' => 'Field Layout',
+    'translate.eventTypes.deleteMessage' => 'Are you sure you want to delete “{ name }” and all its events?',
 ];
