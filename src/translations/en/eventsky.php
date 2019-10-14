@@ -47,6 +47,7 @@ return [
     'translate.elements.Event.displayName' => 'Event',
     'translate.elements.Event.pluralDisplayName' => 'Events',
     'translate.elements.Event.sideBar.allEvents' => 'All Events',
+    'translate.elements.Event.sideBar.eventTypeHeading' => 'Event Types',
     'translate.elements.Event.search.description' => 'Description',
 
     // ------------------------
