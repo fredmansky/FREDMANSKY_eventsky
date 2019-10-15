@@ -5,8 +5,8 @@
 {% set selectedSubnavItem = 'eventTypes' %}
 
 {% block content %}
-    <input type="hidden" name="action" value="sections/save-section">
-    {{ redirectInput('settings/sections') }}
+    {{ actionInput('eventsky/event-types/save') }}
+    {{ redirectInput('eventsky/eventtypes') }}
 
     {% if eventType.id %}<input type="hidden" name="eventTypeId" value="{{ eventType.id }}">{% endif %}
 
@@ -35,6 +35,24 @@
             errors: eventType.getErrors('handle'),
             required: true
         }) }}
+
+
+        {{ forms.lightswitchField({
+            label: 'isWaitingListEnabled?',
+            instructions: '',
+            id: 'isWaitingListEnabled',
+            name: 'isWaitingListEnabled',
+            on: eventType.isWaitingListEnabled,
+        }) }}
+
+        {{ forms.lightswitchField({
+            label: 'isRegistrationEnabled?',
+            instructions: '',
+            id: 'isRegistrationEnabled',
+            name: 'isRegistrationEnabled',
+            on: eventType.isRegistrationEnabled,
+        }) }}
+
 
         <hr>
 
@@ -109,29 +127,6 @@
             staticRows: true,
             errors: siteErrors|unique
         }) }}
-
-        {#{% if CraftEdition == CraftPro %}
-            {{ forms.editableTableField({
-                label: 'Preview Targets'|t('app'),
-                instructions: 'Additional locations that should be available for previewing entries in this section.',
-                id: 'previewTargets',
-                name: 'previewTargets',
-                cols: {
-                    label: {
-                        type: 'singleline',
-                        heading: 'Label'|t('app'),
-                    },
-                    urlFormat: {
-                        type: 'singleline',
-                        heading: 'URL Format'|t('app'),
-                        info: 'The URL/URI to use for this target.'|t('app'),
-                        code: true,
-                    }
-                },
-                rows: eventType.previewTargets,
-                errors: eventType.getErrors('previewTargets')
-            }) }}
-        {% endif %}#}
 
     </div>
     <div id="eventtype-fieldlayout" class="hidden">

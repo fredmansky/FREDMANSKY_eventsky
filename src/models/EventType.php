@@ -28,9 +28,6 @@ use fredmansky\eventsky\Eventsky;
  */
 class EventType extends Model
 {
-    // Properties
-    // =========================================================================
-
     public $id;
     public $fieldLayoutId;
     public $name;
@@ -40,6 +37,7 @@ class EventType extends Model
     public $isWaitingListEnabled;
     public $dateCreated;
     public $dateUpdated;
+    public $dateDeleted;
 
     private $eventTypeSites;
 
@@ -124,6 +122,9 @@ class EventType extends Model
     }
 
 
+    /**
+     * @return EventTypeSite[]
+     */
     public function getEventTypeSites(): array
     {
         if ($this->eventTypeSites !== null) {
@@ -133,7 +134,7 @@ class EventType extends Model
         if (!$this->id) {
             return [];
         }
-        $eventTypeSites = Eventsky::$plugin->getEventTypeSites($this->id);
+        $eventTypeSites = Eventsky::$plugin->eventType->getEventTypeSites($this->id);
         $this->setEventTypeSites($eventTypeSites);
         return $this->eventTypeSites;
     }
@@ -146,6 +147,5 @@ class EventType extends Model
         foreach ($this->eventTypeSites as $eventTypeSite) {
             $eventTypeSite->setEventType($this);
         }
-        $this->eventTypeSites = $eventTypeSites;
     }
 }
