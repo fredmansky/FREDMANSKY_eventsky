@@ -28,24 +28,13 @@ use fredmansky\eventsky\Eventsky;
  */
 class TicketType extends Model
 {
-    // Properties
-    // =========================================================================
-
     public $id;
     public $fieldLayoutId;
     public $name;
     public $handle;
     public $uid;
-    public $isRegistrationEnabled;
-    public $isWaitingListEnabled;
     public $dateCreated;
     public $dateUpdated;
-
-    private $eventTypeSites;
-
-
-    // Public Methods
-    // =========================================================================
 
     /**
      * @inheritdoc

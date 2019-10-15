@@ -86,4 +86,34 @@ class TicketTypesController extends Controller
 
     return $this->renderTemplate('eventsky/ticketTypes/edit', $data);
   }
+
+  public function actionSave()
+  {
+    $this->requirePostRequest();
+
+    $request = Craft::$app->getRequest();
+    $ticketType = new TicketType();
+
+    $ticketType->id = $request->getBodyParam('ticketTypeId');
+    $ticketType->name = $request->getBodyParam('name');
+    $ticketType->handle = $request->getBodyParam('handle');
+
+
+    $fieldLayout = \Craft::$app->fields->assembleLayoutFromPost();
+    $fieldLayout->type = Ticket::class;
+    $ticketType->setFieldLayout($fieldLayout);
+
+    Eventsky::$plugin->ticketType->saveTicketType($ticketType);
+  }
+
+  public function actionDelete(): Response
+  {
+    $this->requirePostRequest();
+    $this->requireAcceptsJson();
+
+    $ticketTypeId = Craft::$app->getRequest()->getRequiredBodyParam('id');
+    Eventsky::$plugin->ticketType->deleteTicketTypeById($ticketTypeId);
+
+    return $this->asJson(['success' => true]);
+  }
 }

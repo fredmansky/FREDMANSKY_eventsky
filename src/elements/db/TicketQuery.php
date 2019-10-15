@@ -33,15 +33,9 @@ use fredmansky\eventsky\elements\Ticket;
  */
 class TicketQuery extends ElementQuery
 {
-    // Properties
-    // =========================================================================
-
-    public $eventId;
-    public $ticketTypeId;
+    public $title;
     public $description;
-
-    // Public Methods
-    // =========================================================================
+    public $typeId;
 
     public function description($value)
     {
@@ -49,37 +43,22 @@ class TicketQuery extends ElementQuery
         return $this;
     }
 
-    public function eventId($value)
-    {
-      $this->eventId = $value;
-      return $this;
-    }
-
-    public function ticketTypeId($value)
-    {
-      $this->ticketTypeId = $value;
-      return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function __construct($elementType, array $config = [])
     {
-        // Default status
-        if (!isset($config['status'])) {
-            $config['status'] = ['live'];
-        }
+      // Default status
+      if (!isset($config['status'])) {
+        $config['status'] = ['live'];
+      }
 
-        parent::__construct($elementType, $config);
+      parent::__construct($elementType, $config);
     }
 
-    // Protected Methods
-    // =========================================================================
+    public function typeId($value)
+    {
+      $this->typeId = $value;
+      return $this;
+    }
 
-    /**
-     * @inheritdoc
-     */
     protected function beforePrepare(): bool
     {
         // join in the products table
@@ -88,27 +67,21 @@ class TicketQuery extends ElementQuery
         // select the price column
         $this->query->select([
             'eventsky_tickets.id',
-            'eventsky_tickets.eventId',
-            'eventsky_tickets.ticketTypeId',
+            'eventsky_tickets.typeId',
             'eventsky_tickets.description',
         ]);
 
-        $this->addWhere('id', 'eventsky_tickets.id');
-        $this->addWhere('eventId', 'eventsky_tickets.eventId');
-        $this->addWhere('ticketTypeId', 'eventsky_tickets.ticketTypeId');
-        $this->addWhere('description', 'eventsky_tickets.description');
+        if ($this->id) {
+          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.id', $this->id));
+        }
 
+        if ($this->typeId) {
+          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.typeId', $this->typeId));
+        }
+
+        if ($this->description) {
+          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.description', $this->description));
+        }
         return parent::beforePrepare();
-    }
-
-
-    // Private Methods
-    // =========================================================================
-
-    private function addWhere(string $property, string $column)
-    {
-      if ($this->{$property}) {
-        $this->subQuery->andWhere(Db::parseParam($column, $this->{$property}));
-      }
     }
 }

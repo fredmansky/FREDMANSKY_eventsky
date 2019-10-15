@@ -35,7 +35,7 @@ class Ticket extends Element
     /**
      * @var int|null Ticket Type ID
      */
-    public $ticketTypeId;
+    public $typeId;
 
     /**
      * @var int|null Event ID
@@ -140,7 +140,7 @@ class Ticket extends Element
   /**
    * @param int|null $siteId
    * @param int|null $ticketId
-   * @param int|null $ticketTypeId
+   * @param int|null $typeId
    * @param int|null $eventId
    * @param string|null $description
    * @param DateTime|null $startDate
@@ -148,10 +148,10 @@ class Ticket extends Element
    * @return Ticket
    * @throws \Exception
    */
-    public static function create(int $siteId = null, int $ticketId = null, int $ticketTypeId = null, int $eventId = null, string $description = null, dateTime $startDate = null, dateTime $endDate = null): Ticket
+    public static function create(int $siteId = null, int $ticketId = null, int $typeId = null, int $eventId = null, string $description = null, dateTime $startDate = null, dateTime $endDate = null): Ticket
     {
       $element                = new self();
-      $element->ticketTypeId  = $ticketTypeId ?? TicketType::getInstance()->ticketTypes->getTicketTypeById();
+      $element->typeId        = $typeId ?? TicketType::getInstance()->ticketTypes->getTicketTypeById();
       $element->eventId       = $eventId ?? Event::getInstance()->events->getEventById();
       $element->authorId      = \Craft::$app->user->getId();
       $element->description   = $description;
@@ -314,7 +314,7 @@ class Ticket extends Element
     public function afterSave(bool $isNew)
     {
         $insertData = [
-          'ticketTypeId'  => $this->ticketTypeId,
+          'typeId'        => $this->typeId,
           'eventId'       => $this->eventId,
           'authorId'      => $this->authorId,
           'description'   => $this->description,
