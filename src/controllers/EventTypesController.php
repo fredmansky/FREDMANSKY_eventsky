@@ -79,7 +79,7 @@ class EventTypesController extends Controller
         $data['crumbs'] = [
             [
                 'label' => Craft::t('eventsky', 'translate.eventTypes.cpTitle'),
-                'url' => UrlHelper::url('settings/sections')
+                'url' => UrlHelper::url('eventsky/eventtypes')
             ],
         ];
 
