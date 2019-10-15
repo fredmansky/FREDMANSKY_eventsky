@@ -8,6 +8,7 @@ namespace fredmansky\eventsky\controllers;
 
 use Craft;
 
+use craft\models\FieldLayout;
 use fredmansky\eventsky\elements\Event;
 use fredmansky\eventsky\elements\db\EventTypeQuery;
 use fredmansky\eventsky\Eventsky;
@@ -59,14 +60,22 @@ class EventTypesController extends Controller
             $eventType = Eventsky::$plugin->eventType->getEventTypeById($eventTypeId);
 
             if (!$eventType) {
-                throw new NotFoundHttpException('EventType not found');
+                throw new NotFoundHttpException(Craft::t('eventsky', 'translate.eventTypes.notFound'));
             }
 
             $data['title'] = trim($eventType->name) ?: Craft::t('eventsky', 'translate.eventTypes.edit');
+            $fieldlayout = Craft::$app->fields->getLayoutById($eventType->fieldLayoutId);
+
+            if (!$fieldlayout) {
+                throw new NotFoundHttpException(Craft::t('eventsky', 'translate.fieldlayout.notFound'));
+            }
+
+            $data['fieldlayout'] = $fieldlayout;
         } else {
             $eventType = new EventType();
             $data['brandNewEventType'] = true;
             $data['title'] = Craft::t('eventsky', 'translate.eventTypes.new');
+            $data['fieldlayout'] = new FieldLayout();
         }
 
         $data['eventType'] = $eventType;
