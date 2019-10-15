@@ -28,6 +28,7 @@ use fredmansky\eventsky\models\EventTypeSite;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 
+use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -56,10 +57,7 @@ class EventsController extends Controller
 
     public function actionEdit(int $eventId = null, string $site = null): Response
     {
-        $data = [
-//            'eventTypeId' => $eventId,
-//            'brandNewEventType' => false,
-        ];
+        $data = [];
 
         $eventTypes = Eventsky::$plugin->eventType->getAllEventTypes();
 
@@ -163,10 +161,18 @@ class EventsController extends Controller
         $this->requirePostRequest();
 
         $request = Craft::$app->getRequest();
-        $event = new Event();
+        $eventId = $request->getBodyParam('eventId');
 
-//        echo var_dump($request->getBodyParams());
-//        die();
+        if ($eventId) {
+            $event = Eventsky::$plugin->event->getEventById($eventId);
+
+            if (!$event) {
+                throw new HttpException(404, Craft::t('eventsky', 'translate.event.notFound'));
+            }
+        } else {
+            $event = new Event();
+        }
+
 
         $event->title = $request->getBodyParam('title');
         $event->slug = $request->getBodyParam('slug');
