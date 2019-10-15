@@ -75,6 +75,7 @@ return [
     'translate.eventTypes.handle' => 'Handle',
     'translate.eventTypes.new' => 'Create a new event type',
     'translate.eventTypes.edit' => 'Edit event type',
+    'translate.eventTypes.notFound' => 'Event Type not found.',
     'translate.eventTypes.fieldLayout' => 'Field layout',
     'translate.eventType.fieldLayout.headline' => 'Field layout of event type “{name}”',
     'translate.eventTypes.fieldLayout.edit' => 'Edit field layout',

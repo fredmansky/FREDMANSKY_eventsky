@@ -18,6 +18,7 @@ use craft\helpers\UrlHelper;
 use craft\web\Controller;
 use yii\web\ForbiddenHttpException;
 
+use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -47,7 +48,7 @@ class EventTypesController extends Controller
         return $this->renderTemplate('eventsky/eventTypes/index', $data);
     }
 
-    public function actionEdit(int $eventTypeId = null, EventType $eventType = null): Response
+    public function actionEdit(int $eventTypeId = null): Response
     {
         $data = [
             'eventTypeId' => $eventTypeId,
@@ -55,26 +56,20 @@ class EventTypesController extends Controller
         ];
 
         if ($eventTypeId !== null) {
-            if ($eventType === null) {
-                $eventType = Eventsky::$plugin->eventType->getEventTypeById($eventTypeId);
+            $eventType = Eventsky::$plugin->eventType->getEventTypeById($eventTypeId);
 
-                if (!$eventType) {
-                    throw new NotFoundHttpException('EventType not found');
-                }
+            if (!$eventType) {
+                throw new NotFoundHttpException('EventType not found');
             }
 
             $data['title'] = trim($eventType->name) ?: Craft::t('eventsky', 'translate.eventTypes.edit');
         } else {
-            if ($eventType === null) {
-                $eventType = new EventType();
-                $data['brandNewEventType'] = true;
-            }
+            $eventType = new EventType();
+            $data['brandNewEventType'] = true;
             $data['title'] = Craft::t('eventsky', 'translate.eventTypes.new');
         }
 
         $data['eventType'] = $eventType;
-
-        $eventTypeSites = $eventType->getEventTypeSites();
 
         $data['crumbs'] = [
             [
@@ -102,7 +97,17 @@ class EventTypesController extends Controller
         $this->requirePostRequest();
 
         $request = Craft::$app->getRequest();
-        $eventType = new EventType();
+        $eventTypeId = $request->getBodyParam('eventTypeId');
+
+        if ($eventTypeId) {
+            $eventType = Eventsky::$plugin->eventType->getEventTypeById($eventTypeId);
+
+            if (!$eventType) {
+                throw new HttpException(404, Craft::t('eventsky', 'translate.eventType.notFound'));
+            }
+        } else {
+            $eventType = new EventType();
+        }
 
         $eventType->id = $request->getBodyParam('eventTypeId');
         $eventType->name = $request->getBodyParam('name');
