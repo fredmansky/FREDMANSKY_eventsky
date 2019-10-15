@@ -14,13 +14,8 @@ namespace fredmansky\eventsky;
 use Craft;
 use craft\base\Plugin;
 use craft\events\RegisterUrlRulesEvent;
-use craft\services\Plugins;
-use craft\events\PluginEvent;
-
-use craft\events\RegisterCpNavItemsEvent;
-use craft\web\twig\variables\Cp;
-
 use craft\web\UrlManager;
+use fredmansky\eventsky\services\EventService;
 use fredmansky\eventsky\services\EventTypeService;
 use fredmansky\vidsky\services\Video;
 use yii\base\Event;
@@ -42,6 +37,7 @@ class Eventsky extends Plugin
         $this->installEventListeners();
         $this->setComponents([
             'eventType' => EventTypeService::class,
+            'event' => EventService::class,
         ]);
     }
 

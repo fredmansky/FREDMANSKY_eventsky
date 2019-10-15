@@ -61,7 +61,6 @@ class EventsController extends Controller
 //            'brandNewEventType' => false,
         ];
 
-        $event = null;
         $eventTypes = Eventsky::$plugin->eventType->getAllEventTypes();
 
         /** @var EventType $eventType */
@@ -73,33 +72,28 @@ class EventsController extends Controller
         $site = $this->getSiteForNewEvent($site);
 
         if ($eventId !== null) {
-            // TODO: implement (SS)
-//            if ($event === null) {
-//                $eventType = Eventsky::$plugin->eventType->getEventTypeById($eventTypeId);
-//
-//                if (!$eventType) {
-//                    throw new NotFoundHttpException('EventType not found');
-//                }
-//            }
-//
-//            $data['title'] = trim($eventType->name) ?: Craft::t('eventsky', 'translate.eventTypes.edit');
-        } else {
-            if ($event === null) {
-                $request = Craft::$app->getRequest();
-                $event = new Event();
-                $event->siteId = $site->id;
-                $event->typeId = $request->getQueryParam('typeId', $eventType->id);
-//                $event->authorId = $request->getQueryParam('authorId', Craft::$app->getUser()->getId());
-                $event->slug = ElementHelper::tempSlug();
+            $event = Eventsky::$plugin->event->getEventById($eventId);
 
-                $event->setFieldValuesFromRequest('fields');
+            if (!$event) {
+                throw new NotFoundHttpException(Craft::t('eventsky', 'translate.event.notFound'));
             }
+
+            $data['title'] = trim($event->title) ?: Craft::t('eventsky', 'translate.event.edit');
+        } else {
+            $request = Craft::$app->getRequest();
+            $event = new Event();
+            $event->siteId = $site->id;
+            $event->typeId = $request->getQueryParam('typeId', $eventType->id);
+//                $event->authorId = $request->getQueryParam('authorId', Craft::$app->getUser()->getId());
+            $event->slug = ElementHelper::tempSlug();
+
+            // TODO: implement (SS)
+            $event->enabled = true;
+            $event->enabledForSite = true;
+
+            $event->setFieldValuesFromRequest('fields');
             $data['title'] = Craft::t('eventsky', 'translate.event.new');
         }
-
-        // TODO: implement (SS)
-        $event->enabled = true;
-        $event->enabledForSite = true;
 
         $data['eventId'] = $eventId;
         $data['eventType'] = $eventType;
