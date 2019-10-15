@@ -15,9 +15,12 @@ use craft\elements\actions\SetStatus;
 use craft\elements\actions\View;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\User;
-use DateTime;
+use fredmansky\eventsky\db\Table;
 use fredmansky\eventsky\elements\db\EventQuery;
 use fredmansky\eventsky\Eventsky;
+use fredmansky\eventsky\models\EventType;
+use fredmansky\eventsky\records\EventRecord;
+use yii\base\InvalidConfigException;
 use yii\db\Exception;
 
 /**
@@ -27,6 +30,16 @@ use yii\db\Exception;
  */
 class Event extends Element
 {
+
+    public $description;
+    public $typeId;
+//    public $authorId;
+    public $startDate;
+    public $endDate;
+    public $postDate;
+    public $expiryDate;
+//    private $_author;
+
     public static function displayName(): string
     {
         return Craft::t('eventsky', 'translate.elements.Event.displayName');
@@ -65,6 +78,26 @@ class Event extends Element
     public static function find(): ElementQueryInterface
     {
         return new EventQuery(static::class);
+    }
+
+    public function getFieldLayout()
+    {
+        return parent::getFieldLayout() ?? $this->getType()->getFieldLayout();
+    }
+
+    public function getType(): EventType
+    {
+        if ($this->typeId === null) {
+            throw new InvalidConfigException('Event is missing its type ID');
+        }
+
+        $eventType = Eventsky::$plugin->eventType->getEventTypeById($this->typeId);
+
+        if (!$eventType) {
+            throw new InvalidConfigException('Invalid event type ID: ' . $this->typeId);
+        }
+
+        return $eventType;
     }
 
     protected static function defineSources(string $context = null): array
@@ -192,12 +225,7 @@ class Event extends Element
     // }
 
 
-    public $description;
-    public $typeId;
-    public $authorId;
-    public $postDate;
-    public $expiryDate;
-    private $_author;
+
 
 //     /**
 //      * @inheritdoc
@@ -225,6 +253,8 @@ class Event extends Element
         $attributes = parent::datetimeAttributes();
         $attributes[] = 'postDate';
         $attributes[] = 'expiryDate';
+        $attributes[] = 'startDate';
+        $attributes[] = 'endDate';
         return $attributes;
     }
 
@@ -381,27 +411,27 @@ class Event extends Element
 //         return $sectionEntryTypes[$this->typeId];
 //     }
 
-     public function getAuthor()
-     {
-         if ($this->_author !== null) {
-             return $this->_author;
-         }
+//     public function getAuthor()
+//     {
+//         if ($this->_author !== null) {
+//             return $this->_author;
+//         }
+//
+//         if ($this->authorId === null) {
+//             return null;
+//         }
+//
+//         if (($this->_author = Craft::$app->getUsers()->getUserById($this->authorId)) === null) {
+//             throw new InvalidConfigException('Invalid author ID: ' . $this->authorId);
+//         }
+//
+//         return $this->_author;
+//     }
 
-         if ($this->authorId === null) {
-             return null;
-         }
-
-         if (($this->_author = Craft::$app->getUsers()->getUserById($this->authorId)) === null) {
-             throw new InvalidConfigException('Invalid author ID: ' . $this->authorId);
-         }
-
-         return $this->_author;
-     }
-
-     public function setAuthor(User $author = null)
-     {
-         $this->_author = $author;
-     }
+//     public function setAuthor(User $author = null)
+//     {
+//         $this->_author = $author;
+//     }
 
 //     /**
 //      * @inheritdoc
@@ -434,7 +464,8 @@ class Event extends Element
       */
      public function getIsEditable(): bool
      {
-         return \Craft::$app->user->checkPermission('edit-event:'.$this->getType()->id);
+         return true;
+//         return \Craft::$app->user->checkPermission('edit-event:'.$this->getType()->id);
      }
 
 //     public function getCpEditUrl()
@@ -497,28 +528,28 @@ class Event extends Element
 //     }
 
 
-    public function getEditorHtml(): string
-    {
-        $html = \Craft::$app->getView()->renderTemplateMacro('_includes/forms', 'textField', [
-            [
-                'label' => \Craft::t('app', 'Title'),
-                'siteId' => $this->siteId,
-                'id' => 'title',
-                'name' => 'title',
-                'value' => $this->title,
-                'errors' => $this->getErrors('title'),
-                'first' => true,
-                'autofocus' => true,
-                'required' => true
-            ]
-        ]);
-
-        // ...
-
-        $html .= parent::getEditorHtml();
-
-        return $html;
-    }
+//    public function getEditorHtml(): string
+//    {
+//        $html = \Craft::$app->getView()->renderTemplateMacro('_includes/forms', 'textField', [
+//            [
+//                'label' => \Craft::t('app', 'Title'),
+//                'siteId' => $this->siteId,
+//                'id' => 'title',
+//                'name' => 'title',
+//                'value' => $this->title,
+//                'errors' => $this->getErrors('title'),
+//                'first' => true,
+//                'autofocus' => true,
+//                'required' => true
+//            ]
+//        ]);
+//
+//        // ...
+//
+//        $html .= parent::getEditorHtml();
+//
+//        return $html;
+//    }
 
     /**
      * @inheritdoc
@@ -526,20 +557,27 @@ class Event extends Element
      */
     public function afterSave(bool $isNew)
     {
-        if ($isNew) {
-            \Craft::$app->db->createCommand()
-                ->insert('{{%eventsky_events}}', [
-                    'id' => $this->id,
-                    'description' => $this->description,
-                ])
-                ->execute();
+        if (!$isNew) {
+            $record = EventRecord::findOne($this->id);
+
+            if (!$record) {
+                throw new Exception('Invalid event ID: ' . $this->id);
+            }
         } else {
-            \Craft::$app->db->createCommand()
-                ->update('{{%eventsky_events}}', [
-                    'description' => $this->description,
-                ], ['id' => $this->id])
-                ->execute();
+            $record = new EventRecord();
+            $record->id = $this->id;
         }
+
+        $record->typeId = $this->typeId;
+        $record->description = $this->description;
+        $record->startDate = $this->startDate;
+        $record->endDate = $this->endDate;
+        $record->postDate = $this->postDate;
+        $record->expiryDate = $this->expiryDate;
+
+        $record->save(false);
+
+        $this->id = $record->id;
 
         parent::afterSave($isNew);
     }

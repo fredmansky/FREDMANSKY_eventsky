@@ -44,6 +44,20 @@ return [
     // ----- Events ------
     // -------------------
     
+    'translate.event.new' => 'Create a new event',
+    'translate.event.saved' => 'Event saved.',
+    'translate.events.fields.eventStart' => 'Event Start',
+    'translate.events.fields.eventEnd' => 'Event End',
+    'translate.events.fields.eventDescription' => 'Description',
+    'translate.events.fields.placeholder.eventDescription' => 'Enter description',
+    'translate.events.fields.details.eventtype' => 'Event Type',
+    'translate.events.fields.details.slug' => 'Slug',
+    'translate.events.fields.details.placeholder.slug' => 'Enter slug',
+    'translate.events.fields.details.postDate' => 'Post Date',
+    'translate.events.fields.details.expiryDate' => 'Expiry Date',
+    'translate.events.fields.details.placeholder.eventDescription' => 'Enter description',
+    'translate.events.tab.eventData' => 'Event Data',
+    'translate.events.tab.tickets' => 'Tickets',
     'translate.elements.Event.displayName' => 'Event',
     'translate.elements.Event.pluralDisplayName' => 'Events',
     'translate.elements.Event.sideBar.allEvents' => 'All Events',

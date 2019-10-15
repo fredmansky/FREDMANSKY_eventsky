@@ -27,24 +27,24 @@ class Install extends Migration
 
     protected function createTables()
     {
-        if (!$this->db->tableExists('{{%eventsky_events}}')) {
-            $this->createTable('{{%eventsky_events}}', [
+        if (!$this->db->tableExists(Table::EVENTS)) {
+            $this->createTable(Table::EVENTS, [
                 'id' => $this->primaryKey(),
                 'typeId' => $this->integer()->notNull(),
-                'authorId' => $this->integer()->notNull(),
+//                'authorId' => $this->integer()->notNull(),
                 'description' => $this->text(),
-                'image' => $this->integer(),
+//                'image' => $this->integer(),
                 'startDate' => $this->dateTime()->notNull(),
                 'endDate' => $this->dateTime(),
                 'postDate' => $this->dateTime()->notNull(),
                 'expiryDate' => $this->dateTime(),
                 'dateCreated' => $this->dateTime()->notNull(),
                 'dateUpdated' => $this->dateTime()->notNull(),
-                'needsRegistration' => $this->boolean(),
-                'registrationEnabled' => $this->boolean(),
-                'numberOfTickets' => $this->integer(),
-                'waitingList' => $this->boolean(),
-                'waitingListSize' => $this->integer(),
+//                'needsRegistration' => $this->boolean(),
+//                'registrationEnabled' => $this->boolean(),
+//                'numberOfTickets' => $this->integer(),
+//                'waitingList' => $this->boolean(),
+//                'waitingListSize' => $this->integer(),
                 'uid' => $this->uid(),
             ]);
         }
@@ -100,7 +100,7 @@ class Install extends Migration
 
     protected function createForeignKeys()
     {
-        $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_events}}', 'id'), '{{%%eventsky_events}}', 'id', '{{%elements}}', 'id', 'CASCADE', null);
+        $this->addForeignKey($this->db->getForeignKeyName(Table::EVENTS, 'id'), Table::EVENTS, 'id', '{{%elements}}', 'id', 'CASCADE', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes}}', 'fieldLayoutId'), '{{%%eventsky_eventtypes}}', 'fieldLayoutId', '{{%fieldlayouts}}', 'id', 'CASCADE', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes_sites}}', 'siteId'), '{{%%eventsky_eventtypes_sites}}', 'siteId', '{{%sites}}', 'id', 'CASCADE', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes_sites}}', 'eventtypeId'), '{{%%eventsky_eventtypes_sites}}', 'eventtypeId', Table::EVENT_TYPES, 'id', 'CASCADE', null);
@@ -108,7 +108,7 @@ class Install extends Migration
 
     protected function dropTables()
     {
-        $this->dropTableIfExists('{{%eventsky_events}}');
+        $this->dropTableIfExists(Table::EVENTS);
         $this->dropTableIfExists('{{%eventsky_tickets}}');
         $this->dropTableIfExists(Table::EVENT_TYPES);
         $this->dropTableIfExists('{{%eventsky_tickettypes}}');
