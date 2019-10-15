@@ -78,8 +78,9 @@ return [
 
     'translate.ticketTypes.name' => 'Name',
     'translate.ticketTypes.handle' => 'Handle',
-    'translate.ticketTypes.new' => 'Create a new event type',
+    'translate.ticketTypes.new' => 'Create a new ticket type',
     'translate.ticketTypes.edit' => 'Edit event type',
+    'translate.ticketTypes.notFound' => 'Ticket Type not found.',
     'translate.ticketTypes.fieldLayout' => 'Field layout',
     'translate.ticketTypes.fieldLayout.edit' => 'Edit field layout',
     'translate.ticketTypes.delete' => 'Delete',

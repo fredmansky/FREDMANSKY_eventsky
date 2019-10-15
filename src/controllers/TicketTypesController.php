@@ -8,6 +8,7 @@ namespace fredmansky\eventsky\controllers;
 
 use Craft;
 
+use craft\models\FieldLayout;
 use fredmansky\eventsky\elements\Ticket;
 use fredmansky\eventsky\elements\db\TicketTypeQuery;
 use fredmansky\eventsky\Eventsky;
@@ -17,6 +18,7 @@ use craft\helpers\UrlHelper;
 use craft\web\Controller;
 use yii\web\ForbiddenHttpException;
 
+use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -39,7 +41,7 @@ class TicketTypesController extends Controller
     return $this->renderTemplate('eventsky/ticketTypes/index', $data);
   }
 
-  public function actionEdit(int $ticketTypeId = null, TicketType $ticketType = null): Response
+  public function actionEdit(int $ticketTypeId = null): Response
   {
     $data = [
       'ticketTypeId' => $ticketTypeId,
@@ -47,21 +49,25 @@ class TicketTypesController extends Controller
     ];
 
     if ($ticketTypeId !== null) {
-      if ($ticketType === null) {
-        $ticketType = Eventsky::$plugin->ticketType->getTicketTypeById($ticketTypeId);
+      $ticketType = Eventsky::$plugin->ticketType->getTicketTypeById($ticketTypeId);
 
-        if (!$ticketType) {
-          throw new NotFoundHttpException('TicketType not found');
-        }
+      if (!$ticketType) {
+        throw new NotFoundHttpException(Craft::t('eventsky', 'translate.ticketTypes.notFound'));
       }
 
       $data['title'] = trim($ticketType->name) ?: Craft::t('eventsky', 'translate.ticketTypes.edit');
-    } else {
-      if ($ticketType === null) {
-        $ticketType = new TicketType();
-        $data['brandNewTicketType'] = true;
+      $fieldlayout = Craft::$app->fields->getLayoutById($ticketType->fieldLayoutId);
+
+      if (!$fieldlayout) {
+        throw new NotFoundHttpException(Craft::t('eventsky', 'translate.fieldlayout.notFound'));
       }
+
+      $data['fieldlayout'] = $fieldlayout;
+    } else {
+      $ticketType = new TicketType();
+      $data['brandNewTicketType'] = true;
       $data['title'] = Craft::t('eventsky', 'translate.ticketTypes.new');
+      $data['fieldlayout'] = new FieldLayout();
     }
 
     $data['ticketType'] = $ticketType;
@@ -69,7 +75,7 @@ class TicketTypesController extends Controller
     $data['crumbs'] = [
       [
         'label' => Craft::t('eventsky', 'translate.ticketTypes.cpTitle'),
-        'url' => UrlHelper::url('settings/sections')
+        'url' => UrlHelper::url('eventsky/tickettypes')
       ],
     ];
 
@@ -92,12 +98,21 @@ class TicketTypesController extends Controller
     $this->requirePostRequest();
 
     $request = Craft::$app->getRequest();
-    $ticketType = new TicketType();
+    $ticketTypeId = $request->getBodyParam('ticketTypeId');
+
+    if ($ticketTypeId) {
+      $ticketType = Eventsky::$plugin->ticketType->getTicketTypeById($ticketTypeId);
+
+      if (!$ticketType) {
+        throw new HttpException(404, Craft::t('eventsky', 'translate.ticketType.notFound'));
+      }
+    } else {
+      $ticketType = new TicketType();
+    }
 
     $ticketType->id = $request->getBodyParam('ticketTypeId');
     $ticketType->name = $request->getBodyParam('name');
     $ticketType->handle = $request->getBodyParam('handle');
-
 
     $fieldLayout = \Craft::$app->fields->assembleLayoutFromPost();
     $fieldLayout->type = Ticket::class;

@@ -41,7 +41,7 @@
     </div>
     <div id="tickettype-fieldlayout" class="hidden">
         {% include "_includes/fieldlayoutdesigner" with {
-            fieldLayout: craft.app.fields.getLayoutByType('fredmansky\\eventsky\\elements\\Ticket')
+            fieldLayout: fieldlayout,
         } only %}
     </div>
 {% endblock %}

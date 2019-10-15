@@ -3,10 +3,3 @@
 {% set selectedSubnavItem = 'tickets' %}
 {% set title = "translate.tickets.title" | t('eventsky') %}
 {% set elementType = 'fredmansky\\eventsky\\elements\\Ticket' %}
-
-{% block actionButton %}
-    <a href="{{ url('tickets/new') }}" class="btn submit add icon">{{ "New ticket"|t('app') }}</a>
-    {{ parent() }}
-{% endblock %}
-
-{% do view.registerTranslations('app', ['New entry']) %}

@@ -125,9 +125,7 @@ class Ticket extends Element
         return true;
     }
 
-    /**
-     * @inheritdoc
-     */
+    // By default your elements will support two statuses: Enabled and Disabled (so maybe statuses() not necessary)
     public static function statuses(): array
     {
       return [
