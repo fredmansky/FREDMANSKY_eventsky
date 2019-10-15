@@ -11,4 +11,14 @@ class EventRecord extends ActiveRecord
     {
         return Table::EVENTS;
     }
+
+    public function getElement(): ActiveQueryInterface
+    {
+        return $this->hasOne(Element::class, ['id' => 'id']);
+    }
+
+    public function getType(): ActiveQueryInterface
+    {
+        return $this->hasOne(EventTypeRecord::class, ['id' => 'eventtypeId']);
+    }
 }

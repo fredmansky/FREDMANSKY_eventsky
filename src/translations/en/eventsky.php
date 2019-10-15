@@ -46,6 +46,7 @@ return [
     
     'translate.event.new' => 'Create a new event',
     'translate.event.saved' => 'Event saved.',
+    'translate.event.notSaved' => 'Couldn’t save event.',
     'translate.events.fields.eventStart' => 'Event Start',
     'translate.events.fields.eventEnd' => 'Event End',
     'translate.events.fields.eventDescription' => 'Description',

@@ -179,6 +179,9 @@ class EventsController extends Controller
         $event->typeId = $request->getBodyParam('typeId');
         $event->description = $request->getBodyParam('description');
 
+        // save values from custom fields to event
+        $event->setFieldValuesFromRequest('fields');
+
         if (($postDate = $request->getBodyParam('postDate')) !== null) {
             $event->postDate = DateTimeHelper::toDateTime($postDate) ?: null;
         }
@@ -200,12 +203,12 @@ class EventsController extends Controller
                 ]);
             }
 
-            Craft::$app->getSession()->setError(Craft::t('commerce', 'Couldn’t save product.'));
+            Craft::$app->getSession()->setError(Craft::t('eventsky', 'translate.event.notSaved'));
 
-            // Send the category back to the template
-//            Craft::$app->getUrlManager()->setRouteParams([
-//                'product' => $product
-//            ]);
+            // Send the event back to the template
+            Craft::$app->getUrlManager()->setRouteParams([
+                'event' => $event,
+            ]);
 
             return null;
         }
