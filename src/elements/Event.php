@@ -15,6 +15,7 @@ use craft\elements\actions\SetStatus;
 use craft\elements\actions\View;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\User;
+use DateTime;
 use fredmansky\eventsky\db\Table;
 use fredmansky\eventsky\elements\db\EventQuery;
 use fredmansky\eventsky\Eventsky;
@@ -551,10 +552,22 @@ class Event extends Element
 //        return $html;
 //    }
 
-    /**
-     * @inheritdoc
-     * @throws Exception
-     */
+
+    public function beforeSave(bool $isNew): bool
+    {
+        // Make sure the field layout is set correctly
+        $this->fieldLayoutId = $this->getType()->fieldLayoutId;
+
+        if ($this->enabled && !$this->postDate) {
+            // Default the post date to the current date/time
+            $this->postDate = new DateTime();
+            // ...without the seconds
+            $this->postDate->setTimestamp($this->postDate->getTimestamp() - ($this->postDate->getTimestamp() % 60));
+        }
+
+        return parent::beforeSave($isNew);
+    }
+
     public function afterSave(bool $isNew)
     {
         if (!$isNew) {

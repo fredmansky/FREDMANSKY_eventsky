@@ -61,8 +61,6 @@ class EventsController extends Controller
 
         $eventTypes = Eventsky::$plugin->eventType->getAllEventTypes();
 
-        /** @var EventType $eventType */
-        $eventType = $eventTypes[0];
 
         /** @var Event $event */
         $event = null;
@@ -76,10 +74,12 @@ class EventsController extends Controller
                 throw new NotFoundHttpException(Craft::t('eventsky', 'translate.event.notFound'));
             }
 
+            $eventType = $event->getType();
             $data['title'] = trim($event->title) ?: Craft::t('eventsky', 'translate.event.edit');
         } else {
             $request = Craft::$app->getRequest();
             $event = new Event();
+            $eventType = $eventTypes[0];
             $event->siteId = $site->id;
             $event->typeId = $request->getQueryParam('typeId', $eventType->id);
 //                $event->authorId = $request->getQueryParam('authorId', Craft::$app->getUser()->getId());

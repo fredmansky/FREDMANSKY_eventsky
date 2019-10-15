@@ -4,7 +4,7 @@
     {% block settings %}
         {{ forms.selectField({
             label: 'translate.events.fields.details.eventtype' | t('eventsky'),
-            id: 'entryType',
+            id: 'typeId',
             name: 'typeId',
             value: eventType.id,
             options: eventTypeOptions
