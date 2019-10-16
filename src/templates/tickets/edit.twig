@@ -67,21 +67,6 @@
             required: true,
             maxlength: 255
         }) }}
-
-        <div>
-            {% set tabs = ticketType.getFieldLayout().getTabs() %}
-            <div id="tabTicketData">
-                {% include "eventsky/tickets/_tabEventData" %}
-            </div>
-            {% for tab in tabs %}
-                <div id="{{ 'tab' ~ tab.name | title }}" class="hidden">
-                    {% include "_includes/fields" with {
-                        fields: tab.getFields(),
-                        element: ticket,
-                    } only %}
-                </div>
-            {% endfor %}
-        </div>
     </div>
 {% endblock %}
 
@@ -89,7 +74,7 @@
     {% include "eventsky/tickets/_details" %}
 {% endblock %}
 
-{% if not event.slug %}
+{% if not ticket.slug %}
     {% js %}
         window.slugGenerator = new Craft.SlugGenerator('#title', '#slug');
     {% endjs %}

@@ -3,7 +3,7 @@
 <div id="settings" class="meta">
     {% block settings %}
         {{ forms.selectField({
-            label: 'translate.tickets.fields.details.tickettype' | t('eventsky'),
+            label: 'translate.ticket.fields.details.tickettype' | t('eventsky'),
             id: 'typeId',
             name: 'typeId',
             value: ticketType.id,
@@ -11,8 +11,7 @@
         }) }}
 
         {{ forms.textField({
-            label: 'translate.tickets.fields.details.slug' | t('eventsky'),
-            site: site,
+            label: 'translate.ticket.fields.details.slug' | t('eventsky'),
             id: 'slug',
             name: 'slug',
             value: ticket.slug,
@@ -43,16 +42,6 @@
             on: element.enabled,
             toggle: 'enabledForSite-field'
         }) }}
-
-        {% if isMultiSiteElement %}
-            {{ forms.lightswitchField({
-                fieldClass: not element.enabled ? 'hidden',
-                label: "Enabled for {site}" | t('app', { site: element.site.name | t('site') }),
-                id: 'enabledForSite',
-                name: 'enabledForSite',
-                on: element.enabledForSite,
-            }) }}
-        {% endif %}
     {% endblock %}
 </div>
 

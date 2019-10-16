@@ -3,3 +3,49 @@
 {% set selectedSubnavItem = 'tickets' %}
 {% set title = "translate.tickets.title" | t('eventsky') %}
 {% set elementType = 'fredmansky\\eventsky\\elements\\Ticket' %}
+
+{% block actionButton %}
+    <a href="{{ url('eventsky/ticket/new') }}" class="btn submit add icon">{{ "translate.ticket.new" | t('eventsky') }}</a>
+{% endblock %}
+
+{% block content %}
+    <div id="noTickets"{% if tickets %} class="hidden"{% endif %}>
+        <p>{{ "No tickets exist yet." | t('eventsky') }}</p>
+    </div>
+
+    {% if tickets | length %}
+        <table id="tickets" class="data fullwidth collapsible">
+            <thead>
+            <th scope="col">{{ "translate.tickets.name" | t('eventsky') }}</th>
+            <th scope="col">{{ "translate.tickets.handle" | t('eventsky') }}</th>
+            <td class="thin"></td>
+            </thead>
+            <tbody>
+            {% for ticket in tickets %}
+                <tr data-id="{{ ticket.id }}" data-name="{{ ticket.name | t('site') }}">
+                    <th scope="row" data-title="{{ 'translate.tickets.name' | t('eventsky') }}"><a href="{{ ticket.getCpEditUrl() }}">{{ ticket.name | t('site') }}</a></th>
+                    <td data-title="{{ 'translate.tickets.handle' | t('eventsky') }}"><code>{{ ticket.handle }}</code></td>
+                    <td class="thin"><a class="delete icon" title="{{ 'translate.tickets.delete' | t('eventsky') }}" role="button"></a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
+
+{% js %}
+    var adminTable = new Craft.AdminTable({
+    tableSelector: '#tickets',
+    noItemsSelector: '#noTickes',
+    deleteAction: 'sections/delete-section',
+    confirmDeleteMessage: '{{ "translate.tickets.deleteMessage" | t('eventsky') }}',
+    onDeleteItem: function()
+    {
+    // Hide the Entries tab if that was the last one
+    if (adminTable.totalItems == 0)
+    {
+    $('#nav-entries').remove();
+    }
+    }
+    });
+{% endjs %}

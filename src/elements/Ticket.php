@@ -40,15 +40,16 @@ class Ticket extends Element
     public $endDate;
     public $postDate;
     public $expiryDate;
+    public $dateDeleted;
 
     public static function displayName(): string
     {
-        return Craft::t('eventsky', 'translate.elements.Ticket.displayName');
+        return Craft::t('eventsky', 'translate.tickets.displayName');
     }
 
     static function pluralDisplayName(): string
     {
-        return Craft::t('eventsky', 'translate.elements.Ticket.pluralDisplayName');
+        return Craft::t('eventsky', 'translate.tickets.pluralDisplayName');
     }
 
     public static function hasContent(): bool
@@ -101,10 +102,10 @@ class Ticket extends Element
       $sources = [
         [
           'key' => '*',
-          'label' =>  Craft::t('eventsky', 'translate.elements.Ticket.sideBar.allTickets'),
+          'label' =>  Craft::t('eventsky', 'translate.tickets.sideBar.allTickets'),
           'criteria' => []
         ],
-        $sources[] = ['heading' => Craft::t('eventsky', 'translate.elements.Ticket.sideBar.ticketTypeHeading')],
+        $sources[] = ['heading' => Craft::t('eventsky', 'translate.tickets.sideBar.ticketTypeHeading')],
       ];
 
       $ticketTypes = Eventsky::$plugin->ticketType->getAllTicketTypes();
@@ -168,7 +169,7 @@ class Ticket extends Element
     {
         return [
           'title'       => \Craft::t('app', 'Title'),
-          'description' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.elements.Ticket.search.description')),
+          'description' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.search.description')),
         ];
     }
 

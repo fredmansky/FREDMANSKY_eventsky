@@ -64,13 +64,35 @@ return [
     'translate.eventType.tab.fieldlayout' => 'Field Layout',
     'translate.eventTypes.deleteMessage' => 'Are you sure you want to delete “{ name }” and all its events?',
 
-    // -------------------
+    // --------------------
     // ----- Tickets ------
-    // -------------------
-    'translate.elements.Ticket.displayName' => 'Ticket',
-    'translate.elements.Ticket.pluralDisplayName' => 'Tickets',
-    'translate.elements.Ticket.sideBar.allTickets' => 'All Events',
-    'translate.elements.Ticket.search.description' => 'Description',
+    // --------------------
+
+    'translate.tickets.displayName' => 'Ticket',
+    'translate.tickets.pluralDisplayName' => 'Tickets',
+    'translate.tickets.sideBar.allTickets' => 'All Events',
+    'translate.tickets.search.description' => 'Description',
+    'translate.tickets.name' => 'Name',
+    'translate.tickets.handle' => 'Handle',
+    'translate.tickets.new' => 'Create a new Ticket',
+    'translate.tickets.edit' => 'Edit Ticket',
+    'translate.tickets.notFound' => 'Ticket not found.',
+    'translate.tickets.fieldLayout' => 'Field layout',
+    'translate.tickets.fieldLayout.edit' => 'Edit field layout',
+    'translate.tickets.delete' => 'Delete',
+    'translate.tickets.deleteMessage' => 'Are you sure you want to delete “{ name }” and all its events?',
+    'translate.ticket.tab.settings' => 'Settings',
+    'translate.ticket.tab.fieldlayout' => 'Field Layout',
+    'translate.ticket.tab.ticketData' => 'Ticket Data',
+    'translate.ticket.tab.event' => 'Ticket Event',
+    'translate.ticket.fieldLayout.headline' => 'Field layout of event type “{name}”',
+    'translate.ticket.new' => 'Create a new ticket',
+    'translate.ticket.saved' => 'Ticket saved.',
+    'translate.ticket.notSaved' => 'Couldn’t save ticket.',
+    'translate.ticket.edit' => 'Couldn’t save ticket.',
+    'translate.ticket.notFound' => 'Ticket not found.',
+    'translate.ticket.fields.details.slug' => 'Slug',
+    'translate.ticket.fields.details.tickettype' => 'Ticket Type',
 
     // ------------------------
     // ----- Ticket Types -----
@@ -79,7 +101,7 @@ return [
     'translate.ticketTypes.name' => 'Name',
     'translate.ticketTypes.handle' => 'Handle',
     'translate.ticketTypes.new' => 'Create a new ticket type',
-    'translate.ticketTypes.edit' => 'Edit event type',
+    'translate.ticketTypes.edit' => 'Edit ticket type',
     'translate.ticketTypes.notFound' => 'Ticket Type not found.',
     'translate.ticketTypes.fieldLayout' => 'Field layout',
     'translate.ticketTypes.fieldLayout.edit' => 'Edit field layout',

@@ -39,6 +39,7 @@ class TicketQuery extends ElementQuery
     public $authorId;
     public $postDate;
     public $expiryDate;
+    public $dateDeleted;
 
     public function description($value)
     {
@@ -75,10 +76,15 @@ class TicketQuery extends ElementQuery
           'eventsky_tickets.endDate',
           'eventsky_tickets.postDate',
           'eventsky_tickets.expiryDate',
+          'eventsky_tickets.dateDeleted',
         ]);
 
         if ($this->description) {
           $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.description', $this->description));
+        }
+
+        if ($this->dateDeleted) {
+          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.dateDeleted', $this->dateDeleted));
         }
         return parent::beforePrepare();
     }

@@ -47,21 +47,25 @@ class TicketsController extends Controller
 
   public function actionIndex(array $variables = []): Response
   {
-    $data = [];
+    $data = [
+      'tickets' => Eventsky::$plugin->ticket->getAllTickets(),
+    ];
+
     return $this->renderTemplate('eventsky/tickets/index', $data);
   }
 
-  public function actionEdit(int $ticketId = null /* , string $site = null*/): Response
+  public function actionEdit(int $ticketId = null): Response
   {
     $data = [];
 
     $ticketTypes = Eventsky::$plugin->ticketType->getAllTicketTypes();
 
+    if (!$ticketTypes) {
+      throw new NotFoundHttpException(Craft::t('eventsky', 'translate.ticketTypes.notFound'));
+    }
 
     /** @var Ticket $ticket */
     $ticket = null;
-
-    // $site = $this->getSiteForNewTicket($site);
 
     if ($ticketId !== null) {
       $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
@@ -76,7 +80,6 @@ class TicketsController extends Controller
       $request = Craft::$app->getRequest();
       $ticket = new Ticket();
       $ticketType = $ticketTypes[0];
-      // $ticket->siteId = $site->id;
       $ticket->typeId = $request->getQueryParam('typeId', $ticketType->id);
       $ticket->slug = ElementHelper::tempSlug();
 
@@ -88,10 +91,10 @@ class TicketsController extends Controller
       $data['title'] = Craft::t('eventsky', 'translate.ticket.new');
     }
 
-    $data['eventId'] = $ticketId;
-    $data['eventType'] = $ticketType;
+    $data['ticketId'] = $ticketId;
+    $data['ticketType'] = $ticketType;
 
-    $data['eventTypeOptions'] = array_map(function($ticketType) {
+    $data['ticketTypeOptions'] = array_map(function($ticketType) {
       return [
         'label' => $ticketType->name,
         'value' => $ticketType->id
@@ -100,7 +103,6 @@ class TicketsController extends Controller
 
     $data['ticket'] = $ticket;
     $data['element'] = $ticket;
-    // $data['site'] = $site;
 
     $data['crumbs'] = [
       [
@@ -118,12 +120,12 @@ class TicketsController extends Controller
 
     $data['tabs'] = [
       [
-        'label' => Craft::t('eventsky', 'translate.tickets.tab.eventData'),
-        'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.tickets.tab.ticketData')),
+        'label' => Craft::t('eventsky', 'translate.ticket.tab.ticketData'),
+        'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.ticketData')),
       ],
       [
-        'label' => Craft::t('eventsky', 'translate.tickets.tab.tickets'),
-        'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.tickets.tab.tickets')),
+        'label' => Craft::t('eventsky', 'translate.ticket.tab.event'),
+        'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.event')),
       ],
     ];
     foreach ($ticketType->getFieldLayout()->getTabs() as $index => $tab) {
