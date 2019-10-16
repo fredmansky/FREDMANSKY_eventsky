@@ -35,8 +35,9 @@ class TicketType extends Model
     public $uid;
     public $dateCreated;
     public $dateUpdated;
+    public $dateDeleted;
 
-    /**
+  /**
      * @inheritdoc
      */
     public function behaviors(): array
