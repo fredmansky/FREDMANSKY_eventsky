@@ -1,0 +1,96 @@
+{% extends '_layouts/cp' %}
+{% import "_includes/forms" as forms %}
+
+{% set selectedSubnavItem = 'tickets' %}
+{% set fullPageForm = true %}
+
+{% block header %}
+    <div class="flex flex-nowrap">
+        {{ block('pageTitle') }}
+        {{ block('contextMenu') }}
+    </div>
+    <div class="flex">
+        <div class="btngroup">
+            {% if shareUrl is defined %}
+                <a href="{{ shareUrl }}" class="btn sharebtn"
+                   target="_blank">{{ 'Share'|t('app') }}</a>
+            {% endif %}
+        </div>
+
+        {{ block('actionButton') }}
+    </div>
+{% endblock %}
+
+{% block contextMenu %}
+    {#    {% include "_includes/revisionmenu" %}#}
+{% endblock %}
+
+{% block actionButton %}
+    <div id="save-btn-container" class="btngroup submit">
+        <input type="submit" class="btn submit" value="{{ 'Save' | t('app', { type: element.displayName() }) }}">
+    </div>
+{% endblock %}
+
+{#{% block main %}#}
+{#        {{ actionInput(saveSourceAction) }}#}
+{#        {{ redirectInput(redirectUrl) }}#}
+
+{#        {% if craft.app.isMultiSite %}#}
+{#            {{ hiddenInput('siteId', element.siteId) }}#}
+{#        {% endif %}#}
+
+{#    {{ parent() }}#}
+{#{% endblock %}#}
+
+{% block content %}
+    {{ actionInput('eventsky/tickets/save') }}
+    {{ redirectInput('eventsky/tickets') }}
+    {{ csrfInput() }}
+
+    {% if ticket.id %}<input type="hidden" name="ticketId" value="{{ ticket.id }}">{% endif %}
+
+    {#    {% if craft.app.getIsMultiSite() %}#}
+    {#        <input type="hidden" name="siteId" value="{{ product.siteId }}">#}
+    {#    {% endif %}#}
+
+    <div id="fields">
+        {{ forms.textField({
+            label: "Title" | t('commerce'),
+            site: ticket.site,
+            id: 'title',
+            name: 'title',
+            value: ticket.title,
+            placeholder: 'Enter title' | t('commerce'),
+            errors: ticket.getErrors('title'),
+            first: true,
+            autofocus: true,
+            required: true,
+            maxlength: 255
+        }) }}
+
+        <div>
+            {% set tabs = ticketType.getFieldLayout().getTabs() %}
+            <div id="tabTicketData">
+                {% include "eventsky/tickets/_tabEventData" %}
+            </div>
+            {% for tab in tabs %}
+                <div id="{{ 'tab' ~ tab.name | title }}" class="hidden">
+                    {% include "_includes/fields" with {
+                        fields: tab.getFields(),
+                        element: ticket,
+                    } only %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block details %}
+    {% include "eventsky/tickets/_details" %}
+{% endblock %}
+
+{% if not event.slug %}
+    {% js %}
+        window.slugGenerator = new Craft.SlugGenerator('#title', '#slug');
+    {% endjs %}
+{% endif %}

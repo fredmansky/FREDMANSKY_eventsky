@@ -35,7 +35,10 @@ class TicketQuery extends ElementQuery
 {
     public $title;
     public $description;
-    // public $typeId;
+    public $typeId;
+    public $authorId;
+    public $postDate;
+    public $expiryDate;
 
     public function description($value)
     {
@@ -53,12 +56,11 @@ class TicketQuery extends ElementQuery
       parent::__construct($elementType, $config);
     }
 
-    /*
     public function typeId($value)
     {
       $this->typeId = $value;
       return $this;
-    }*/
+    }
 
     protected function beforePrepare(): bool
     {
@@ -67,19 +69,13 @@ class TicketQuery extends ElementQuery
 
         // select the price column
         $this->query->select([
-            'eventsky_tickets.id',
-            // 'eventsky_tickets.typeId',
-            'eventsky_tickets.description',
+          'eventsky_tickets.typeId',
+          'eventsky_tickets.description',
+          'eventsky_tickets.startDate',
+          'eventsky_tickets.endDate',
+          'eventsky_tickets.postDate',
+          'eventsky_tickets.expiryDate',
         ]);
-
-        if ($this->id) {
-          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.id', $this->id));
-        }
-
-        /*
-        if ($this->typeId) {
-          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.typeId', $this->typeId));
-        }*/
 
         if ($this->description) {
           $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.description', $this->description));

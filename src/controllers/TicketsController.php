@@ -1,59 +1,232 @@
 <?php
+/**
+ * @link https://fredmansky.at/
+ * @copyright Copyright (c) Fredmansky GmbH
+ */
 
-
-namespace fredmansky\eventsky;
+namespace fredmansky\eventsky\controllers;
 
 use Craft;
-use craft\web\Controller;
+use craft\base\Element;
+use craft\base\Field;
+use craft\base\Plugin;
+use craft\db\Query;
+use craft\elements\Entry;
+use craft\helpers\ArrayHelper;
+use craft\helpers\DateTimeHelper;
+use craft\helpers\ElementHelper;
+use craft\helpers\StringHelper;
+use craft\models\Section;
+use craft\models\Section_SiteSettings;
+use craft\models\Site;
+use craft\web\assets\editentry\EditEntryAsset;
 use fredmansky\eventsky\elements\Ticket;
+use fredmansky\eventsky\Eventsky;
+use fredmansky\eventsky\models\TicketType;
+use craft\helpers\UrlHelper;
+use craft\web\Controller;
+
+use yii\web\HttpException;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * The TicketsController class is a controller that handles various ticket related tasks such as retrieving, saving,
  * swapping between ticket types, and deleting tickets.
  *
- * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
+ * @author Fredmansky
  * @since 3.0
  */
 class TicketsController extends Controller
 {
-  // Public Methods
-  // =========================================================================
-
-  /**
-   * Saves a ticket.
-   */
-  public function actionSaveTicket()
+  public function init()
   {
-    // Create a new ticket element
-    $ticket = new Ticket();
-
-    // Set the main properties from POST data
-    $ticket->description = Craft::$app->request->getBodyParam('description');
-    $ticket->authorId = Craft::$app->request->getBodyParam('authorId');
-    $ticket->ticketTypeId = Craft::$app->request->getBodyParam('ticketTypeId');
-
-    // Save the ticket
-    $success = Craft::$app->elements->saveElement($ticket);
+    $this->requireAdmin();
+    parent::init();
   }
 
+  public function actionIndex(array $variables = []): Response
+  {
+    $data = [];
+    return $this->renderTemplate('eventsky/tickets/index', $data);
+  }
 
-  /**
-   * Deletes a ticket.
-   */
-  public function actionDeleteEvent()
+  public function actionEdit(int $ticketId = null /* , string $site = null*/): Response
+  {
+    $data = [];
+
+    $ticketTypes = Eventsky::$plugin->ticketType->getAllTicketTypes();
+
+
+    /** @var Ticket $ticket */
+    $ticket = null;
+
+    // $site = $this->getSiteForNewTicket($site);
+
+    if ($ticketId !== null) {
+      $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
+
+      if (!$ticket) {
+        throw new NotFoundHttpException(Craft::t('eventsky', 'translate.ticket.notFound'));
+      }
+
+      $ticketType = $ticket->getType();
+      $data['title'] = trim($ticket->title) ?: Craft::t('eventsky', 'translate.ticket.edit');
+    } else {
+      $request = Craft::$app->getRequest();
+      $ticket = new Ticket();
+      $ticketType = $ticketTypes[0];
+      // $ticket->siteId = $site->id;
+      $ticket->typeId = $request->getQueryParam('typeId', $ticketType->id);
+      $ticket->slug = ElementHelper::tempSlug();
+
+      // TODO: implement (SS)
+      $ticket->enabled = true;
+      $ticket->enabledForSite = true;
+
+      $ticket->setFieldValuesFromRequest('fields');
+      $data['title'] = Craft::t('eventsky', 'translate.ticket.new');
+    }
+
+    $data['eventId'] = $ticketId;
+    $data['eventType'] = $ticketType;
+
+    $data['eventTypeOptions'] = array_map(function($ticketType) {
+      return [
+        'label' => $ticketType->name,
+        'value' => $ticketType->id
+      ];
+    }, $ticketTypes);
+
+    $data['ticket'] = $ticket;
+    $data['element'] = $ticket;
+    // $data['site'] = $site;
+
+    $data['crumbs'] = [
+      [
+        'label' => Craft::t('eventsky', 'translate.ticket.cpTitle'),
+        'url' => UrlHelper::url('eventsky/tickets')
+      ],
+    ];
+
+    $data['saveShortcutRedirect'] = 'eventsky/tickets'; // TODO: correct URL here (SS)
+    $data['redirectUrl'] = 'eventsky/tickets';
+    $data['shareUrl'] = '/admin/eventsky'; // TODO: implement
+    $data['saveSourceAction'] = 'entries/save-entry';
+    $data['isMultiSiteElement'] = Craft::$app->isMultiSite && count(Craft::$app->getSites()->allSiteIds) > 1;
+    $data['canUpdateSource'] = true;
+
+    $data['tabs'] = [
+      [
+        'label' => Craft::t('eventsky', 'translate.tickets.tab.eventData'),
+        'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.tickets.tab.ticketData')),
+      ],
+      [
+        'label' => Craft::t('eventsky', 'translate.tickets.tab.tickets'),
+        'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.tickets.tab.tickets')),
+      ],
+    ];
+    foreach ($ticketType->getFieldLayout()->getTabs() as $index => $tab) {
+      $hasErrors = null;
+
+      $data['tabs'][] = [
+        'label' => $tab->name,
+        'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
+        'class' => $hasErrors ? 'error' : null,
+      ];
+    }
+
+    return $this->renderTemplate('eventsky/tickets/edit', $data);
+  }
+
+  public function actionSave()
   {
     $this->requirePostRequest();
 
-    $ticketId = craft()->request->getRequiredPost('ticketId');
+    $request = Craft::$app->getRequest();
+    $ticketId = $request->getBodyParam('ticketId');
 
-    if (craft()->elements->deleteElementById($ticketId))
-    {
-      craft()->userSession->setNotice(Craft::t('Ticket deleted.'));
-      $this->redirectToPostedUrl();
+    if ($ticketId) {
+      $ticket = Eventsky::$plugin->ticket->getEventById($ticketId);
+
+      if (!$ticket) {
+        throw new HttpException(404, Craft::t('eventsky', 'translate.ticket.notFound'));
+      }
+    } else {
+      $ticket = new Ticket();
     }
-    else
-    {
-      craft()->userSession->setError(Craft::t('Couldn’t delete ticket.'));
+
+
+    $ticket->title = $request->getBodyParam('title');
+    $ticket->slug = $request->getBodyParam('slug');
+    $ticket->typeId = $request->getBodyParam('typeId');
+    $ticket->description = $request->getBodyParam('description');
+
+    // save values from custom fields to event
+    $ticket->setFieldValuesFromRequest('fields');
+
+    if (($postDate = $request->getBodyParam('postDate')) !== null) {
+      $ticket->postDate = DateTimeHelper::toDateTime($postDate) ?: null;
     }
+    if (($expiryDate = $request->getBodyParam('expiryDate')) !== null) {
+      $ticket->expiryDate = DateTimeHelper::toDateTime($expiryDate) ?: null;
+    }
+    if (($startDate = $request->getBodyParam('startDate')) !== null) {
+      $ticket->startDate = DateTimeHelper::toDateTime($startDate) ?: null;
+    }
+    if (($endDate = $request->getBodyParam('endDate')) !== null) {
+      $ticket->endDate = DateTimeHelper::toDateTime($endDate) ?: null;
+    }
+
+    if (!Craft::$app->getElements()->saveElement($ticket)) {
+      if ($request->getAcceptsJson()) {
+        return $this->asJson([
+          'success' => false,
+          'errors' => $ticket->getErrors(),
+        ]);
+      }
+
+      Craft::$app->getSession()->setError(Craft::t('eventsky', 'translate.ticket.notSaved'));
+
+      // Send the event back to the template
+      Craft::$app->getUrlManager()->setRouteParams([
+        'ticket' => $ticket,
+      ]);
+
+      return null;
+    }
+
+    Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'translate.ticket.saved'));
+
+    return $this->redirectToPostedUrl($ticket);
   }
+
+  /*
+  private function getSiteForNewEvent($site) {
+    $sitesService = Craft::$app->getSites();
+    $siteIds = $sitesService->allSiteIds;
+    if ($site !== null) {
+      $siteHandle = $site;
+      $site = $sitesService->getSiteByHandle($siteHandle);
+      if (!$site) {
+        throw new BadRequestHttpException('Invalid site handle: ' . $siteHandle);
+      }
+    }
+
+    // If there's only one site, go with that
+    if ($site === null && count($siteIds) === 1) {
+      $site = $sitesService->getSiteById($siteIds[0]);
+    }
+
+    // If we still don't know the site, give the user a chance to pick one
+    if ($site === null) {
+      return $this->renderTemplate('_special/sitepicker', [
+        'siteIds' => $siteIds,
+        'baseUrl' => "entries/event/new",
+      ]);
+    }
+
+    return $site;
+  }
+  */
 }

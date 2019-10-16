@@ -1,0 +1,69 @@
+{% import "_includes/forms" as forms %}
+
+<div id="settings" class="meta">
+    {% block settings %}
+        {{ forms.selectField({
+            label: 'translate.tickets.fields.details.tickettype' | t('eventsky'),
+            id: 'typeId',
+            name: 'typeId',
+            value: ticketType.id,
+            options: ticketTypeOptions
+        }) }}
+
+        {{ forms.textField({
+            label: 'translate.tickets.fields.details.slug' | t('eventsky'),
+            site: site,
+            id: 'slug',
+            name: 'slug',
+            value: ticket.slug,
+            placeholder: 'Enter slug' | t('eventsky'),
+            errors: ticket.getErrors('slug') | merge(ticket.getErrors('uri'))
+        }) }}
+
+        {{ forms.dateTimeField({
+            label: 'Post Date' | t('eventsky'),
+            id: 'postDate',
+            name: 'postDate',
+            value: ticket.postDate,
+            errors: ticket.getErrors('postDate')
+        }) }}
+
+        {{ forms.dateTimeField({
+            label: 'Expiry Date' | t('eventsky'),
+            id: 'expiryDate',
+            name: 'expiryDate',
+            value: ticket.expiryDate,
+            errors: ticket.getErrors('expiryDate')
+        }) }}
+
+        {{ forms.lightswitchField({
+            label: isMultiSiteElement ? 'Enabled Globally' | t('app') : 'Enabled' | t('app'),
+            id: 'enabled',
+            name: 'enabled',
+            on: element.enabled,
+            toggle: 'enabledForSite-field'
+        }) }}
+
+        {% if isMultiSiteElement %}
+            {{ forms.lightswitchField({
+                fieldClass: not element.enabled ? 'hidden',
+                label: "Enabled for {site}" | t('app', { site: element.site.name | t('site') }),
+                id: 'enabledForSite',
+                name: 'enabledForSite',
+                on: element.enabledForSite,
+            }) }}
+        {% endif %}
+    {% endblock %}
+</div>
+
+<div class="meta read-only">
+    <div class="data">
+        <h5 class="heading">{{ "Created at"|t('app') }}</h5>
+        <div class="value">{{ element.dateCreated | datetime('short') }}</div>
+    </div>
+    <div class="data">
+        <h5 class="heading">{{ "Updated at"|t('app') }}</h5>
+        <div class="value">{{ element.dateUpdated | datetime('short') }}</div>
+    </div>
+</div>
+
