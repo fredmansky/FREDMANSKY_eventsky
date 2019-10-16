@@ -29,15 +29,18 @@ class TicketTypeService extends Component
     {
         parent::init();
     }
-    
+
     public function getAllTicketTypes(): array
     {
         if ($this->ticketTypes !== null) {
             return $this->ticketTypes;
         }
 
+        $condition = ['eventsky_tickettypes.dateDeleted' => null];
+
         $results = $this->createTicketTypeQuery()
-            ->all();
+          ->where($condition)
+          ->all();
 
         $this->ticketTypes = array_map(function($result) {
             return new TicketType($result);
@@ -126,6 +129,12 @@ class TicketTypeService extends Component
         ->typeId($ticketType->id);
 
       $elementsService = Craft::$app->getElements();
+
+      foreach ($ticketQuery as $ticket) {
+        /** @var Ticket $ticket */
+        $ticket->deletedWithTicketType = true;
+        $elementsService->deleteElement($ticket);
+      }
 
       // Delete the field layout
       if ($ticketType->fieldLayoutId) {
