@@ -5,7 +5,7 @@
 {% set elementType = 'fredmansky\\eventsky\\elements\\Ticket' %}
 
 {% block actionButton %}
-    <a href="{{ url('eventsky/ticket/new') }}" class="btn submit add icon">{{ "translate.ticket.new" | t('eventsky') }}</a>
+    <a href="{{ url('eventsky/ticket/new') }}" class="btn submit add icon">{{ "translate.tickets.new" | t('eventsky') }}</a>
 {% endblock %}
 
 {% block content %}
@@ -23,7 +23,7 @@
             <tbody>
             {% for ticket in tickets %}
                 <tr data-id="{{ ticket.id }}" data-name="{{ ticket.name | t('site') }}">
-                    <th scope="row" data-title="{{ 'translate.tickets.name' | t('eventsky') }}"><a href="{{ ticket.getCpEditUrl() }}">{{ ticket.name | t('site') }}</a></th>
+                    <th scope="row" data-title="{{ 'translate.tickets.title' | t('eventsky') }}"><a href="{{ ticket.getCpEditUrl() }}">{{ ticket.name | t('site') }}</a></th>
                     <td data-title="{{ 'translate.tickets.handle' | t('eventsky') }}"><code>{{ ticket.handle }}</code></td>
                     <td class="thin"><a class="delete icon" title="{{ 'translate.tickets.delete' | t('eventsky') }}" role="button"></a></td>
                 </tr>

@@ -70,7 +70,8 @@ return [
 
     'translate.tickets.displayName' => 'Ticket',
     'translate.tickets.pluralDisplayName' => 'Tickets',
-    'translate.tickets.sideBar.allTickets' => 'All Events',
+    'translate.tickets.sideBar.allTickets' => 'All Tickets',
+    'translate.tickets.sideBar.ticketTypeHeading' => 'Ticket Types',
     'translate.tickets.search.description' => 'Description',
     'translate.tickets.name' => 'Name',
     'translate.tickets.handle' => 'Handle',

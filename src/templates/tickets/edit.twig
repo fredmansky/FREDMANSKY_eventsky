@@ -55,17 +55,44 @@
 
     <div id="fields">
         {{ forms.textField({
-            label: "Title" | t('commerce'),
-            site: ticket.site,
-            id: 'title',
-            name: 'title',
-            value: ticket.title,
-            placeholder: 'Enter title' | t('commerce'),
-            errors: ticket.getErrors('title'),
             first: true,
+            label: "Name"|t('app'),
+            instructions: "What this ticket will be called in the CP."|t('app'),
+            id: 'name',
+            name: 'name',
+            value: ticket.name,
+            errors: ticket.getErrors('name'),
             autofocus: true,
             required: true,
-            maxlength: 255
+        }) }}
+
+        {{ forms.textField({
+            label: "Handle"|t('app'),
+            instructions: "How you’ll refer to this ticket in the templates."|t('app'),
+            id: 'handle',
+            name: 'handle',
+            class: 'code',
+            autocorrect: false,
+            autocapitalize: false,
+            value: ticket.handle,
+            errors: ticket.getErrors('handle'),
+            required: true
+        }) }}
+
+        {{ forms.dateTimeField({
+            label: 'Start Date' | t('eventsky'),
+            id: 'startDate',
+            name: 'startDate',
+            value: ticket.startDate,
+            errors: ticket.getErrors('startDate')
+        }) }}
+
+        {{ forms.dateTimeField({
+            label: 'End Date' | t('eventsky'),
+            id: 'endDate',
+            name: 'endDate',
+            value: ticket.endDate,
+            errors: ticket.getErrors('endDate')
         }) }}
     </div>
 {% endblock %}

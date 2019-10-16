@@ -33,7 +33,11 @@ use yii\db\Exception;
  */
 class Ticket extends Element
 {
-
+    public $id;
+    public $fieldLayoutId;
+    public $name;
+    public $handle;
+    public $uid;
     public $description;
     public $typeId;
     public $startDate;
@@ -262,11 +266,14 @@ class Ticket extends Element
       }
 
       $record->typeId = $this->typeId;
+      $record->name = $this->name;
+      $record->handle = $this->handle;
       $record->description = $this->description;
       $record->startDate = $this->startDate;
       $record->endDate = $this->endDate;
       $record->postDate = $this->postDate;
       $record->expiryDate = $this->expiryDate;
+      $record->dateDeleted = $this->dateDeleted;
 
       $record->save(false);
 

@@ -75,7 +75,7 @@ class TicketsController extends Controller
       }
 
       $ticketType = $ticket->getType();
-      $data['title'] = trim($ticket->title) ?: Craft::t('eventsky', 'translate.ticket.edit');
+      $data['title'] = trim($ticket->name) ?: Craft::t('eventsky', 'translate.ticket.edit');
     } else {
       $request = Craft::$app->getRequest();
       $ticket = new Ticket();
@@ -149,7 +149,7 @@ class TicketsController extends Controller
     $ticketId = $request->getBodyParam('ticketId');
 
     if ($ticketId) {
-      $ticket = Eventsky::$plugin->ticket->getEventById($ticketId);
+      $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
 
       if (!$ticket) {
         throw new HttpException(404, Craft::t('eventsky', 'translate.ticket.notFound'));
@@ -158,8 +158,11 @@ class TicketsController extends Controller
       $ticket = new Ticket();
     }
 
-
-    $ticket->title = $request->getBodyParam('title');
+    $ticket->id = $request->getBodyParam('ticketId');
+    $ticket->name = $request->getBodyParam('name');
+    $ticket->handle = $request->getBodyParam('handle');
+    $ticket->typeId = $request->getBodyParam('typeId');
+    $ticket->title = $request->getBodyParam('name');
     $ticket->slug = $request->getBodyParam('slug');
     $ticket->typeId = $request->getBodyParam('typeId');
     $ticket->description = $request->getBodyParam('description');
@@ -180,6 +183,9 @@ class TicketsController extends Controller
       $ticket->endDate = DateTimeHelper::toDateTime($endDate) ?: null;
     }
 
+    Eventsky::$plugin->ticket->saveTicket($ticket);
+
+    /*
     if (!Craft::$app->getElements()->saveElement($ticket)) {
       if ($request->getAcceptsJson()) {
         return $this->asJson([
@@ -200,7 +206,7 @@ class TicketsController extends Controller
 
     Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'translate.ticket.saved'));
 
-    return $this->redirectToPostedUrl($ticket);
+    return $this->redirectToPostedUrl($ticket);*/
   }
 
   /*

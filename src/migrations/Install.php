@@ -53,6 +53,8 @@ class Install extends Migration
             $this->createTable(Table::TICKETS,
                 [
                   'id' => $this->primaryKey(),
+                  'name' => $this->string(255),
+                  'handle' => $this->string(255),
                   'typeId' => $this->integer()->notNull(),
                   'description' => $this->text(),
                   'startDate' => $this->dateTime()->notNull(),
