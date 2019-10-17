@@ -63,7 +63,7 @@ class Install extends Migration
                   'expiryDate' => $this->dateTime(),
                   'dateCreated' => $this->dateTime()->notNull(),
                   'dateUpdated' => $this->dateTime()->notNull(),
-                  'dateDeleted' => $this->dateTime(),
+                  'dateDeleted' => $this->dateTime()->null(),
 //                  'eventId' => $this->integer()->notNull(),
                   'uid' => $this->uid(),
                 ]

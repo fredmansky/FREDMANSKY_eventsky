@@ -112,6 +112,37 @@ class TicketService extends Component
     return true;
   }
 
+  public function deleteTicketById(int $id): bool
+  {
+    $ticket = $this->getTicketById($id);
+
+    if (!$ticket) {
+      return false;
+    }
+
+    return $this->deleteTicket($ticket);
+  }
+
+  public function deleteTicket(Ticket $ticket): bool
+  {
+    $transaction = Craft::$app->getDb()->beginTransaction();
+    try {
+      Craft::$app->getDb()->createCommand()
+        ->softDelete(Table::TICKETS, ['id' => $ticket->id])
+        ->execute();
+
+      $transaction->commit();
+    } catch (\Throwable $e) {
+      $transaction->rollBack();
+      throw $e;
+    }
+
+    // Clear caches
+    $this->$ticket = null;
+
+    return true;
+  }
+
   private function createTicketQuery(): ActiveQuery
   {
     return TicketRecord::find();

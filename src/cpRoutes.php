@@ -7,6 +7,7 @@ return [
 
     'eventsky/tickets' => 'eventsky/tickets/index',
     'eventsky/ticket/new' => 'eventsky/tickets/edit',
+    'eventsky/ticket/delete/<ticketId:\d+><slug:(?:-[^\/]*)?>' => 'eventsky/tickets/delete',
     'eventsky/ticket/<ticketId:\d+><slug:(?:-[^\/]*)?>' => 'eventsky/tickets/edit',
 
     'eventsky/tickettypes' => 'eventsky/ticket-types/index',

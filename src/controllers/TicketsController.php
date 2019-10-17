@@ -141,7 +141,7 @@ class TicketsController extends Controller
     return $this->renderTemplate('eventsky/tickets/edit', $data);
   }
 
-  public function actionSave()
+  public function actionSave(): Response
   {
     $this->requirePostRequest();
 
@@ -210,9 +210,8 @@ class TicketsController extends Controller
       return null;
     }
 
-    Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'translate.ticket.saved'));
-
-    return $this->redirectToPostedUrl($ticket);*/
+    Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'translate.ticket.saved'));*/
+    return $this->redirectToPostedUrl($ticket);
   }
 
   /*
@@ -243,4 +242,15 @@ class TicketsController extends Controller
     return $site;
   }
   */
+
+  public function actionDelete(): Response
+  {
+    $this->requirePostRequest();
+    $this->requireAcceptsJson();
+
+    $ticketId = Craft::$app->getRequest()->getRequiredBodyParam('id');
+    Eventsky::$plugin->ticket->deleteTicketById($ticketId);
+
+    return $this->asJson(['success' => true]);
+  }
 }
