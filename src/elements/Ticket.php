@@ -15,6 +15,7 @@ use craft\elements\actions\SetStatus;
 use craft\elements\actions\View;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\User;
+use craft\helpers\UrlHelper;
 use DateTime;
 use fredmansky\eventsky\db\Table;
 use fredmansky\eventsky\elements\db\TicketQuery;
@@ -208,12 +209,12 @@ class Ticket extends Element
       // return \Craft::$app->user->checkPermission('edit-ticket:'.$this->getType()->id);
     }
 
-/*    public function getCpEditUrl()
+    public function getCpEditUrl(): string
     {
-      return UrlHelper::cpUrl('eventsky/tickets/' . $this->id);
+      return UrlHelper::cpUrl('eventsky/ticket/' . $this->id);
     }
 
-
+/*
     public function getEditorHtml(): string
     {
         $html = \Craft::$app->getView()->renderTemplateMacro('_includes/forms', 'textField', [

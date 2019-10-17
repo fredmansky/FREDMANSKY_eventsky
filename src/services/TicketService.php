@@ -52,7 +52,6 @@ class TicketService extends Component
   {
     $result = $this->createTicketQuery()
       ->where(['=', 'id', $id])
-      ->with(['fieldLayout'])
       ->one();
 
     if ($result) {
@@ -98,6 +97,7 @@ class TicketService extends Component
     // $ticketRecord->fieldLayoutId = (int) $fieldLayout->id;
     $ticketRecord->name = $ticket->name;
     $ticketRecord->handle = $ticket->handle;
+    $ticketRecord->description = $ticket->description;
     $ticketRecord->typeId = $ticket->typeId;
     $ticketRecord->startDate = $ticket->startDate;
     $ticketRecord->endDate = $ticket->endDate;

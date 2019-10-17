@@ -161,6 +161,7 @@ class TicketsController extends Controller
     $ticket->id = $request->getBodyParam('ticketId');
     $ticket->name = $request->getBodyParam('name');
     $ticket->handle = $request->getBodyParam('handle');
+    $ticket->description = $request->getBodyParam('description');
     $ticket->typeId = $request->getBodyParam('typeId');
     $ticket->title = $request->getBodyParam('name');
     $ticket->slug = $request->getBodyParam('slug');
@@ -173,6 +174,11 @@ class TicketsController extends Controller
     if (($postDate = $request->getBodyParam('postDate')) !== null) {
       $ticket->postDate = DateTimeHelper::toDateTime($postDate) ?: null;
     }
+
+    if ($ticket->postDate === null) {
+      $ticket->postDate = DateTimeHelper::currentUTCDateTime();
+    }
+
     if (($expiryDate = $request->getBodyParam('expiryDate')) !== null) {
       $ticket->expiryDate = DateTimeHelper::toDateTime($expiryDate) ?: null;
     }
