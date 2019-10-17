@@ -82,6 +82,7 @@ return [
     'translate.tickets.fieldLayout.edit' => 'Edit field layout',
     'translate.tickets.delete' => 'Delete',
     'translate.tickets.deleteMessage' => 'Are you sure you want to delete ticket “{ name }”?',
+    'translate.tickets.ticketType' => 'Ticket Type ID',
     'translate.ticket.tab.settings' => 'Settings',
     'translate.ticket.tab.fieldlayout' => 'Field Layout',
     'translate.ticket.tab.ticketData' => 'Ticket Data',

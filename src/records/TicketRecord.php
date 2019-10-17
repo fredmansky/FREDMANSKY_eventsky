@@ -2,9 +2,11 @@
 
 namespace fredmansky\eventsky\records;
 
+use craft\base\Element;
 use craft\db\ActiveRecord;
 use craft\db\SoftDeleteTrait;
 use fredmansky\eventsky\db\Table;
+use yii\db\ActiveQueryInterface;
 
 class TicketRecord extends ActiveRecord
 {
@@ -22,6 +24,6 @@ class TicketRecord extends ActiveRecord
 
   public function getType(): ActiveQueryInterface
   {
-    return $this->hasOne(TicketTypeRecord::class, ['id' => 'tickettypeId']);
+    return $this->hasOne(TicketTypeRecord::class, ['id' => 'typeId']);
   }
 }
