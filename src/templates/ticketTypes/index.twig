@@ -36,7 +36,7 @@
     var adminTable = new Craft.AdminTable({
     tableSelector: '#ticketTypes',
     noItemsSelector: '#noTicketTypes',
-    deleteAction: 'sections/delete-section',
+    deleteAction: 'eventsky/ticket-types/delete',
     confirmDeleteMessage: '{{ "translate.ticketTypes.deleteMessage" | t('eventsky') }}',
     onDeleteItem: function()
     {

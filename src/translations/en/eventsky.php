@@ -107,7 +107,7 @@ return [
     'translate.ticketTypes.fieldLayout' => 'Field layout',
     'translate.ticketTypes.fieldLayout.edit' => 'Edit field layout',
     'translate.ticketTypes.delete' => 'Delete',
-    'translate.ticketTypes.deleteMessage' => 'Are you sure you want to delete “{ name }” and all its events?',
+    'translate.ticketTypes.deleteMessage' => 'Are you sure you want to delete ticket type “{ name }” and all its tickets?',
     'translate.ticketType.tab.settings' => 'Settings',
     'translate.ticketType.tab.fieldlayout' => 'Field Layout',
     'translate.ticketType.fieldLayout.headline' => 'Field layout of event type “{name}”',

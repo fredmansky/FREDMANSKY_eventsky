@@ -108,7 +108,7 @@ class Install extends Migration
                 'fieldLayoutId' => $this->integer()->notNull(),
                 'dateCreated' => $this->dateTime()->notNull(),
                 'dateUpdated' => $this->dateTime()->notNull(),
-                'dateDeleted' => $this->dateTime(),
+                'dateDeleted' => $this->dateTime()->null(),
                 'uid' => $this->uid(),
             ]);
         }
