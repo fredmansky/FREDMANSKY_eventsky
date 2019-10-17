@@ -5,7 +5,11 @@
 {% set elementType = 'fredmansky\\eventsky\\elements\\Ticket' %}
 
 {% block actionButton %}
-    <a href="{{ url('eventsky/ticket/new') }}" class="btn submit add icon">{{ "translate.tickets.new" | t('eventsky') }}</a>
+    {% if ticketTypes %}
+        <a href="{{ url('eventsky/ticket/new') }}" class="btn submit add icon">{{ "translate.tickets.new" | t('eventsky') }}</a>
+    {% else %}
+        Create at least one ticket type first.
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -18,6 +22,7 @@
             <thead>
             <th scope="col">{{ "translate.tickets.name" | t('eventsky') }}</th>
             <th scope="col">{{ "translate.tickets.handle" | t('eventsky') }}</th>
+            <th scope="col">{{ "translate.tickets.ticketType" | t('eventsky') }}</th>
             <td class="thin"></td>
             </thead>
             <tbody>
@@ -25,6 +30,7 @@
                 <tr data-id="{{ ticket.id }}" data-name="{{ ticket.name | t('site') }}">
                     <th scope="row" data-title="{{ 'translate.tickets.title' | t('eventsky') }}"><a href="{{ ticket.getCpEditUrl() }}">{{ ticket.name | t('site') }}</a></th>
                     <td data-title="{{ 'translate.tickets.handle' | t('eventsky') }}"><code>{{ ticket.handle }}</code></td>
+                    <td data-title="{{ 'translate.tickets.typeId' | t('eventsky') }}"><code>{{ ticket.typeId }}</code></td>
                     <td class="thin"><a class="delete icon" title="{{ 'translate.tickets.delete' | t('eventsky') }}" role="button"></a></td>
                 </tr>
             {% endfor %}
