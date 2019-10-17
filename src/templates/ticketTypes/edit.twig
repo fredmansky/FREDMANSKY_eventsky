@@ -20,6 +20,7 @@
             value: ticketType.name,
             errors: ticketType.getErrors('name'),
             autofocus: true,
+            maxlength: 250,
             required: true,
         }) }}
 
@@ -33,6 +34,7 @@
             autocapitalize: false,
             value: ticketType.handle,
             errors: ticketType.getErrors('handle'),
+            maxlength: 250,
             required: true
         }) }}
 

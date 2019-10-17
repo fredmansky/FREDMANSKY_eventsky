@@ -93,7 +93,7 @@ class TicketTypesController extends Controller
     return $this->renderTemplate('eventsky/ticketTypes/edit', $data);
   }
 
-  public function actionSave()
+  public function actionSave(): Response
   {
     $this->requirePostRequest();
 
@@ -119,6 +119,7 @@ class TicketTypesController extends Controller
     $ticketType->setFieldLayout($fieldLayout);
 
     Eventsky::$plugin->ticketType->saveTicketType($ticketType);
+    return $this->redirectToPostedUrl($ticketType);
   }
 
   public function actionDelete(): Response

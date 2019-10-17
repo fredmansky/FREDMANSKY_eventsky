@@ -123,25 +123,25 @@ class TicketTypeService extends Component
     $transaction = Craft::$app->getDb()->beginTransaction();
     try {
 
-      // delete events
-      $ticketQuery = Ticket::find()
-        ->anyStatus()
-        ->typeId($ticketType->id);
+//      // TODO: delete all tickets of ticket type
+//      $ticketQuery = Ticket::find()
+//        ->anyStatus()
+//        ->typeId($ticketType->id);
+//
+//      $elementsService = Craft::$app->getElements();
+//
+//      foreach ($ticketQuery as $ticket) {
+//        /** @var Ticket $ticket */
+//        $ticket->deletedWithTicketType = true;
+//        $elementsService->deleteElement($ticket);
+//      }
+//
+//      // TODO: delete field layout of ticket type
+//      if ($ticketType->fieldLayoutId) {
+//        Craft::$app->getFields()->deleteLayoutById($ticketType->fieldLayoutId);
+//      }
 
-      $elementsService = Craft::$app->getElements();
-
-      foreach ($ticketQuery as $ticket) {
-        /** @var Ticket $ticket */
-        $ticket->deletedWithTicketType = true;
-        $elementsService->deleteElement($ticket);
-      }
-
-      // Delete the field layout
-      if ($ticketType->fieldLayoutId) {
-        Craft::$app->getFields()->deleteLayoutById($ticketType->fieldLayoutId);
-      }
-
-      // Delete the eventType
+      // Delete the ticket type
       Craft::$app->getDb()->createCommand()
         ->softDelete(Table::TICKET_TYPES, ['id' => $ticketType->id])
         ->execute();
