@@ -37,6 +37,7 @@ class TicketQuery extends ElementQuery
     public $name;
     public $description;
     public $typeId;
+    public $eventId;
     public $authorId;
     public $postDate;
     public $expiryDate;
@@ -54,11 +55,11 @@ class TicketQuery extends ElementQuery
         return $this;
     }
 
-    public function __construct($elementType, array $config = [])
+    public function __construct(string $elementType, array $config = [])
     {
       // Default status
       if (!isset($config['status'])) {
-        $config['status'] = ['live'];
+        $config['status'] = TICKET::STATUS_ENABLED;
       }
 
       parent::__construct($elementType, $config);
@@ -70,6 +71,12 @@ class TicketQuery extends ElementQuery
       return $this;
     }
 
+    public function eventId($value)
+    {
+      $this->eventId = $value;
+      return $this;
+    }
+
     protected function beforePrepare(): bool
     {
         // join in the products table
@@ -78,6 +85,7 @@ class TicketQuery extends ElementQuery
         // select the price column
         $this->query->select([
           'eventsky_tickets.typeId',
+          'eventsky_tickets.eventId',
           'eventsky_tickets.name',
           'eventsky_tickets.description',
           'eventsky_tickets.startDate',
@@ -89,6 +97,10 @@ class TicketQuery extends ElementQuery
 
         if ($this->typeId) {
           $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.typeId', $this->typeId));
+        }
+
+        if ($this->eventId) {
+          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.eventId', $this->eventId));
         }
 
         if ($this->name) {

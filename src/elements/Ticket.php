@@ -39,6 +39,7 @@ class Ticket extends Element
     public $uid;
     public $description;
     public $typeId;
+    public $eventId;
     public $startDate;
     public $endDate;
     public $postDate;
@@ -53,6 +54,11 @@ class Ticket extends Element
     static function pluralDisplayName(): string
     {
         return Craft::t('eventsky', 'translate.tickets.pluralDisplayName');
+    }
+
+    public static function refHandle()
+    {
+      return 'ticket';
     }
 
     public static function hasContent(): bool
@@ -73,6 +79,14 @@ class Ticket extends Element
     public static function hasStatuses(): bool
     {
         return true;
+    }
+
+    public static function statuses(): array
+    {
+      return [
+        self::STATUS_ENABLED => Craft::t('app', 'Enabled'),
+        self::STATUS_DISABLED => Craft::t('app', 'Disabled'),
+      ];
     }
 
     public static function find(): ElementQueryInterface
@@ -98,6 +112,21 @@ class Ticket extends Element
       }
 
       return $ticketType;
+    }
+
+    public function getEvent(): Event
+    {
+      if ($this->eventId === null) {
+        throw new InvalidConfigException('Ticket is missing its event ID');
+      }
+
+      $event = Eventsky::$plugin->event->getEventById($this->eventId);
+
+      if (!$event) {
+        throw new InvalidConfigException('Invalid event ID: ' . $this->eventId);
+      }
+
+      return $event;
     }
 
     protected static function defineSources(string $context = null): array
@@ -172,10 +201,10 @@ class Ticket extends Element
     protected static function defineTableAttributes(): array
     {
         return [
+          'id'            => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.id')),
           'name'          => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.name')),
-          'handle'        => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.handle')),
-          // 'event'       => \Craft::t('eventsky', 'EVENT'),
           'typeId'        => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.typeId')),
+          'eventId'       => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.eventId')),
         ];
     }
 
@@ -258,6 +287,7 @@ class Ticket extends Element
       }
 
       $record->typeId = $this->typeId;
+      $record->eventId = $this->eventId;
       $record->name = $this->name;
       $record->handle = $this->handle;
       $record->description = $this->description;

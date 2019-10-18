@@ -99,6 +99,7 @@ class TicketService extends Component
     $ticketRecord->handle = $ticket->handle;
     $ticketRecord->description = $ticket->description;
     $ticketRecord->typeId = $ticket->typeId;
+    $ticketRecord->eventId = $ticket->eventId;
     $ticketRecord->startDate = $ticket->startDate;
     $ticketRecord->endDate = $ticket->endDate;
     $ticketRecord->postDate = $ticket->postDate;
@@ -138,7 +139,7 @@ class TicketService extends Component
     }
 
     // Clear caches
-    $this->$ticket = null;
+    $this->tickets = null;
 
     return true;
   }

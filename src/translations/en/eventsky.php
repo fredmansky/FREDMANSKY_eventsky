@@ -86,6 +86,7 @@ return [
     'translate.tickets.ticketType' => 'Ticket Type ID',
     'translate.tickets.table.name' => 'Title',
     'translate.tickets.table.handle' => 'Handle',
+    'translate.tickets.table.eventId' => 'Event ID',
     'translate.tickets.table.typeId' => 'Ticket Type ID',
 
     'translate.ticket.tab.settings' => 'Settings',
@@ -100,6 +101,7 @@ return [
     'translate.ticket.notFound' => 'Ticket not found.',
     'translate.ticket.fields.details.slug' => 'Slug',
     'translate.ticket.fields.details.tickettype' => 'Ticket Type',
+    'translate.ticket.fields.details.event' => 'Event',
 
     // ------------------------
     // ----- Ticket Types -----

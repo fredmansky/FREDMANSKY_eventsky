@@ -56,6 +56,7 @@ class Install extends Migration
                   'name' => $this->string(255),
                   'handle' => $this->string(255),
                   'typeId' => $this->integer()->notNull(),
+                  'eventId' => $this->integer()->notNull(),
                   'description' => $this->text(),
                   'startDate' => $this->dateTime()->notNull(),
                   'endDate' => $this->dateTime(),
@@ -64,7 +65,6 @@ class Install extends Migration
                   'dateCreated' => $this->dateTime()->notNull(),
                   'dateUpdated' => $this->dateTime()->notNull(),
                   'dateDeleted' => $this->dateTime()->null(),
-//                  'eventId' => $this->integer()->notNull(),
                   'uid' => $this->uid(),
                 ]
             );

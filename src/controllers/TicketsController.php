@@ -60,10 +60,14 @@ class TicketsController extends Controller
     $data = [];
 
     $ticketTypes = Eventsky::$plugin->ticketType->getAllTicketTypes();
-
     if (!$ticketTypes) {
       throw new NotFoundHttpException(Craft::t('eventsky', 'translate.ticketTypes.notFound'));
     }
+
+//    $ticketEvents = Eventsky::$plugin->events->getAllEvents();
+//    if (!$ticketEvents) {
+//      throw new NotFoundHttpException(Craft::t('eventsky', 'translate.events.notFound'));
+//    }
 
     /** @var Ticket $ticket */
     $ticket = null;
@@ -76,11 +80,13 @@ class TicketsController extends Controller
       }
 
       $ticketType = $ticket->getType();
+//      $ticketEvent = $ticket->getEvent();
       $data['title'] = trim($ticket->name) ?: Craft::t('eventsky', 'translate.ticket.edit');
     } else {
       $request = Craft::$app->getRequest();
       $ticket = new Ticket();
       $ticketType = $ticketTypes[0];
+//      $ticketEvent = $ticketEvents[0];
       $ticket->typeId = $request->getQueryParam('typeId', $ticketType->id);
       $ticket->slug = ElementHelper::tempSlug();
 
@@ -94,6 +100,7 @@ class TicketsController extends Controller
 
     $data['ticketId'] = $ticketId;
     $data['ticketType'] = $ticketType;
+//    $data['ticketEvent'] = $ticketEvent;
 
     $data['ticketTypeOptions'] = array_map(function($ticketType) {
       return [
@@ -101,6 +108,13 @@ class TicketsController extends Controller
         'value' => $ticketType->id
       ];
     }, $ticketTypes);
+
+//    $data['ticketEventOptions'] = array_map(function($ticketEvent) {
+//      return [
+//        'label' => $ticketEvent->name,
+//        'value' => $ticketEvent->id
+//      ];
+//    }, $ticketEvents);
 
     $data['ticket'] = $ticket;
     $data['element'] = $ticket;
@@ -164,6 +178,7 @@ class TicketsController extends Controller
     $ticket->handle = $request->getBodyParam('handle');
     $ticket->description = $request->getBodyParam('description');
     $ticket->typeId = $request->getBodyParam('typeId');
+    $ticket->eventId = $request->getBodyParam('eventId');
     $ticket->title = $request->getBodyParam('name');
     $ticket->slug = $request->getBodyParam('slug');
     $ticket->typeId = $request->getBodyParam('typeId');
