@@ -10,7 +10,6 @@ use Craft;
 use craft\base\Element;
 use craft\elements\actions\Edit;
 use craft\elements\actions\NewChild;
-use craft\elements\actions\Restore;
 use craft\elements\actions\SetStatus;
 use craft\elements\actions\View;
 use craft\elements\db\ElementQueryInterface;
@@ -35,7 +34,6 @@ use yii\db\Exception;
 class Ticket extends Element
 {
     public $id;
-    public $fieldLayoutId;
     public $name;
     public $handle;
     public $uid;
@@ -159,14 +157,6 @@ class Ticket extends Element
         'allowDisabledForSite' => true,
       ];
 
-      // Restore
-      $actions[] = $elementsService->createAction([
-        'type' => Restore::class,
-        'successMessage' => Craft::t('app', 'Entries restored.'),
-        'partialSuccessMessage' => Craft::t('app', 'Some entries restored.'),
-        'failMessage' => Craft::t('app', 'Entries not restored.'),
-      ]);
-
       return $actions;
     }
 
@@ -174,6 +164,7 @@ class Ticket extends Element
     {
         return [
           'title'       => \Craft::t('app', 'Title'),
+          'typeId'      => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.search.ticketType')),
           'description' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.search.description')),
         ];
     }
@@ -181,16 +172,16 @@ class Ticket extends Element
     protected static function defineTableAttributes(): array
     {
         return [
-          'title'       => \Craft::t('app', 'Title'),
-          'event'       => \Craft::t('eventsky', 'EVENT'),
-          'ticketType'  => \Craft::t('eventsky', 'TICKET TYPE'),
-          'ticketId'    => \Craft::t('eventsky', 'TICKET ID'),
+          'name'          => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.name')),
+          'handle'        => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.handle')),
+          // 'event'       => \Craft::t('eventsky', 'EVENT'),
+          'typeId'        => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.typeId')),
         ];
     }
 
     protected static function defineSearchableAttributes(): array
     {
-      return ['id', 'title', 'ticketType'];
+      return ['name', 'typeId'];
     }
 
   public function datetimeAttributes(): array

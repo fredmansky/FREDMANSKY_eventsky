@@ -12,6 +12,7 @@
     {% endif %}
 {% endblock %}
 
+{#
 {% block content %}
     <div id="noTickets"{% if tickets %} class="hidden"{% endif %}>
         <p>{{ "No tickets exist yet." | t('eventsky') }}</p>
@@ -38,6 +39,9 @@
         </table>
     {% endif %}
 {% endblock %}
+
+
+#}
 
 {% js %}
     var adminTable = new Craft.AdminTable({

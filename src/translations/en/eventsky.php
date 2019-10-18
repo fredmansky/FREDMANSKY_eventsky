@@ -73,6 +73,7 @@ return [
     'translate.tickets.sideBar.allTickets' => 'All Tickets',
     'translate.tickets.sideBar.ticketTypeHeading' => 'Ticket Types',
     'translate.tickets.search.description' => 'Description',
+    'translate.tickets.search.ticketType' => 'Ticket Type',
     'translate.tickets.name' => 'Name',
     'translate.tickets.handle' => 'Handle',
     'translate.tickets.new' => 'Create a new Ticket',
@@ -83,6 +84,10 @@ return [
     'translate.tickets.delete' => 'Delete',
     'translate.tickets.deleteMessage' => 'Are you sure you want to delete ticket “{ name }”?',
     'translate.tickets.ticketType' => 'Ticket Type ID',
+    'translate.tickets.table.name' => 'Title',
+    'translate.tickets.table.handle' => 'Handle',
+    'translate.tickets.table.typeId' => 'Ticket Type ID',
+
     'translate.ticket.tab.settings' => 'Settings',
     'translate.ticket.tab.fieldlayout' => 'Field Layout',
     'translate.ticket.tab.ticketData' => 'Ticket Data',

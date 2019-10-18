@@ -34,12 +34,19 @@ use fredmansky\eventsky\elements\Ticket;
 class TicketQuery extends ElementQuery
 {
     public $title;
+    public $name;
     public $description;
     public $typeId;
     public $authorId;
     public $postDate;
     public $expiryDate;
     public $dateDeleted;
+
+    public function name($value)
+    {
+        $this->name = $value;
+        return $this;
+    }
 
     public function description($value)
     {
@@ -71,6 +78,7 @@ class TicketQuery extends ElementQuery
         // select the price column
         $this->query->select([
           'eventsky_tickets.typeId',
+          'eventsky_tickets.name',
           'eventsky_tickets.description',
           'eventsky_tickets.startDate',
           'eventsky_tickets.endDate',
@@ -78,6 +86,14 @@ class TicketQuery extends ElementQuery
           'eventsky_tickets.expiryDate',
           'eventsky_tickets.dateDeleted',
         ]);
+
+        if ($this->typeId) {
+          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.typeId', $this->typeId));
+        }
+
+        if ($this->name) {
+          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.name', $this->name));
+        }
 
         if ($this->description) {
           $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.description', $this->description));
