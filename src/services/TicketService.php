@@ -95,32 +95,9 @@ class TicketService extends Component
       $ticket->uid = Db::uidById(Table::TICKET_TYPES, $ticket->id);
     }
 
-    $ticketRecord = TicketRecord::find()
-      ->where(['=', 'id', $ticket->id])
-      ->one();
-
-    if (!$ticketRecord) {
-      $ticketRecord = new TicketRecord();
-    }
-
     $fieldLayout = $ticket->getFieldLayout();
-    \Craft::$app->getFields()->saveLayout($fieldLayout);
 
-    // $ticketRecord->fieldLayoutId = (int) $fieldLayout->id;
-    $ticketRecord->name = $ticket->name;
-    $ticketRecord->handle = $ticket->handle;
-    $ticketRecord->description = $ticket->description;
-    $ticketRecord->typeId = $ticket->typeId;
-    $ticketRecord->eventId = $ticket->eventId;
-    $ticketRecord->startDate = $ticket->startDate;
-    $ticketRecord->endDate = $ticket->endDate;
-    $ticketRecord->postDate = $ticket->postDate;
-    $ticketRecord->expiryDate = $ticket->expiryDate;
-    // $ticketRecord->fieldLayoutId = $ticket->fieldLayoutId;
-    $ticketRecord->uid = $ticket->uid;
-    // $ticketRecord->setFieldLayout($fieldLayout);
-    // $ticketRecord->save();
-
+    Craft::$app->getFields()->saveLayout($fieldLayout);
     Craft::$app->elements->saveElement($ticket);
 
     // @TODO add exceptions when saving is failing

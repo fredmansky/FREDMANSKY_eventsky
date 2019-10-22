@@ -211,6 +211,16 @@ class TicketsController extends Controller
       $ticket->endDate = DateTimeHelper::toDateTime($endDate) ?: null;
     }
 
+    // get field layout tab content
+    $fieldLayoutTabs = $ticket->getFieldLayout()->getTabs();
+
+    foreach ($fieldLayoutTabs as $index => $tab) {
+      foreach ($tab->getFields() as $field) {
+        $content = $request->getBodyParam($field->handle);
+        $ticket[$field->handle] = $content;
+      }
+    }
+
     Eventsky::$plugin->ticket->saveTicket($ticket);
 
     /*
