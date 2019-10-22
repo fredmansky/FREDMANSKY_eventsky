@@ -16,6 +16,7 @@ use fredmansky\eventsky\elements\Ticket;
 use fredmansky\eventsky\models\TicketType;
 use fredmansky\eventsky\records\TicketTypeRecord;
 use yii\db\ActiveQuery;
+use fredmansky\eventsky\Eventsky;
 
 class TicketTypeService extends Component
 {
@@ -122,20 +123,13 @@ class TicketTypeService extends Component
   {
     $transaction = Craft::$app->getDb()->beginTransaction();
     try {
+      $tickets = Eventsky::$plugin->ticket->getTicketsByType($ticketType->id);
 
-//      // TODO: delete all tickets of ticket type
-//      $ticketQuery = Ticket::find()
-//        ->anyStatus()
-//        ->typeId($ticketType->id);
-//
-//      $elementsService = Craft::$app->getElements();
-//
-//      foreach ($ticketQuery as $ticket) {
-//        /** @var Ticket $ticket */
-//        $ticket->deletedWithTicketType = true;
-//        $elementsService->deleteElement($ticket);
-//      }
-//
+      // delete all tickets of ticket type
+      foreach ($tickets as $ticket) {
+        Eventsky::$plugin->ticket->deleteTicketById($ticket->id);
+      }
+
 //      // TODO: delete field layout of ticket type
 //      if ($ticketType->fieldLayoutId) {
 //        Craft::$app->getFields()->deleteLayoutById($ticketType->fieldLayoutId);

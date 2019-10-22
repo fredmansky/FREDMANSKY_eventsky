@@ -61,6 +61,18 @@ class TicketService extends Component
     return null;
   }
 
+  public function getTicketsByType(int $typeId): array
+  {
+    $results = $this->createTicketQuery()
+      ->where(['=', 'typeId', $typeId])
+      ->all();
+
+    $this->tickets = array_map(function($result) {
+      return new Ticket($result);
+    }, $results);
+    return $this->tickets;
+  }
+
   public function saveTicket(Ticket $ticket, bool $runValidation = true)
   {
     $isNewTicket = !$ticket->id;
