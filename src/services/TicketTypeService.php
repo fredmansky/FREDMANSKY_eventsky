@@ -125,15 +125,15 @@ class TicketTypeService extends Component
     try {
       $tickets = Eventsky::$plugin->ticket->getTicketsByType($ticketType->id);
 
-      // delete all tickets of ticket type
+      // Delete all tickets of ticket type
       foreach ($tickets as $ticket) {
         Eventsky::$plugin->ticket->deleteTicketById($ticket->id);
       }
 
-//      // TODO: delete field layout of ticket type
-//      if ($ticketType->fieldLayoutId) {
-//        Craft::$app->getFields()->deleteLayoutById($ticketType->fieldLayoutId);
-//      }
+      // Delete field layout of ticket type
+      if ($ticketType->fieldLayoutId) {
+        Craft::$app->getFields()->deleteLayoutById($ticketType->fieldLayoutId);
+      }
 
       // Delete the ticket type
       Craft::$app->getDb()->createCommand()
