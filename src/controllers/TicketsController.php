@@ -143,6 +143,7 @@ class TicketsController extends Controller
         'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.event')),
       ],
     ];
+
     foreach ($ticketType->getFieldLayout()->getTabs() as $index => $tab) {
       $hasErrors = null;
 
@@ -150,6 +151,11 @@ class TicketsController extends Controller
         'label' => $tab->name,
         'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
         'class' => $hasErrors ? 'error' : null,
+      ];
+
+      $data['tabsFields'][]= [
+        'tab' => $tab->name,
+        'fields' => $tab->getFields(),
       ];
     }
 
