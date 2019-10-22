@@ -119,7 +119,9 @@ class TicketService extends Component
     // $ticketRecord->fieldLayoutId = $ticket->fieldLayoutId;
     $ticketRecord->uid = $ticket->uid;
     // $ticketRecord->setFieldLayout($fieldLayout);
-    $ticketRecord->save();
+    // $ticketRecord->save();
+
+    Craft::$app->elements->saveElement($ticket);
 
     // @TODO add exceptions when saving is failing
     return true;
