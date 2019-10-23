@@ -54,6 +54,14 @@ class TicketService extends Component
       ->where(['=', 'id', $id])
       ->one();
 
+
+    // + getElementById to get element content
+    $elementResult = Craft::$app->getElements()->getElementById($id);
+    // var_dump($elementResult);
+    // die();
+
+    // merge ticket result with element content result
+
     if ($result) {
       return new Ticket($result);
     }
