@@ -7,6 +7,7 @@
 namespace fredmansky\eventsky\controllers;
 
 use Craft;
+// use fredmansky\eventsky\events\TicketEvent;
 use craft\base\Element;
 use craft\base\Field;
 use craft\base\Plugin;
@@ -39,6 +40,8 @@ use yii\web\Response;
  */
 class TicketsController extends Controller
 {
+//  public const EVENT_BEFORE_SWITCH_TICKET_TYPE = 'beforeSwitchTicketType';
+
   public function init()
   {
     $this->requireAdmin();
@@ -160,6 +163,28 @@ class TicketsController extends Controller
         'fields' => $tab->getFields(),
       ];
     }
+
+
+//    // Multiple ticket types?
+//    if (count($ticketTypes) > 1) {
+//      $variables['showTicketTypes'] = true;
+//
+//      foreach ($ticketTypes as $ticketType) {
+//        $variables['ticketTypeOptions'][] = [
+//          'label' => Craft::t('site', $ticketType->name),
+//          'value' => $ticketType->id
+//        ];
+//      }
+//
+//      $this->trigger(self::EVENT_BEFORE_SWITCH_TICKET_TYPE, new TicketEvent([
+//        'ticket' => $ticket,
+//        'ticketType' => $ticketType,
+//        'isNew' => false,
+//        'switchType' => true
+//      ]));
+//    } else {
+//      $variables['showTicketTypes'] = false;
+//    }
 
     return $this->renderTemplate('eventsky/tickets/edit', $data);
   }

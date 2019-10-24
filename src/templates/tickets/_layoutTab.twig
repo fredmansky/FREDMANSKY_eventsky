@@ -7,7 +7,12 @@
     {% set requiredInput = field.required %}
     {% set fieldHandle = field.handle %}
 
-    {#{{ dump(ticketContent[fieldHandle]) }}#}
+    {#
+    {% if ticketContent and ticketContent[fieldHandle] %}
+        {% set fieldValue = ticketContent[fieldHandle] %}
+        {{ dump(fieldValue) }}
+    {% endif %}
+    #}
 
     {% include "_includes/field" with {
         field: input,

@@ -201,15 +201,13 @@ class Ticket extends Element
         return [
           'title'       => \Craft::t('app', 'Title'),
           'typeId'      => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.search.ticketType')),
-          'description' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.search.description')),
         ];
     }
 
     protected static function defineTableAttributes(): array
     {
         return [
-          'id'            => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.id')),
-          'name'          => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.name')),
+          'id'            => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.name')),
           'typeId'        => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.typeId')),
           'eventId'       => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.eventId')),
         ];
