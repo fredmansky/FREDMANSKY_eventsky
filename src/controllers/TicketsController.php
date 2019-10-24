@@ -71,9 +71,11 @@ class TicketsController extends Controller
 
     /** @var Ticket $ticket */
     $ticket = null;
+    $ticketContent = null;
 
     if ($ticketId !== null) {
       $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
+      $data['ticketContent'] = Eventsky::$plugin->ticket->getTicketContentById($ticketId);
 
       if (!$ticket) {
         throw new NotFoundHttpException(Craft::t('eventsky', 'translate.ticket.notFound'));

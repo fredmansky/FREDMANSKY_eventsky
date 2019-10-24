@@ -31,17 +31,6 @@
     </div>
 {% endblock %}
 
-{#{% block main %}#}
-{#        {{ actionInput(saveSourceAction) }}#}
-{#        {{ redirectInput(redirectUrl) }}#}
-
-{#        {% if craft.app.isMultiSite %}#}
-{#            {{ hiddenInput('siteId', element.siteId) }}#}
-{#        {% endif %}#}
-
-{#    {{ parent() }}#}
-{#{% endblock %}#}
-
 {% block content %}
     {{ actionInput('eventsky/tickets/save') }}
     {{ redirectInput('eventsky/tickets') }}
@@ -49,80 +38,11 @@
 
     {% if ticket.id %}<input type="hidden" name="ticketId" value="{{ ticket.id }}">{% endif %}
 
-    {#    {% if craft.app.getIsMultiSite() %}#}
-    {#        <input type="hidden" name="siteId" value="{{ product.siteId }}">#}
-    {#    {% endif %}#}
-
     <div id="fields">
-        {{ forms.textField({
-            first: true,
-            label: "Name"|t('app'),
-            instructions: "What this ticket will be called in the CP."|t('app'),
-            id: 'name',
-            name: 'name',
-            value: ticket.name,
-            errors: ticket.getErrors('name'),
-            autofocus: true,
-            maxlength: 250,
-            required: true,
-        }) }}
-
-        {{ forms.textField({
-            label: "Handle"|t('app'),
-            instructions: "How you’ll refer to this ticket in the templates."|t('app'),
-            id: 'handle',
-            name: 'handle',
-            class: 'code',
-            autocorrect: false,
-            autocapitalize: false,
-            value: ticket.handle,
-            errors: ticket.getErrors('handle'),
-            maxlength: 250,
-            required: true
-        }) }}
-
-        {{ forms.textareaField({
-            label: "Description"|t('app'),
-            instructions: "Description of this ticket."|t('app'),
-            id: 'description',
-            name: 'description',
-            class: 'code',
-            autocorrect: false,
-            autocapitalize: false,
-            value: ticket.description,
-            errors: ticket.getErrors('description'),
-            required: false
-        }) }}
-
-        {{ forms.dateTimeField({
-            label: 'Start Date' | t('eventsky'),
-            id: 'startDate',
-            name: 'startDate',
-            value: ticket.startDate,
-            errors: ticket.getErrors('startDate'),
-            required: true
-        }) }}
-
-        {{ forms.dateTimeField({
-            label: 'End Date' | t('eventsky'),
-            id: 'endDate',
-            name: 'endDate',
-            value: ticket.endDate,
-            errors: ticket.getErrors('endDate')
-        }) }}
+        {% include "eventsky/tickets/_general" %}
 
         {% for tab in tabsFields %}
-            <b>Fields for Tab {{ tab['tab'] }}:</b>
-            {% for field in tab['fields'] %}
-
-                {% set input = craft.fields.getFieldById(field.id) %}
-                {% set requiredInput = field.required %}
-
-                {% include "_includes/field" with {
-                    field: input,
-                    required: requiredInput
-                } only %}
-            {% endfor %}
+            {% include "eventsky/tickets/_layoutTab" with {tab: tab}%}
         {% endfor %}
     </div>
 {% endblock %}

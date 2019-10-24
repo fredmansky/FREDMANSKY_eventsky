@@ -1,0 +1,58 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.textField({
+    first: true,
+    label: "Name"|t('app'),
+    instructions: "What this ticket will be called in the CP."|t('app'),
+    id: 'name',
+    name: 'name',
+    value: ticket.name,
+    errors: ticket.getErrors('name'),
+    autofocus: true,
+    maxlength: 250,
+    required: true,
+}) }}
+
+{{ forms.textField({
+    label: "Handle"|t('app'),
+    instructions: "How you’ll refer to this ticket in the templates."|t('app'),
+    id: 'handle',
+    name: 'handle',
+    class: 'code',
+    autocorrect: false,
+    autocapitalize: false,
+    value: ticket.handle,
+    errors: ticket.getErrors('handle'),
+    maxlength: 250,
+    required: true
+}) }}
+
+{{ forms.textareaField({
+    label: "Description"|t('app'),
+    instructions: "Description of this ticket."|t('app'),
+    id: 'description',
+    name: 'description',
+    class: 'code',
+    autocorrect: false,
+    autocapitalize: false,
+    value: ticket.description,
+    errors: ticket.getErrors('description'),
+    required: false
+}) }}
+
+{{ forms.dateTimeField({
+    label: 'Start Date' | t('eventsky'),
+    id: 'startDate',
+    name: 'startDate',
+    value: ticket.startDate,
+    errors: ticket.getErrors('startDate'),
+    required: true
+}) }}
+
+{{ forms.dateTimeField({
+    label: 'End Date' | t('eventsky'),
+    id: 'endDate',
+    name: 'endDate',
+    value: ticket.endDate,
+    errors: ticket.getErrors('endDate')
+}) }}

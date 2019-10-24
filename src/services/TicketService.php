@@ -20,7 +20,7 @@ use yii\db\ActiveQuery;
 
 class TicketService extends Component
 {
-  public const EVENT_BEFORE_SAVE_TICKET = 'beforeSaveTicketType';
+  public const EVENT_BEFORE_SAVE_TICKET = 'beforeSaveTicket';
 
   /** @var array */
   private $tickets;
@@ -54,16 +54,19 @@ class TicketService extends Component
       ->where(['=', 'id', $id])
       ->one();
 
-
-    // + getElementById to get element content
-    $elementResult = Craft::$app->getElements()->getElementById($id);
-    // var_dump($elementResult);
-    // die();
-
-    // merge ticket result with element content result
-
     if ($result) {
       return new Ticket($result);
+    }
+
+    return null;
+  }
+
+  public function getTicketContentById(int $id): array
+  {
+    $elementResult = Craft::$app->getElements()->getElementById($id)->getFieldValues();
+
+    if ($elementResult) {
+      return $elementResult;
     }
 
     return null;

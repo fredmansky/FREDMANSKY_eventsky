@@ -12,33 +12,6 @@
     {% endif %}
 {% endblock %}
 
-{% block content %}
-    <div id="noTickets"{% if tickets %} class="hidden"{% endif %}>
-        <p>{{ "No tickets exist yet." | t('eventsky') }}</p>
-    </div>
-
-    {% if tickets | length %}
-        <table id="tickets" class="data fullwidth collapsible">
-            <thead>
-            <th scope="col">{{ "translate.tickets.name" | t('eventsky') }}</th>
-            <th scope="col">{{ "translate.tickets.handle" | t('eventsky') }}</th>
-            <th scope="col">{{ "translate.tickets.ticketType" | t('eventsky') }}</th>
-            <td class="thin"></td>
-            </thead>
-            <tbody>
-            {% for ticket in tickets %}
-                <tr data-id="{{ ticket.id }}" data-name="{{ ticket.name | t('site') }}">
-                    <th scope="row" data-title="{{ 'translate.tickets.title' | t('eventsky') }}"><a href="{{ ticket.getCpEditUrl() }}">{{ ticket.name | t('site') }}</a></th>
-                    <td data-title="{{ 'translate.tickets.handle' | t('eventsky') }}"><code>{{ ticket.handle }}</code></td>
-                    <td data-title="{{ 'translate.tickets.typeId' | t('eventsky') }}"><code>{{ ticket.typeId }}</code></td>
-                    <td class="thin"><a class="delete icon" title="{{ 'translate.tickets.delete' | t('eventsky') }}" role="button"></a></td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
-{% endblock %}
-
 {% js %}
     var adminTable = new Craft.AdminTable({
     tableSelector: '#tickets',

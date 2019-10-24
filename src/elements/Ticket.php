@@ -8,6 +8,7 @@ namespace fredmansky\eventsky\elements;
 
 use Craft;
 use craft\base\Element;
+use craft\elements\actions\Delete;
 use craft\elements\actions\Edit;
 use craft\elements\actions\NewChild;
 use craft\elements\actions\SetStatus;
@@ -178,6 +179,12 @@ class Ticket extends Element
       $actions[] = $elementsService->createAction([
         'type' => View::class,
         'label' => Craft::t('app', 'View entry'),
+      ]);
+
+      $actions[] = $elementsService->createAction([
+        'type' => Delete::class,
+        'confirmationMessage' => Craft::t('app', 'Are you sure you want to delete the selected entries?'),
+        'successMessage' => Craft::t('app', 'Entries deleted.'),
       ]);
 
       // Set status

@@ -1,0 +1,16 @@
+{% import "_includes/forms" as forms %}
+
+<b>Fields for Tab {{ tab['tab'] }}:</b>
+{% for field in tab['fields'] %}
+
+    {% set input = craft.fields.getFieldById(field.id) %}
+    {% set requiredInput = field.required %}
+    {% set fieldHandle = field.handle %}
+
+    {#{{ dump(ticketContent[fieldHandle]) }}#}
+
+    {% include "_includes/field" with {
+        field: input,
+        required: requiredInput,
+    } only %}
+{% endfor %}
