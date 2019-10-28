@@ -10,7 +10,7 @@
 
     {% if ticketType.id %}<input type="hidden" name="ticketTypeId" value="{{ ticketType.id }}">{% endif %}
 
-    <div id="eventtype-settings">
+    <div id="tickettype-settings">
         {{ forms.textField({
             first: true,
             label: "Name"|t('app'),
@@ -39,8 +39,8 @@
         }) }}
 
         <hr>
-
     </div>
+
     <div id="tickettype-fieldlayout" class="hidden">
         {% include "_includes/fieldlayoutdesigner" with {
             fieldLayout: fieldlayout,
