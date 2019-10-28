@@ -61,17 +61,6 @@ class TicketService extends Component
     return null;
   }
 
-  public function getTicketContentById(int $id): array
-  {
-    $elementResult = Craft::$app->getElements()->getElementById($id)->getFieldValues();
-
-    if ($elementResult) {
-      return $elementResult;
-    }
-
-    return null;
-  }
-
   public function getTicketsByType(int $typeId): array
   {
     $results = $this->createTicketQuery()

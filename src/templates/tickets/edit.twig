@@ -39,11 +39,35 @@
     {% if ticket.id %}<input type="hidden" name="ticketId" value="{{ ticket.id }}">{% endif %}
 
     <div id="fields">
-        {% include "eventsky/tickets/_general" %}
+        {#
+                {{ forms.textField({
+            label: "Title" | t('commerce'),
+            id: 'title',
+            name: 'title',
+            value: ticket.title,
+            placeholder: 'Enter title' | t('commerce'),
+            errors: ticket.getErrors('title'),
+            first: true,
+            autofocus: true,
+            required: true,
+            maxlength: 255
+        }) }}
+        #}
 
-        {% for tab in tabsFields %}
-            {% include "eventsky/tickets/_layoutTab" with {tab: tab}%}
-        {% endfor %}
+        <div>
+            {% set tabs = ticketType.getFieldLayout().getTabs() %}
+            <div id="tabTicketData">
+                {% include "eventsky/tickets/_tabTicketData" %}
+            </div>
+            {% for tab in tabs %}
+                <div id="{{ ('tab' ~ tab.name) | camel }}" class="hidden">
+                    {% include "_includes/fields" with {
+                        fields: tab.getFields(),
+                        element: ticket,
+                    } only %}
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
 

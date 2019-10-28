@@ -74,11 +74,9 @@ class TicketsController extends Controller
 
     /** @var Ticket $ticket */
     $ticket = null;
-    $ticketContent = null;
 
     if ($ticketId !== null) {
       $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
-      $data['ticketContent'] = Eventsky::$plugin->ticket->getTicketContentById($ticketId);
 
       if (!$ticket) {
         throw new NotFoundHttpException(Craft::t('eventsky', 'translate.ticket.notFound'));
@@ -157,11 +155,6 @@ class TicketsController extends Controller
         'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
         'class' => $hasErrors ? 'error' : null,
       ];
-
-      $data['tabsFields'][]= [
-        'tab' => $tab->name,
-        'fields' => $tab->getFields(),
-      ];
     }
 
 
@@ -214,8 +207,6 @@ class TicketsController extends Controller
     $ticket->eventId = $request->getBodyParam('eventId');
     $ticket->title = $request->getBodyParam('name');
     $ticket->slug = $request->getBodyParam('slug');
-    $ticket->typeId = $request->getBodyParam('typeId');
-    $ticket->description = $request->getBodyParam('description');
 
     // save values from custom fields to event
     $ticket->setFieldValuesFromRequest('fields');
@@ -238,19 +229,6 @@ class TicketsController extends Controller
       $ticket->endDate = DateTimeHelper::toDateTime($endDate) ?: null;
     }
 
-    // get field layout tab content
-    $fieldLayoutTabs = $ticket->getFieldLayout()->getTabs();
-
-    foreach ($fieldLayoutTabs as $index => $tab) {
-      foreach ($tab->getFields() as $field) {
-        $content = $request->getBodyParam($field->handle);
-        $ticket[$field->handle] = $content;
-      }
-    }
-
-    Eventsky::$plugin->ticket->saveTicket($ticket);
-
-    /*
     if (!Craft::$app->getElements()->saveElement($ticket)) {
       if ($request->getAcceptsJson()) {
         return $this->asJson([
@@ -261,7 +239,6 @@ class TicketsController extends Controller
 
       Craft::$app->getSession()->setError(Craft::t('eventsky', 'translate.ticket.notSaved'));
 
-      // Send the event back to the template
       Craft::$app->getUrlManager()->setRouteParams([
         'ticket' => $ticket,
       ]);
@@ -269,38 +246,10 @@ class TicketsController extends Controller
       return null;
     }
 
-    Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'translate.ticket.saved'));*/
+    Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'translate.ticket.saved'));
     return $this->redirectToPostedUrl($ticket);
   }
 
-  /*
-  private function getSiteForNewEvent($site) {
-    $sitesService = Craft::$app->getSites();
-    $siteIds = $sitesService->allSiteIds;
-    if ($site !== null) {
-      $siteHandle = $site;
-      $site = $sitesService->getSiteByHandle($siteHandle);
-      if (!$site) {
-        throw new BadRequestHttpException('Invalid site handle: ' . $siteHandle);
-      }
-    }
-
-    // If there's only one site, go with that
-    if ($site === null && count($siteIds) === 1) {
-      $site = $sitesService->getSiteById($siteIds[0]);
-    }
-
-    // If we still don't know the site, give the user a chance to pick one
-    if ($site === null) {
-      return $this->renderTemplate('_special/sitepicker', [
-        'siteIds' => $siteIds,
-        'baseUrl' => "entries/event/new",
-      ]);
-    }
-
-    return $site;
-  }
-  */
 
   public function actionDelete(): Response
   {
