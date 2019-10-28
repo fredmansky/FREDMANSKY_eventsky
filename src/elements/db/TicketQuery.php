@@ -35,23 +35,15 @@ class TicketQuery extends ElementQuery
 {
     public $title;
     public $name;
-    public $description;
     public $typeId;
     public $eventId;
     public $authorId;
-    public $postDate;
-    public $expiryDate;
+    public $status;
     public $dateDeleted;
 
     public function name($value)
     {
         $this->name = $value;
-        return $this;
-    }
-
-    public function description($value)
-    {
-        $this->description = $value;
         return $this;
     }
 
@@ -87,11 +79,7 @@ class TicketQuery extends ElementQuery
           'eventsky_tickets.typeId',
           'eventsky_tickets.eventId',
           'eventsky_tickets.name',
-          'eventsky_tickets.description',
-          'eventsky_tickets.startDate',
-          'eventsky_tickets.endDate',
-          'eventsky_tickets.postDate',
-          'eventsky_tickets.expiryDate',
+          'eventsky_tickets.status',
           'eventsky_tickets.dateDeleted',
         ]);
 
@@ -105,10 +93,6 @@ class TicketQuery extends ElementQuery
 
         if ($this->name) {
           $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.name', $this->name));
-        }
-
-        if ($this->description) {
-          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.description', $this->description));
         }
 
         if ($this->dateDeleted) {

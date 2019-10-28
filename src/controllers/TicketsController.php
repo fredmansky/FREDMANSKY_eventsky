@@ -93,10 +93,6 @@ class TicketsController extends Controller
       $ticket->typeId = $request->getQueryParam('typeId', $ticketType->id);
       $ticket->slug = ElementHelper::tempSlug();
 
-      // TODO: implement (SS)
-      $ticket->enabled = true;
-      $ticket->enabledForSite = true;
-
       $ticket->setFieldValuesFromRequest('fields');
       $data['title'] = Craft::t('eventsky', 'translate.ticket.new');
     }
@@ -140,10 +136,6 @@ class TicketsController extends Controller
       [
         'label' => Craft::t('eventsky', 'translate.ticket.tab.ticketData'),
         'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.ticketData')),
-      ],
-      [
-        'label' => Craft::t('eventsky', 'translate.ticket.tab.event'),
-        'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.event')),
       ],
     ];
 
@@ -201,8 +193,9 @@ class TicketsController extends Controller
 
     $ticket->id = $request->getBodyParam('ticketId');
     $ticket->name = $request->getBodyParam('name');
-    $ticket->handle = $request->getBodyParam('handle');
-    $ticket->description = $request->getBodyParam('description');
+    // todo: always update handle or keep first handle even if title changes?
+    $ticket->handle = StringHelper::camelCase($ticket->name);
+    $ticket->status = $request->getBodyParam('status');
     $ticket->typeId = $request->getBodyParam('typeId');
     $ticket->eventId = $request->getBodyParam('eventId');
     $ticket->title = $request->getBodyParam('name');
@@ -210,24 +203,6 @@ class TicketsController extends Controller
 
     // save values from custom fields to event
     $ticket->setFieldValuesFromRequest('fields');
-
-    if (($postDate = $request->getBodyParam('postDate')) !== null) {
-      $ticket->postDate = DateTimeHelper::toDateTime($postDate) ?: null;
-    }
-
-    if ($ticket->postDate === null) {
-      $ticket->postDate = DateTimeHelper::currentUTCDateTime();
-    }
-
-    if (($expiryDate = $request->getBodyParam('expiryDate')) !== null) {
-      $ticket->expiryDate = DateTimeHelper::toDateTime($expiryDate) ?: null;
-    }
-    if (($startDate = $request->getBodyParam('startDate')) !== null) {
-      $ticket->startDate = DateTimeHelper::toDateTime($startDate) ?: null;
-    }
-    if (($endDate = $request->getBodyParam('endDate')) !== null) {
-      $ticket->endDate = DateTimeHelper::toDateTime($endDate) ?: null;
-    }
 
     if (!Craft::$app->getElements()->saveElement($ticket)) {
       if ($request->getAcceptsJson()) {

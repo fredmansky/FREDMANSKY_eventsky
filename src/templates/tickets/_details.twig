@@ -2,14 +2,6 @@
 
 <div id="settings" class="meta">
     {% block settings %}
-        {{ forms.selectField({
-            label: 'translate.ticket.fields.details.tickettype' | t('eventsky'),
-            id: 'typeId',
-            name: 'typeId',
-            value: ticketType.id,
-            options: ticketTypeOptions
-        }) }}
-
         {{ forms.textField({
             label: 'translate.ticket.fields.details.slug' | t('eventsky'),
             id: 'slug',
@@ -19,39 +11,27 @@
             errors: ticket.getErrors('slug') | merge(ticket.getErrors('uri'))
         }) }}
 
-        {# TODO: replace forms.textField with forms.selectField for events #}
+        {{ forms.selectField({
+            label: 'translate.ticket.fields.details.tickettype' | t('eventsky'),
+            id: 'typeId',
+            name: 'typeId',
+            value: ticketType.id,
+            options: ticketTypeOptions
+        }) }}
+
+        {# TODO: replace forms.textField with forms.selectField for statuses #}
         {{ forms.textField({
-            label: 'translate.ticket.fields.details.event' | t('eventsky'),
-            instructions: "Event id (switch with event dropdown)."|t('app'),
-            id: 'eventId',
-            name: 'eventId',
-            value: ticket.eventId,
-            errors: ticket.getErrors('eventId'),
+            label: "Status"|t('app'),
+            instructions: "Status of ticket (switch with status dropdown)"|t('app'),
+            id: 'status',
+            name: 'status',
+            class: 'code',
+            autocorrect: false,
+            autocapitalize: false,
+            value: ticket.status,
+            errors: ticket.getErrors('status'),
+            maxlength: 250,
             required: true
-        }) }}
-
-        {{ forms.dateTimeField({
-            label: 'Post Date' | t('eventsky'),
-            id: 'postDate',
-            name: 'postDate',
-            value: ticket.postDate,
-            errors: ticket.getErrors('postDate')
-        }) }}
-
-        {{ forms.dateTimeField({
-            label: 'Expiry Date' | t('eventsky'),
-            id: 'expiryDate',
-            name: 'expiryDate',
-            value: ticket.expiryDate,
-            errors: ticket.getErrors('expiryDate')
-        }) }}
-
-        {{ forms.lightswitchField({
-            label: isMultiSiteElement ? 'Enabled Globally' | t('app') : 'Enabled' | t('app'),
-            id: 'enabled',
-            name: 'enabled',
-            on: element.enabled,
-            toggle: 'enabledForSite-field'
         }) }}
     {% endblock %}
 </div>

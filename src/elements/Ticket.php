@@ -38,13 +38,9 @@ class Ticket extends Element
     public $name;
     public $handle;
     public $uid;
-    public $description;
     public $typeId;
     public $eventId;
-    public $startDate;
-    public $endDate;
-    public $postDate;
-    public $expiryDate;
+    public $status;
     public $dateDeleted;
 
     public static function displayName(): string
@@ -218,16 +214,6 @@ class Ticket extends Element
       return ['name', 'typeId'];
     }
 
-  public function datetimeAttributes(): array
-  {
-    $attributes = parent::datetimeAttributes();
-    $attributes[] = 'postDate';
-    $attributes[] = 'expiryDate';
-    $attributes[] = 'startDate';
-    $attributes[] = 'endDate';
-    return $attributes;
-  }
-
     public function getIsEditable(): bool
     {
       return true;
@@ -268,13 +254,6 @@ class Ticket extends Element
       // Make sure the field layout is set correctly
       $this->fieldLayoutId = $this->getType()->fieldLayoutId;
 
-      if ($this->enabled && !$this->postDate) {
-        // Default the post date to the current date/time
-        $this->postDate = new DateTime();
-        // ...without the seconds
-        $this->postDate->setTimestamp($this->postDate->getTimestamp() - ($this->postDate->getTimestamp() % 60));
-      }
-
       return parent::beforeSave($isNew);
     }
 
@@ -295,11 +274,7 @@ class Ticket extends Element
       $record->eventId = $this->eventId;
       $record->name = $this->name;
       $record->handle = $this->handle;
-      $record->description = $this->description;
-      $record->startDate = $this->startDate;
-      $record->endDate = $this->endDate;
-      $record->postDate = $this->postDate;
-      $record->expiryDate = $this->expiryDate;
+      $record->status = $this->status;
       $record->dateDeleted = $this->dateDeleted;
 
       $record->save(false);
