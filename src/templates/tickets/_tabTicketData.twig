@@ -1,12 +1,11 @@
 {% import "_includes/forms" as forms %}
 
-{# TODO: replace forms.textField with forms.selectField for events #}
-{{ forms.textField({
+{{ forms.selectField({
     label: 'translate.ticket.fields.details.event' | t('eventsky'),
-    instructions: "Event id (switch with event dropdown)."|t('app'),
     id: 'eventId',
     name: 'eventId',
     value: ticket.eventId,
     errors: ticket.getErrors('eventId'),
-    required: true
+    required: true,
+    options: ticketEventOptions
 }) }}

@@ -19,19 +19,12 @@
             options: ticketTypeOptions
         }) }}
 
-        {# TODO: replace forms.textField with forms.selectField for statuses #}
-        {{ forms.textField({
-            label: "Status"|t('app'),
-            instructions: "Status of ticket (switch with status dropdown)"|t('app'),
+        {{ forms.selectField({
+            label: 'translate.ticket.fields.details.status' | t('eventsky'),
             id: 'status',
             name: 'status',
-            class: 'code',
-            autocorrect: false,
-            autocapitalize: false,
             value: ticket.status,
-            errors: ticket.getErrors('status'),
-            maxlength: 250,
-            required: true
+            options: ticketStatusOptions
         }) }}
     {% endblock %}
 </div>

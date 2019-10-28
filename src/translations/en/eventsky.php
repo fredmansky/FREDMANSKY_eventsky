@@ -102,6 +102,7 @@ return [
     'translate.ticket.fields.details.slug' => 'Slug',
     'translate.ticket.fields.details.tickettype' => 'Ticket Type',
     'translate.ticket.fields.details.event' => 'Event',
+    'translate.ticket.fields.details.status' => 'Status',
 
     // ------------------------
     // ----- Ticket Types -----

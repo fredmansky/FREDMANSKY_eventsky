@@ -108,6 +108,36 @@ class TicketsController extends Controller
       ];
     }, $ticketTypes);
 
+    $data['ticketStatusOptions'] = [
+      [
+        'label' => 'Waitlisted',
+        'value' => 'waitlisted',
+      ],
+      [
+        'label' => 'Reserved',
+        'value' => 'reserved',
+      ],
+      [
+        'label' => 'Confirmed',
+        'value' => 'confirmed',
+      ],
+    ];
+
+    $data['ticketEventOptions'] = [
+      [
+        'label' => 'Event one',
+        'value' => 1,
+      ],
+      [
+        'label' => 'Event two',
+        'value' => 2,
+      ],
+      [
+        'label' => 'Event three',
+        'value' => 3,
+      ],
+    ];
+
 //    $data['ticketEventOptions'] = array_map(function($ticketEvent) {
 //      return [
 //        'label' => $ticketEvent->name,
@@ -120,7 +150,7 @@ class TicketsController extends Controller
 
     $data['crumbs'] = [
       [
-        'label' => Craft::t('eventsky', 'translate.ticket.cpTitle'),
+        'label' => Craft::t('eventsky', 'translate.tickets.cpTitle'),
         'url' => UrlHelper::url('eventsky/tickets')
       ],
     ];
