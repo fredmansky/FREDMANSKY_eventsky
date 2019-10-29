@@ -75,6 +75,8 @@ return [
     'translate.eventTypes.handle' => 'Handle',
     'translate.eventTypes.new' => 'Create a new event type',
     'translate.eventTypes.edit' => 'Edit event type',
+    'translate.eventTypes.save.success' => 'Event type saved.',
+    'translate.eventTypes.save.error' => 'Couldn’t save event type.',
     'translate.eventTypes.notFound' => 'Event Type not found.',
     'translate.eventTypes.fieldLayout' => 'Field layout',
     'translate.eventType.fieldLayout.headline' => 'Field layout of event type “{name}”',
@@ -82,7 +84,7 @@ return [
     'translate.eventTypes.delete' => 'Delete',
     'translate.eventType.tab.settings' => 'Settings',
     'translate.eventType.tab.fieldlayout' => 'Field Layout',
-    'translate.eventTypes.deleteMessage' => 'Are you sure you want to delete “{ name }” and all its events?',
+    'translate.eventTypes.deleteMessage' => 'Are you sure you want to delete “{name}“ and all its events?',
 
 
     'translate.fieldlayout.notFound' => 'Field layout not found.',

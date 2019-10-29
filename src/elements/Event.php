@@ -15,6 +15,7 @@ use craft\elements\actions\SetStatus;
 use craft\elements\actions\View;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\User;
+use craft\helpers\UrlHelper;
 use DateTime;
 use fredmansky\eventsky\db\Table;
 use fredmansky\eventsky\elements\db\EventQuery;
@@ -370,14 +371,6 @@ class Event extends Element
 //         ];
 //     }
 
-//     /**
-//      * @inheritdoc
-//      */
-//     protected function previewTargets(): array
-//     {
-//         return $this->getSection()->previewTargets;
-//     }
-
 
 //     public function getFieldLayout()
 //     {
@@ -460,33 +453,21 @@ class Event extends Element
 //         return $status;
 //     }
 
-     /**
-      * @inheritdoc
-      */
      public function getIsEditable(): bool
      {
          return true;
 //         return \Craft::$app->user->checkPermission('edit-event:'.$this->getType()->id);
      }
 
-//     public function getCpEditUrl()
-//     {
-//         $section = $this->getSection();
+     public function getCpEditUrl()
+     {
+         // The slug *might* not be set if this is a Draft and they've deleted it for whatever reason
+         $path = 'eventsky/event/' . $this->id .
+             ($this->slug && strpos($this->slug, '__') !== 0 ? '-' . $this->slug : '');
 
-//         // The slug *might* not be set if this is a Draft and they've deleted it for whatever reason
-//         $path = 'entries/' . $section->handle . '/' . $this->getSourceId() .
-//             ($this->slug && strpos($this->slug, '__') !== 0 ? '-' . $this->slug : '');
-
-//         $params = [];
-//         if (Craft::$app->getIsMultiSite()) {
-//             $params['site'] = $this->getSite()->handle;
-//         }
-//         if ($this->getIsDraft()) {
-//             $params['draftId'] = $this->draftId;
-//         }
-
-//         return UrlHelper::cpUrl($path, $params);
-//     }
+         $params = [];
+         return UrlHelper::cpUrl($path, $params);
+     }
 
 //     /**
 //      * @inheritdoc
@@ -594,19 +575,6 @@ class Event extends Element
 
         parent::afterSave($isNew);
     }
-
-//     /**
-//      * @inheritdoc
-//      */
-//     public function afterPropagate(bool $isNew)
-//     {
-//         parent::afterPropagate($isNew);
-
-//         // Save a new revision?
-//         if ($this->_shouldSaveRevision()) {
-//             Craft::$app->getRevisions()->createRevision($this, $this->revisionCreatorId, $this->revisionNotes);
-//         }
-//     }
 
 //     /**
 //      * @inheritdoc
