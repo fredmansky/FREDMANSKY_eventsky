@@ -4,3 +4,14 @@
 {% set title = "translate.events.title" | t('eventsky') %}
 {% set elementType = 'fredmansky\\eventsky\\elements\\Event' %}
 {#{% set elementType = 'craft\\elements\\Entry' %}#}
+
+{# {% do view.registerTranslations('app', ['New entry']) %}#}
+
+
+{# {% if sectionHandle is defined %}
+    {% js %}
+        window.defaultSectionHandle = '{{ sectionHandle }}';
+    {% endjs %}
+{% endif %} #}
+
+{% do view.registerAssetBundle('fredmansky\\eventsky\\assetbundles\\EventsAsset') -%}
