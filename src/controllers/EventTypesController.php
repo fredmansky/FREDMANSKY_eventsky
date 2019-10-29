@@ -150,7 +150,19 @@ class EventTypesController extends Controller
         $fieldLayout->type = Event::class;
         $eventType->setFieldLayout($fieldLayout);
 
-        Eventsky::$plugin->eventType->saveEventType($eventType);
+        if (!Eventsky::$plugin->eventType->saveEventType($eventType)) {
+            Craft::$app->getSession()->setError(Craft::t('eventsky', 'translate.eventTypes.save.error'));
+
+            // Send the event type back to the template
+            Craft::$app->getUrlManager()->setRouteParams([
+                'eventType' => $eventType,
+            ]);
+
+            return null;
+        }
+
+        Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'translate.eventTypes.save.success'));
+        return $this->redirectToPostedUrl($eventType);
     }
     
     public function actionDelete(): Response
