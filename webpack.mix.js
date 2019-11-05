@@ -17,6 +17,9 @@ Mix.manifest.refresh = _ => void 0
 mix.js('src/resources/src/js/events.js', 'src/resources/dist/js/events.js')
     .sass('src/resources/src/scss/events.scss', 'src/resources/dist/css/events.css');
 
+mix.js('src/web/assets/editticket/src/index.js', 'src/web/assets/editticket/index.js')
+  .sass('src/web/assets/editticket/src/style.scss', 'src/web/assets/editticket/style.css');
+
 // Full API
 // mix.js(src, output);
 // mix.react(src, output); <-- Identical to mix.js(), but registers React Babel compilation.
