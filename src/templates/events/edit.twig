@@ -97,3 +97,9 @@
         window.slugGenerator = new Craft.SlugGenerator('#title', '#slug');
     {% endjs %}
 {% endif %}
+
+{% block initJs %}
+    window.eventTypeSwitcher = new Craft.EventTypeSwitcher();
+{% endblock %}
+
+{% js block('initJs') %}

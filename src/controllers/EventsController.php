@@ -20,11 +20,11 @@ use craft\helpers\StringHelper;
 use craft\models\Section;
 use craft\models\Section_SiteSettings;
 use craft\models\Site;
-use craft\web\assets\editentry\EditEntryAsset;
 use fredmansky\eventsky\elements\Event;
 use fredmansky\eventsky\Eventsky;
 use fredmansky\eventsky\models\EventType;
 use fredmansky\eventsky\models\EventTypeSite;
+use fredmansky\eventsky\web\assets\editevent\EditEventAsset;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 
@@ -61,6 +61,7 @@ class EventsController extends Controller
 
         $eventTypes = Eventsky::$plugin->eventType->getAllEventTypes();
 
+        $this->getView()->registerAssetBundle(EditEventAsset::class);
 
         /** @var Event $event */
         $event = null;
@@ -156,6 +157,35 @@ class EventsController extends Controller
         return $this->renderTemplate('eventsky/events/edit', $data);
     }
 
+    public function actionSwitchEntryType(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        $event = $this->getEventModel();
+        $this->populateEventModel($event);
+
+        $data = [];
+        $data['event'] = $event;
+//
+//        if (($response = $this->_prepEditEntryVariables($variables)) !== null) {
+//            return $response;
+//        }
+
+        $view = $this->getView();
+        $tabsHtml = !empty($variables['tabs']) ? $view->renderTemplate('_includes/tabs', $data) : null;
+//        $fieldsHtml = $view->renderTemplate('entries/_fields', $variables);
+//        $headHtml = $view->getHeadHtml();
+//        $bodyHtml = $view->getBodyHtml();
+//
+        return $this->asJson(compact(
+            'tabsHtml'
+        ));
+//            'fieldsHtml',
+//            'headHtml',
+//            'bodyHtml'
+    }
+
     public function actionSave()
     {
         $this->requirePostRequest();
@@ -247,5 +277,78 @@ class EventsController extends Controller
         }
 
         return $site;
+    }
+
+    private function getEventModel(): Event
+    {
+        $request = Craft::$app->getRequest();
+        $eventId = $request->getBodyParam('eventId');
+        $siteId = $request->getBodyParam('siteId');
+
+        if ($eventId) {
+            $event = Eventsky::$plugin->event->getEventById($eventId);
+
+            if (!$event) {
+                throw new NotFoundHttpException('Event not found');
+            }
+        } else {
+            $event = new Event();
+
+            if ($siteId) {
+                $event->siteId = $siteId;
+            }
+        }
+
+        return $event;
+    }
+
+    private function populateEventModel(Event $event)
+    {
+        $request = Craft::$app->getRequest();
+
+        // Set the entry attributes, defaulting to the existing values for whatever is missing from the post data
+        $entry->typeId = $request->getBodyParam('typeId', $entry->typeId);
+        $entry->slug = $request->getBodyParam('slug', $entry->slug);
+        if (($postDate = $request->getBodyParam('postDate')) !== null) {
+            $entry->postDate = DateTimeHelper::toDateTime($postDate) ?: null;
+        }
+        if (($expiryDate = $request->getBodyParam('expiryDate')) !== null) {
+            $entry->expiryDate = DateTimeHelper::toDateTime($expiryDate) ?: null;
+        }
+        $entry->enabled = (bool)$request->getBodyParam('enabled', $entry->enabled);
+        $entry->enabledForSite = (bool)$request->getBodyParam('enabledForSite', $entry->enabledForSite);
+        $entry->title = $request->getBodyParam('title', $entry->title);
+
+        if (!$entry->typeId) {
+            // Default to the section's first entry type
+            $entry->typeId = $entry->getSection()->getEntryTypes()[0]->id;
+        }
+
+        // Prevent the last entry type's field layout from being used
+        $entry->fieldLayoutId = null;
+
+        $fieldsLocation = $request->getParam('fieldsLocation', 'fields');
+        $entry->setFieldValuesFromRequest($fieldsLocation);
+
+        // Author
+        $authorId = $request->getBodyParam('author', ($entry->authorId ?: Craft::$app->getUser()->getIdentity()->id));
+
+        if (is_array($authorId)) {
+            $authorId = $authorId[0] ?? null;
+        }
+
+        $entry->authorId = $authorId;
+
+        // Parent
+        if (($parentId = $request->getBodyParam('parentId')) !== null) {
+            if (is_array($parentId)) {
+                $parentId = reset($parentId) ?: '';
+            }
+
+            $entry->newParentId = $parentId ?: '';
+        }
+
+        // Revision notes
+        $entry->setRevisionNotes($request->getBodyParam('revisionNotes'));
     }
 }
