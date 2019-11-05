@@ -4,6 +4,7 @@ namespace fredmansky\eventsky\services;
 
 use Craft;
 use craft\base\Component;
+use craft\base\ElementInterface;
 use craft\db\ActiveRecord;
 use craft\db\Query;
 use craft\events\EntryTypeEvent;
@@ -48,17 +49,13 @@ class TicketService extends Component
     return $this->tickets;
   }
 
-  public function getTicketById(int $id): ?Ticket
+  public function getTicketById(int $id): ?ElementInterface
   {
-    $result = $this->createTicketQuery()
-      ->where(['=', 'id', $id])
-      ->one();
-
-    if ($result) {
-      return new Ticket($result);
+    if (!$id) {
+      return null;
     }
 
-    return null;
+    return Craft::$app->getElements()->getElementById($id, Ticket::class);
   }
 
   public function getTicketsByType(int $typeId): array
