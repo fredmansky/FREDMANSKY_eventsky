@@ -36,7 +36,6 @@
             required: true
         }) }}
 
-
         {{ forms.lightswitchField({
             label: 'isWaitingListEnabled?',
             instructions: '',
@@ -52,7 +51,6 @@
             name: 'isRegistrationEnabled',
             on: eventType.isRegistrationEnabled,
         }) }}
-
 
         <hr>
 
@@ -131,7 +129,7 @@
     </div>
     <div id="eventtype-fieldlayout" class="hidden">
         {% include "_includes/fieldlayoutdesigner" with {
-            fieldLayout: craft.app.fields.getLayoutByType('fredmansky\\eventsky\\elements\\Event')
+            fieldLayout: fieldlayout,
         } only %}
     </div>
 {% endblock %}
