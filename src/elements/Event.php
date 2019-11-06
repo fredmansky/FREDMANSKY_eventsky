@@ -9,13 +9,20 @@ namespace fredmansky\eventsky\elements;
 use Craft;
 use craft\base\Element;
 use craft\elements\actions\Edit;
+use craft\elements\actions\NewChild;
 use craft\elements\actions\Restore;
 use craft\elements\actions\SetStatus;
 use craft\elements\actions\View;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\User;
+use craft\helpers\UrlHelper;
 use DateTime;
+use fredmansky\eventsky\db\Table;
 use fredmansky\eventsky\elements\db\EventQuery;
+use fredmansky\eventsky\Eventsky;
+use fredmansky\eventsky\models\EventType;
+use fredmansky\eventsky\records\EventRecord;
+use yii\base\InvalidConfigException;
 use yii\db\Exception;
 
 /**
@@ -25,112 +32,118 @@ use yii\db\Exception;
  */
 class Event extends Element
 {
-    // Constants
-    // =========================================================================
 
-    // Static
-    // =========================================================================
+    public $description;
+    public $typeId;
+//    public $authorId;
+    public $startDate;
+    public $endDate;
+    public $postDate;
+    public $expiryDate;
+//    private $_author;
 
-    /**
-     * @inheritdoc
-     */
     public static function displayName(): string
     {
         return Craft::t('eventsky', 'translate.elements.Event.displayName');
     }
 
-    /**
-     * @inheritdoc
-     */
     public static function pluralDisplayName(): string
     {
         return Craft::t('eventsky', 'translate.elements.Event.pluralDisplayName');
     }
 
-    /**
-     * @inheritdoc
-     */
     public static function hasContent(): bool
     {
         return true;
     }
 
-    /**
-     * @inheritdoc
-     */
     public static function hasTitles(): bool
     {
         return true;
     }
 
-    // /**
-    //  * @inheritdoc
-    //  */
-    // public static function hasUris(): bool
-    // {
-    //     return true;
-    // }
+    public static function hasUris(): bool
+    {
+        return true;
+    }
 
-    // /**
-    //  * @inheritdoc
-    //  */
     // public static function isLocalized(): bool
     // {
     //     return true;
     // }
 
-    /**
-     * @inheritdoc
-     */
     public static function hasStatuses(): bool
     {
         return true;
     }
 
-    /**
-     * @inheritdoc
-     * @return EventQuery The newly created [[EventQuery]] instance.
-     */
     public static function find(): ElementQueryInterface
     {
         return new EventQuery(static::class);
     }
 
-    /**
-     * @inheritdoc
-     */
+    public function getFieldLayout()
+    {
+        return parent::getFieldLayout() ?? $this->getType()->getFieldLayout();
+    }
+
+    public function getType(): EventType
+    {
+        if ($this->typeId === null) {
+            throw new InvalidConfigException('Event is missing its type ID');
+        }
+
+        $eventType = Eventsky::$plugin->eventType->getEventTypeById($this->typeId);
+
+        if (!$eventType) {
+            throw new InvalidConfigException('Invalid event type ID: ' . $this->typeId);
+        }
+
+        return $eventType;
+    }
+
     protected static function defineSources(string $context = null): array
     {
-        return [
+        $sources = [
             [
                 'key' => '*',
                 'label' =>  Craft::t('eventsky', 'translate.elements.Event.sideBar.allEvents'),
                 'criteria' => []
             ],
-//            [
-//                'key' => 'cad',
-//                'label' => 'CAD',
-//                'criteria' => [
-//                    'currency' => 'cad',
-//                ]
-//            ],
-//            [
-//                'key' => 'usd',
-//                'label' => 'USD',
-//                'criteria' => [
-//                    'currency' => 'usd',
-//                ]
-//            ],
+            $sources[] = ['heading' => Craft::t('eventsky', 'translate.elements.Event.sideBar.eventTypeHeading')],
         ];
+
+        $eventTypes = Eventsky::$plugin->eventType->getAllEventTypes();
+        foreach ($eventTypes as &$eventType) {
+            $sources[] = [
+                'key' => $eventType->handle,
+                'label' => $eventType->name,
+                'criteria' => [
+                    'typeId' => $eventType->id,
+                ],
+            ];
+        }
+
+        return $sources;
     }
 
-    /**
-      * @inheritdoc
-      */
     protected static function defineActions(string $source = null): array
     {
         $actions = [];
         $elementsService = Craft::$app->getElements();
+
+        // Create
+        $newChildUrl = 'eventsky/event/new';
+
+//        if (Craft::$app->getIsMultiSite()) {
+//            $newChildUrl .= '?site=' . $site->handle;
+//        }
+
+        $actions[] = $elementsService->createAction([
+            'type' => NewChild::class,
+            'label' => Craft::t('app', 'Create a new child entry'),
+            'newChildUrl' => $newChildUrl,
+        ]);
 
         // Edit
         $actions[] = $elementsService->createAction([
@@ -161,9 +174,6 @@ class Event extends Element
         return $actions;
     }
 
-    /**
-     * @inheritdoc
-     */
     protected static function defineSortOptions(): array
     {
         return [
@@ -172,9 +182,6 @@ class Event extends Element
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
     protected static function defineTableAttributes(): array
     {
         return [
@@ -219,41 +226,8 @@ class Event extends Element
     //     }
     // }
 
-    // Properties
-    // =========================================================================
 
-    /**
-     * @var string Description
-     */
-    public $description;
 
-    /**
-     * @var int|null Type ID
-     */
-    public $typeId;
-
-    /**
-     * @var int|null Author ID
-     */
-    public $authorId;
-
-     /**
-      * @var DateTime|null Post date
-      */
-     public $postDate;
-
-     /**
-      * @var DateTime|null Expiry date
-      */
-     public $expiryDate;
-
-     /**
-      * @var User|null
-      */
-     private $_author;
-
-     // Public Methods
-     // =========================================================================
 
 //     /**
 //      * @inheritdoc
@@ -276,16 +250,15 @@ class Event extends Element
 //         return $names;
 //     }
 
-//     /**
-//      * @inheritdoc
-//      */
-//     public function datetimeAttributes(): array
-//     {
-//         $attributes = parent::datetimeAttributes();
-//         $attributes[] = 'postDate';
-//         $attributes[] = 'expiryDate';
-//         return $attributes;
-//     }
+    public function datetimeAttributes(): array
+    {
+        $attributes = parent::datetimeAttributes();
+        $attributes[] = 'postDate';
+        $attributes[] = 'expiryDate';
+        $attributes[] = 'startDate';
+        $attributes[] = 'endDate';
+        return $attributes;
+    }
 
 //     /**
 //      * @inheritdoc
@@ -398,68 +371,25 @@ class Event extends Element
 //         ];
 //     }
 
-//     /**
-//      * @inheritdoc
-//      */
-//     protected function previewTargets(): array
-//     {
-//         return $this->getSection()->previewTargets;
-//     }
 
-//     /**
-//      * @inheritdoc
-//      */
 //     public function getFieldLayout()
 //     {
-//         return parent::getFieldLayout() ?? $this->getType()->getFieldLayout();
+//         return $this->getType()->getFieldLayout();
 //     }
-
-//     /**
-//      * Returns the entry's section.
-//      *
-//      * ---
-//      * ```php
-//      * $section = $entry->section;
-//      * ```
-//      * ```twig
-//      * {% set section = entry.section %}
-//      * ```
-//      *
-//      * @return Section
-//      * @throws InvalidConfigException if [[sectionId]] is missing or invalid
-//      */
+//
 //     public function getSection(): Section
 //     {
 //         if ($this->sectionId === null) {
 //             throw new InvalidConfigException('Entry is missing its section ID');
 //         }
-
+//
 //         if (($section = Craft::$app->getSections()->getSectionById($this->sectionId)) === null) {
 //             throw new InvalidConfigException('Invalid section ID: ' . $this->sectionId);
 //         }
-
+//
 //         return $section;
 //     }
 
-//     /**
-//      * Returns the entry type.
-//      *
-//      * ---
-//      * ```php
-//      * $entryType = $entry->type;
-//      * ```
-//      * ```twig{1}
-//      * {% switch entry.type.handle %}
-//      *     {% case 'article' %}
-//      *         {% include "news/_article" %}
-//      *     {% case 'link' %}
-//      *         {% include "news/_link" %}
-//      * {% endswitch %}
-//      * ```
-//      *
-//      * @return EntryType
-//      * @throws InvalidConfigException if [[typeId]] is missing or invalid
-//      */
 //     public function getType(): EntryType
 //     {
 //         if ($this->typeId === null) {
@@ -475,42 +405,23 @@ class Event extends Element
 //         return $sectionEntryTypes[$this->typeId];
 //     }
 
-//     /**
-//      * Returns the entry's author.
-//      *
-//      * ---
-//      * ```php
-//      * $author = $entry->author;
-//      * ```
-//      * ```twig
-//      * <p>By {{ entry.author.name }}</p>
-//      * ```
-//      *
-//      * @return User|null
-//      * @throws InvalidConfigException if [[authorId]] is set but invalid
-//      */
 //     public function getAuthor()
 //     {
 //         if ($this->_author !== null) {
 //             return $this->_author;
 //         }
-
+//
 //         if ($this->authorId === null) {
 //             return null;
 //         }
-
+//
 //         if (($this->_author = Craft::$app->getUsers()->getUserById($this->authorId)) === null) {
 //             throw new InvalidConfigException('Invalid author ID: ' . $this->authorId);
 //         }
-
+//
 //         return $this->_author;
 //     }
 
-//     /**
-//      * Sets the entry's author.
-//      *
-//      * @param User|null $author
-//      */
 //     public function setAuthor(User $author = null)
 //     {
 //         $this->_author = $author;
@@ -542,45 +453,21 @@ class Event extends Element
 //         return $status;
 //     }
 
-     /**
-      * @inheritdoc
-      */
      public function getIsEditable(): bool
      {
-         return \Craft::$app->user->checkPermission('edit-event:'.$this->getType()->id);
+         return true;
+//         return \Craft::$app->user->checkPermission('edit-event:'.$this->getType()->id);
      }
 
-//     /**
-//      * @inheritdoc
-//      *
-//      * ---
-//      * ```php
-//      * $url = $entry->cpEditUrl;
-//      * ```
-//      * ```twig{2}
-//      * {% if entry.isEditable %}
-//      *     <a href="{{ entry.cpEditUrl }}">Edit</a>
-//      * {% endif %}
-//      * ```
-//      */
-//     public function getCpEditUrl()
-//     {
-//         $section = $this->getSection();
+     public function getCpEditUrl()
+     {
+         // The slug *might* not be set if this is a Draft and they've deleted it for whatever reason
+         $path = 'eventsky/event/' . $this->id .
+             ($this->slug && strpos($this->slug, '__') !== 0 ? '-' . $this->slug : '');
 
-//         // The slug *might* not be set if this is a Draft and they've deleted it for whatever reason
-//         $path = 'entries/' . $section->handle . '/' . $this->getSourceId() .
-//             ($this->slug && strpos($this->slug, '__') !== 0 ? '-' . $this->slug : '');
-
-//         $params = [];
-//         if (Craft::$app->getIsMultiSite()) {
-//             $params['site'] = $this->getSite()->handle;
-//         }
-//         if ($this->getIsDraft()) {
-//             $params['draftId'] = $this->draftId;
-//         }
-
-//         return UrlHelper::cpUrl($path, $params);
-//     }
+         $params = [];
+         return UrlHelper::cpUrl($path, $params);
+     }
 
 //     /**
 //      * @inheritdoc
@@ -622,68 +509,72 @@ class Event extends Element
 //         return parent::tableAttributeHtml($attribute);
 //     }
 
-    /*
-     * @inheritdoc
-     */
-    public function getEditorHtml(): string
+
+//    public function getEditorHtml(): string
+//    {
+//        $html = \Craft::$app->getView()->renderTemplateMacro('_includes/forms', 'textField', [
+//            [
+//                'label' => \Craft::t('app', 'Title'),
+//                'siteId' => $this->siteId,
+//                'id' => 'title',
+//                'name' => 'title',
+//                'value' => $this->title,
+//                'errors' => $this->getErrors('title'),
+//                'first' => true,
+//                'autofocus' => true,
+//                'required' => true
+//            ]
+//        ]);
+//
+//        // ...
+//
+//        $html .= parent::getEditorHtml();
+//
+//        return $html;
+//    }
+
+
+    public function beforeSave(bool $isNew): bool
     {
-        $html = \Craft::$app->getView()->renderTemplateMacro('_includes/forms', 'textField', [
-            [
-                'label' => \Craft::t('app', 'Title'),
-                'siteId' => $this->siteId,
-                'id' => 'title',
-                'name' => 'title',
-                'value' => $this->title,
-                'errors' => $this->getErrors('title'),
-                'first' => true,
-                'autofocus' => true,
-                'required' => true
-            ]
-        ]);
+        // Make sure the field layout is set correctly
+        $this->fieldLayoutId = $this->getType()->fieldLayoutId;
 
-        // ...
+        if ($this->enabled && !$this->postDate) {
+            // Default the post date to the current date/time
+            $this->postDate = new DateTime();
+            // ...without the seconds
+            $this->postDate->setTimestamp($this->postDate->getTimestamp() - ($this->postDate->getTimestamp() % 60));
+        }
 
-        $html .= parent::getEditorHtml();
-
-        return $html;
+        return parent::beforeSave($isNew);
     }
 
-    /**
-     * @inheritdoc
-     * @throws Exception
-     */
     public function afterSave(bool $isNew)
     {
-        if ($isNew) {
-            \Craft::$app->db->createCommand()
-                ->insert('{{%eventsky_events}}', [
-                    'id' => $this->id,
-                    'description' => $this->description,
-                ])
-                ->execute();
+        if (!$isNew) {
+            $record = EventRecord::findOne($this->id);
+
+            if (!$record) {
+                throw new Exception('Invalid event ID: ' . $this->id);
+            }
         } else {
-            \Craft::$app->db->createCommand()
-                ->update('{{%eventsky_events}}', [
-                    'description' => $this->description,
-                ], ['id' => $this->id])
-                ->execute();
+            $record = new EventRecord();
+            $record->id = $this->id;
         }
+
+        $record->typeId = $this->typeId;
+        $record->description = $this->description;
+        $record->startDate = $this->startDate;
+        $record->endDate = $this->endDate;
+        $record->postDate = $this->postDate;
+        $record->expiryDate = $this->expiryDate;
+
+        $record->save(false);
+
+        $this->id = $record->id;
 
         parent::afterSave($isNew);
     }
-
-//     /**
-//      * @inheritdoc
-//      */
-//     public function afterPropagate(bool $isNew)
-//     {
-//         parent::afterPropagate($isNew);
-
-//         // Save a new revision?
-//         if ($this->_shouldSaveRevision()) {
-//             Craft::$app->getRevisions()->createRevision($this, $this->revisionCreatorId, $this->revisionNotes);
-//         }
-//     }
 
 //     /**
 //      * @inheritdoc
@@ -739,21 +630,6 @@ class Event extends Element
 //         }
 
 //         parent::afterRestore();
-//     }
-
-//     /**
-//      * @inheritdoc
-//      */
-//     public function afterMoveInStructure(int $structureId)
-//     {
-//         // Was the entry moved within its section's structure?
-//         $section = $this->getSection();
-
-//         if ($section->type == Section::TYPE_STRUCTURE && $section->structureId == $structureId) {
-//             Craft::$app->getElements()->updateElementSlugAndUri($this, true, true, true);
-//         }
-
-//         parent::afterMoveInStructure($structureId);
 //     }
 
 //     // Private Methods
@@ -820,20 +696,8 @@ class Event extends Element
 //         return $this->newParentId != $oldParentId;
 //     }
 
-//     /**
-//      * Returns whether the entry should be saving revisions on save.
-//      *
-//      * @return bool
-//      */
-//     private function _shouldSaveRevision(): bool
-//     {
-//         return (
-//             $this->id &&
-//             !$this->propagating &&
-//             !$this->resaving &&
-//             !$this->getIsDraft() &&
-//             !$this->getIsRevision() &&
-//             $this->getSection()->enableVersioning
-//         );
-//     }
+    private function _shouldSaveRevision(): bool
+    {
+        return false;
+    }
 }

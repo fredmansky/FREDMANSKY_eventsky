@@ -101,30 +101,16 @@ class EventType extends Model
         return $rules;
     }
 
-    /**
-     * Use the handle as the string representation.
-     *
-     * @return string
-     */
     public function __toString(): string
     {
         return (string)$this->handle ?: static::class;
     }
 
-    /**
-     * Returns the entry’s CP edit URL.
-     *
-     * @return string
-     */
     public function getCpEditUrl(): string
     {
         return UrlHelper::cpUrl('eventsky/eventtype/' . $this->id);
     }
 
-
-    /**
-     * @return EventTypeSite[]
-     */
     public function getEventTypeSites(): array
     {
         if ($this->eventTypeSites !== null) {

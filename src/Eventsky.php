@@ -14,13 +14,8 @@ namespace fredmansky\eventsky;
 use Craft;
 use craft\base\Plugin;
 use craft\events\RegisterUrlRulesEvent;
-use craft\services\Plugins;
-use craft\events\PluginEvent;
-
-use craft\events\RegisterCpNavItemsEvent;
-use craft\web\twig\variables\Cp;
-
 use craft\web\UrlManager;
+use fredmansky\eventsky\services\EventService;
 use fredmansky\eventsky\services\EventTypeService;
 use fredmansky\eventsky\services\TicketTypeService;
 use fredmansky\vidsky\services\Video;
@@ -44,6 +39,7 @@ class Eventsky extends Plugin
         $this->setComponents([
             'eventType' => EventTypeService::class,
             'ticketType' => TicketTypeService::class,
+            'event' => EventService::class,
         ]);
     }
 

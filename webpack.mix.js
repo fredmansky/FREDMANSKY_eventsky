@@ -14,8 +14,11 @@ Mix.manifest.refresh = _ => void 0
  |
  */
 
-mix.js('src/resources/src/js/events.js', 'src/resources/dist/js/events.js')
-    .sass('src/resources/src/scss/events.scss', 'src/resources/dist/css/events.css');
+// mix.js('src/resources/src/js/events.js', 'src/resources/dist/js/events.js')
+//     .sass('src/resources/src/scss/events.scss', 'src/resources/dist/css/events.css');
+
+mix.js('src/web/assets/editevent/src/index.js', 'src/web/assets/editevent/index.js')
+    .sass('src/web/assets/editevent/src/style.scss', 'src/web/assets/editevent/style.css');
 
 // Full API
 // mix.js(src, output);

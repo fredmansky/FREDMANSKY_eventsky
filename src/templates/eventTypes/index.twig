@@ -21,8 +21,8 @@
             </thead>
             <tbody>
             {% for eventType in eventTypes %}
-                <tr data-id="{{ eventType.id }}" data-name="{{ eventType.name | t('site') }}">
-                    <th scope="row" data-title="{{ 'translate.eventTypes.name' | t('eventsky') }}"><a href="{{ eventType.getCpEditUrl() }}">{{ eventType.name | t('site') }}</a></th>
+                <tr data-id="{{ eventType.id }}" data-uid="{{ eventType.uid }}" data-name="{{ eventType.name }}">
+                    <th scope="row" data-title="{{ 'translate.eventTypes.name' | t('eventsky') }}"><a href="{{ eventType.getCpEditUrl() }}">{{ eventType.name }}</a></th>
                     <td data-title="{{ 'translate.eventTypes.handle' | t('eventsky') }}"><code>{{ eventType.handle }}</code></td>
                     <td class="thin"><a class="delete icon" title="{{ 'translate.eventTypes.delete' | t('eventsky') }}" role="button"></a></td>
                 </tr>
