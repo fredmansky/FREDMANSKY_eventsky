@@ -34,31 +34,40 @@ use fredmansky\eventsky\elements\Ticket;
 class TicketQuery extends ElementQuery
 {
     public $title;
-    public $description;
-    // public $typeId;
+    public $name;
+    public $typeId;
+    public $eventId;
+    public $authorId;
+    public $status;
+    public $dateDeleted;
 
-    public function description($value)
+    public function name($value)
     {
-        $this->description = $value;
+        $this->name = $value;
         return $this;
     }
 
-    public function __construct($elementType, array $config = [])
+    public function __construct(string $elementType, array $config = [])
     {
       // Default status
       if (!isset($config['status'])) {
-        $config['status'] = ['live'];
+        $config['status'] = TICKET::STATUS_ENABLED;
       }
 
       parent::__construct($elementType, $config);
     }
 
-    /*
     public function typeId($value)
     {
       $this->typeId = $value;
       return $this;
-    }*/
+    }
+
+    public function eventId($value)
+    {
+      $this->eventId = $value;
+      return $this;
+    }
 
     protected function beforePrepare(): bool
     {
@@ -67,22 +76,27 @@ class TicketQuery extends ElementQuery
 
         // select the price column
         $this->query->select([
-            'eventsky_tickets.id',
-            // 'eventsky_tickets.typeId',
-            'eventsky_tickets.description',
+          'eventsky_tickets.typeId',
+          'eventsky_tickets.eventId',
+          'eventsky_tickets.name',
+          'eventsky_tickets.status',
+          'eventsky_tickets.dateDeleted',
         ]);
 
-        if ($this->id) {
-          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.id', $this->id));
-        }
-
-        /*
         if ($this->typeId) {
           $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.typeId', $this->typeId));
-        }*/
+        }
 
-        if ($this->description) {
-          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.description', $this->description));
+        if ($this->eventId) {
+          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.eventId', $this->eventId));
+        }
+
+        if ($this->name) {
+          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.name', $this->name));
+        }
+
+        if ($this->dateDeleted) {
+          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.dateDeleted', $this->dateDeleted));
         }
         return parent::beforePrepare();
     }

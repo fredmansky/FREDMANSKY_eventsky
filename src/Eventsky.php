@@ -17,6 +17,7 @@ use craft\events\RegisterUrlRulesEvent;
 use craft\web\UrlManager;
 use fredmansky\eventsky\services\EventService;
 use fredmansky\eventsky\services\EventTypeService;
+use fredmansky\eventsky\services\TicketService;
 use fredmansky\eventsky\services\TicketTypeService;
 use fredmansky\vidsky\services\Video;
 use yii\base\Event;
@@ -37,9 +38,10 @@ class Eventsky extends Plugin
 
         $this->installEventListeners();
         $this->setComponents([
-            'eventType' => EventTypeService::class,
-            'ticketType' => TicketTypeService::class,
             'event' => EventService::class,
+            'eventType' => EventTypeService::class,
+            'ticket' => TicketService::class,
+            'ticketType' => TicketTypeService::class,
         ]);
     }
 

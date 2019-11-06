@@ -49,19 +49,19 @@ class Install extends Migration
             ]);
         }
 
-        if (!$this->db->tableExists('{{%eventsky_tickets}}')) {
-            $this->createTable(
-                '{{%eventsky_tickets}}',
+        if (!$this->db->tableExists(Table::TICKETS)) {
+            $this->createTable(Table::TICKETS,
                 [
-                    'id' => $this->primaryKey(),
-                    'ticketTypeId' => $this->integer()->notNull(),
-                    'eventId' => $this->integer()->notNull(),
-                    'authorId' => $this->integer(),
-                    'description' => $this->string(),
-                    'startDate' => $this->dateTime()->notNull(),
-                    'endDate' => $this->dateTime(),
-                    'dateCreated' => $this->dateTime()->notNull(),
-                    'dateUpdated' => $this->dateTime()->notNull(),
+                  'id' => $this->primaryKey(),
+                  'name' => $this->string(255),
+                  'handle' => $this->string(255),
+                  'typeId' => $this->integer()->notNull(),
+                  'eventId' => $this->integer()->notNull(),
+                  'status' => $this->text(),
+                  'dateCreated' => $this->dateTime()->notNull(),
+                  'dateUpdated' => $this->dateTime()->notNull(),
+                  'dateDeleted' => $this->dateTime()->null(),
+                  'uid' => $this->uid(),
                 ]
             );
         }

@@ -1,0 +1,101 @@
+{% extends '_layouts/cp' %}
+{% import "_includes/forms" as forms %}
+
+{% set selectedSubnavItem = 'tickets' %}
+{% set fullPageForm = true %}
+
+{% block header %}
+    <div class="flex flex-nowrap">
+        {{ block('pageTitle') }}
+        {{ block('contextMenu') }}
+    </div>
+    <div class="flex">
+        <div class="btngroup">
+            {% if shareUrl is defined %}
+                <a href="{{ shareUrl }}" class="btn sharebtn"
+                   target="_blank">{{ 'Share'|t('app') }}</a>
+            {% endif %}
+        </div>
+
+        {{ block('actionButton') }}
+    </div>
+{% endblock %}
+
+{% block contextMenu %}
+    {#    {% include "_includes/revisionmenu" %}#}
+{% endblock %}
+
+{% block actionButton %}
+    <div id="save-btn-container" class="btngroup submit">
+        <input type="submit" class="btn submit" value="{{ 'Save' | t('app', { type: element.displayName() }) }}">
+    </div>
+{% endblock %}
+
+{% block content %}
+    {{ actionInput('eventsky/tickets/save') }}
+    {{ redirectInput('eventsky/tickets') }}
+    {{ csrfInput() }}
+
+    {% if ticket.id %}<input type="hidden" name="ticketId" value="{{ ticket.id }}">{% endif %}
+
+    <div id="fields">
+        {{ forms.textField({
+            first: true,
+            label: "Title"|t('app'),
+            instructions: "What this ticket will be called in the CP."|t('app'),
+            id: 'name',
+            name: 'name',
+            value: ticket.name,
+            errors: ticket.getErrors('name'),
+            autofocus: true,
+            maxlength: 250,
+            required: true,
+        }) }}
+
+        {#
+                {{ forms.textField({
+            label: "Title" | t('commerce'),
+            id: 'title',
+            name: 'title',
+            value: ticket.title,
+            placeholder: 'Enter title' | t('commerce'),
+            errors: ticket.getErrors('title'),
+            first: true,
+            autofocus: true,
+            required: true,
+            maxlength: 255
+        }) }}
+        #}
+
+        <div>
+            {% set tabs = ticketType.getFieldLayout().getTabs() %}
+            <div id="tabTicketData">
+                {% include "eventsky/tickets/_tabTicketData" %}
+            </div>
+            {% for tab in tabs %}
+                <div id="{{ ('tab' ~ tab.name) | camel }}" class="hidden">
+                    {% include "_includes/fields" with {
+                        fields: tab.getFields(),
+                        element: ticket,
+                    } only %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block details %}
+    {% include "eventsky/tickets/_details" %}
+{% endblock %}
+
+{% if not ticket.slug %}
+    {% js %}
+        window.slugGenerator = new Craft.SlugGenerator('#title', '#slug');
+    {% endjs %}
+{% endif %}
+
+{% block initJs %}
+    window.ticketTypeSwitcher = new Craft.TicketTypeSwitcher();
+{% endblock %}
+
+{% js block('initJs') %}
