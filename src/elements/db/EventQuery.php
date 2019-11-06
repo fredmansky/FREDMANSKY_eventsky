@@ -65,12 +65,16 @@ class EventQuery extends ElementQuery
 
     protected function beforePrepare(): bool
     {
-        // join in the products table
+        // join in the event table
         $this->joinElementTable('eventsky_events');
 
-        // select the price column
         $this->query->select([
+            'eventsky_events.typeId',
             'eventsky_events.description',
+            'eventsky_events.startDate',
+            'eventsky_events.endDate',
+            'eventsky_events.postDate',
+            'eventsky_events.expiryDate',
         ]);
 
         if ($this->description) {
@@ -79,5 +83,4 @@ class EventQuery extends ElementQuery
 
         return parent::beforePrepare();
     }
-
 }

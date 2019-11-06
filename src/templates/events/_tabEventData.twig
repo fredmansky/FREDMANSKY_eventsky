@@ -1,0 +1,51 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.dateTimeField({
+    label: 'translate.events.fields.eventStart' | t('eventsky'),
+    id: 'startDate',
+    name: 'startDate',
+    value: event.startDate,
+    errors: event.getErrors('startDate')
+}) }}
+
+{{ forms.dateTimeField({
+    label: 'translate.events.fields.eventEnd' | t('eventsky'),
+    id: 'endDate',
+    name: 'endDate',
+    value: event.endDate,
+    errors: event.getErrors('endDate')
+}) }}
+
+{{ forms.textareaField({
+    label: 'translate.events.fields.eventDescription' | t('eventsky'),
+    site: site,
+    id: 'description',
+    name: 'description',
+    rows: 4,
+    value: event.description,
+    placeholder: 'translate.events.fields.placeholder.eventDescription' | t('eventsky'),
+    errors: event.getErrors('description') | merge(event.getErrors('uri'))
+}) }}
+
+{#<div class="field" id="assetId-field">#}
+{#    <div class="heading">#}
+{#        <label for="assetId">Image</label>#}
+{#    </div>#}
+{#    <div class="input">#}
+{#        {% if assetsSourceExists %}#}
+{#            {{ forms.elementSelect({#}
+{#                elements: elements,#}
+{#                id: 'assetId',#}
+{#                name: 'assetId',#}
+{#                elementType: elementType,#}
+{#                criteria: {"kind":[],"localeEnabled":null,"locale":"en_us"},#}
+{#                sourceElementId: assetId,#}
+{#                jsClass: 'Craft.AssetSelectInput',#}
+{#                addButtonLabel: 'Select Image',#}
+{#                limit: 1,#}
+{#            }) }}#}
+{#        {% else %}#}
+{#            <p class="error">No assets sources currently exist. <a href="{{ newAssetsSourceUrl }}">Create one now...</a></p>#}
+{#        {% endif %}#}
+{#    </div>#}
+{#</div>#}

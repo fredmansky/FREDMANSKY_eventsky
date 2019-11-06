@@ -86,36 +86,80 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/resources/src/js/_event-index.js":
-/*!**********************************************!*\
-  !*** ./src/resources/src/js/_event-index.js ***!
-  \**********************************************/
+/***/ "./src/web/assets/editevent/src/EntryTypeSwitcher.js":
+/*!***********************************************************!*\
+  !*** ./src/web/assets/editevent/src/EntryTypeSwitcher.js ***!
+  \***********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-console.log('here!');
+(function ($) {
+  /** global: Craft */
+
+  /** global: Garnish */
+  Craft.EventTypeSwitcher = Garnish.Base.extend({
+    $typeSelect: null,
+    $spinner: null,
+    init: function init() {
+      this.$typeSelect = $('#typeId');
+      this.$spinner = $('<div class="spinner hidden"/>').insertAfter(this.$typeSelect.parent());
+      this.addListener(this.$typeSelect, 'change', 'onTypeChange');
+    },
+    onTypeChange: function onTypeChange(ev) {
+      this.$spinner.removeClass('hidden');
+      console.log('FORM', Craft.cp.$primaryForm.serialize());
+      Craft.postActionRequest('eventsky/events/switch-entry-type', Craft.cp.$primaryForm.serialize(), $.proxy(function (response, textStatus) {
+        this.$spinner.addClass('hidden');
+        console.log('response', textStatus);
+
+        if (textStatus === 'success') {
+          this.trigger('beforeTypeChange');
+          var $tabs = $('#tabs');
+
+          if ($tabs.length) {
+            $tabs.replaceWith(response.tabsHtml);
+          } else {
+            $(response.tabsHtml).insertBefore($('#content'));
+          } // $('#fields').html(response.fieldsHtml);
+          // Craft.initUiElements($('#fields'));
+          // Craft.appendHeadHtml(response.headHtml);
+          // Craft.appendFootHtml(response.bodyHtml);
+          // Update the slug generator with the new title input
+
+
+          if (typeof slugGenerator !== 'undefined') {
+            slugGenerator.setNewSource('#title');
+          }
+
+          Craft.cp.initTabs();
+          this.trigger('typeChange');
+        }
+      }, this));
+    }
+  });
+})(jQuery);
 
 /***/ }),
 
-/***/ "./src/resources/src/js/events.js":
-/*!****************************************!*\
-  !*** ./src/resources/src/js/events.js ***!
-  \****************************************/
+/***/ "./src/web/assets/editevent/src/index.js":
+/*!***********************************************!*\
+  !*** ./src/web/assets/editevent/src/index.js ***!
+  \***********************************************/
 /*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _event_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_event-index */ "./src/resources/src/js/_event-index.js");
-/* harmony import */ var _event_index__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_event_index__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _EntryTypeSwitcher__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./EntryTypeSwitcher */ "./src/web/assets/editevent/src/EntryTypeSwitcher.js");
+/* harmony import */ var _EntryTypeSwitcher__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_EntryTypeSwitcher__WEBPACK_IMPORTED_MODULE_0__);
 
 
 /***/ }),
 
-/***/ "./src/resources/src/scss/events.scss":
-/*!********************************************!*\
-  !*** ./src/resources/src/scss/events.scss ***!
-  \********************************************/
+/***/ "./src/web/assets/editevent/src/style.scss":
+/*!*************************************************!*\
+  !*** ./src/web/assets/editevent/src/style.scss ***!
+  \*************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -124,14 +168,14 @@ __webpack_require__.r(__webpack_exports__);
 /***/ }),
 
 /***/ 0:
-/*!***********************************************************************************!*\
-  !*** multi ./src/resources/src/js/events.js ./src/resources/src/scss/events.scss ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** multi ./src/web/assets/editevent/src/index.js ./src/web/assets/editevent/src/style.scss ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/fred/Code/FREDMANSKY_eventplugin/src/resources/src/js/events.js */"./src/resources/src/js/events.js");
-module.exports = __webpack_require__(/*! /Users/fred/Code/FREDMANSKY_eventplugin/src/resources/src/scss/events.scss */"./src/resources/src/scss/events.scss");
+__webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editevent/src/index.js */"./src/web/assets/editevent/src/index.js");
+module.exports = __webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editevent/src/style.scss */"./src/web/assets/editevent/src/style.scss");
 
 
 /***/ })
