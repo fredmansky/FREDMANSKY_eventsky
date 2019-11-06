@@ -50,9 +50,20 @@ class Install extends Migration
         }
 
         if (!$this->db->tableExists('{{%eventsky_tickets}}')) {
-            $this->createTable('{{%eventsky_tickets}}', [
-                'id' => $this->primaryKey(),
-            ]);
+            $this->createTable(
+                '{{%eventsky_tickets}}',
+                [
+                    'id' => $this->primaryKey(),
+                    'ticketTypeId' => $this->integer()->notNull(),
+                    'eventId' => $this->integer()->notNull(),
+                    'authorId' => $this->integer(),
+                    'description' => $this->string(),
+                    'startDate' => $this->dateTime()->notNull(),
+                    'endDate' => $this->dateTime(),
+                    'dateCreated' => $this->dateTime()->notNull(),
+                    'dateUpdated' => $this->dateTime()->notNull(),
+                ]
+            );
         }
 
         if (!$this->db->tableExists(Table::EVENT_TYPES)) {
@@ -85,9 +96,16 @@ class Install extends Migration
             ]);
         }
 
-        if (!$this->db->tableExists('{{%eventsky_tickettypes}}')) {
-            $this->createTable('{{%eventsky_tickettypes}}', [
+        if (!$this->db->tableExists(Table::TICKET_TYPES)) {
+            $this->createTable(Table::TICKET_TYPES, [
                 'id' => $this->primaryKey(),
+                'name' => $this->string(255),
+                'handle' => $this->string(255),
+                'fieldLayoutId' => $this->integer()->notNull(),
+                'dateCreated' => $this->dateTime()->notNull(),
+                'dateUpdated' => $this->dateTime()->notNull(),
+                'dateDeleted' => $this->dateTime()->null(),
+                'uid' => $this->uid(),
             ]);
         }
 
@@ -104,6 +122,9 @@ class Install extends Migration
         $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes}}', 'fieldLayoutId'), '{{%%eventsky_eventtypes}}', 'fieldLayoutId', '{{%fieldlayouts}}', 'id', 'CASCADE', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes_sites}}', 'siteId'), '{{%%eventsky_eventtypes_sites}}', 'siteId', '{{%sites}}', 'id', 'CASCADE', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes_sites}}', 'eventtypeId'), '{{%%eventsky_eventtypes_sites}}', 'eventtypeId', Table::EVENT_TYPES, 'id', 'CASCADE', null);
+        $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_eventtypes_sites}}', 'eventtypeId'), '{{%%eventsky_eventtypes_sites}}', 'eventtypeId', '{{%eventsky_eventtypes}}', 'id', 'CASCADE', null);
+        $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_tickets}}', 'id'), '{{%%eventsky_tickets}}', 'id', '{{%elements}}', 'id', 'CASCADE', null);
+        $this->addForeignKey($this->db->getForeignKeyName('{{%%eventsky_tickettypes}}', 'fieldLayoutId'), '{{%%eventsky_tickettypes}}', 'fieldLayoutId', '{{%fieldlayouts}}', 'id', 'CASCADE', null);
     }
 
     protected function dropTables()
@@ -111,7 +132,9 @@ class Install extends Migration
         $this->dropTableIfExists(Table::EVENTS);
         $this->dropTableIfExists('{{%eventsky_tickets}}');
         $this->dropTableIfExists(Table::EVENT_TYPES);
-        $this->dropTableIfExists('{{%eventsky_tickettypes}}');
+        $this->dropTableIfExists(Table::TICKET_TYPES);
         $this->dropTableIfExists('{{%eventsky_events_tickettypes}}');
+        $this->dropTableIfExists('{{%eventsky_tickets}}');
+        $this->dropTableIfExists('{{%eventsky_tickettypes}}');
     }
 }
