@@ -196,42 +196,19 @@ class TicketsController extends Controller
 
     $data = [];
     $data['ticket'] = $ticket;
+    $data['element'] = $ticket;
 
-    $data['tabs'] = [
-      [
-        'label' => Craft::t('eventsky', 'translate.ticket.tab.ticketData'),
-        'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.ticketData')),
-      ],
-    ];
-
-    foreach ($ticket->getType()->getFieldLayout()->getTabs() as $index => $tab) {
-      $hasErrors = null;
-
-      $data['tabs'][] = [
-        'label' => $tab->name,
-        'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
-        'class' => $hasErrors ? 'error' : null,
-      ];
-    }
-//
-
-//  if (($response = $this->_prepEditEntryVariables($variables)) !== null) {
-//            return $response;
-//        }
+    $this->prepEditTicketVariables($data);
 
     $view = $this->getView();
 
     $tabsHtml = !empty($data['tabs']) ? $view->renderTemplate('_includes/tabs', $data) : null;
-//        $fieldsHtml = $view->renderTemplate('entries/_fields', $variables);
-//        $headHtml = $view->getHeadHtml();
-//        $bodyHtml = $view->getBodyHtml();
-//
+    $fieldsHtml = $view->renderTemplate('eventsky/tickets/_fields', $data);
+
     return $this->asJson(compact(
-      'tabsHtml'
+      'tabsHtml',
+      'fieldsHtml'
     ));
-//            'fieldsHtml',
-//            'headHtml',
-//            'bodyHtml'
   }
 
   public function actionSave(): Response
@@ -315,27 +292,65 @@ class TicketsController extends Controller
     return $ticket;
   }
 
-  private function populateTicketModel(Ticket $entry)
+  private function populateTicketModel(Ticket $ticket)
   {
     $request = Craft::$app->getRequest();
 
     // Set the entry attributes, defaulting to the existing values for whatever is missing from the post data
-    $entry->typeId = $request->getBodyParam('typeId', $entry->typeId);
-    $entry->slug = $request->getBodyParam('slug', $entry->slug);
-    $entry->title = $request->getBodyParam('title', $entry->title);
+    $ticket->typeId = $request->getBodyParam('typeId', $ticket->typeId);
+    $ticket->slug = $request->getBodyParam('slug', $ticket->slug);
+    $ticket->title = $request->getBodyParam('title', $ticket->title);
 
-    if (!$entry->typeId) {
+    if (!$ticket->typeId) {
       // Default to the section's first entry type
-      $entry->typeId = $entry->getSection()->getEntryTypes()[0]->id;
+      $ticket->typeId = $ticket->getSection()->getEntryTypes()[0]->id;
     }
 
     // Prevent the last entry type's field layout from being used
-    $entry->fieldLayoutId = null;
+    $ticket->fieldLayoutId = null;
 
     $fieldsLocation = $request->getParam('fieldsLocation', 'fields');
-    $entry->setFieldValuesFromRequest($fieldsLocation);
+    $ticket->setFieldValuesFromRequest($fieldsLocation);
 
     // Revision notes
-    $entry->setRevisionNotes($request->getBodyParam('revisionNotes'));
+    $ticket->setRevisionNotes($request->getBodyParam('revisionNotes'));
+  }
+
+  private function prepEditTicketVariables(array &$data)
+  {
+    $ticketType = $data['ticket']->getType();
+    $data['ticketType'] = $ticketType;
+
+    $data['tabs'] = [
+      [
+        'label' => Craft::t('eventsky', 'translate.ticket.tab.ticketData'),
+        'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.ticketData')),
+      ],
+    ];
+
+    foreach ($ticketType->getFieldLayout()->getTabs() as $index => $tab) {
+      $hasErrors = null;
+
+      $data['tabs'][] = [
+        'label' => $tab->name,
+        'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
+        'class' => $hasErrors ? 'error' : null,
+      ];
+    }
+
+    $data['ticketEventOptions'] = [
+      [
+        'label' => 'Event one',
+        'value' => 1,
+      ],
+      [
+        'label' => 'Event two',
+        'value' => 2,
+      ],
+      [
+        'label' => 'Event three',
+        'value' => 3,
+      ],
+    ];
   }
 }
