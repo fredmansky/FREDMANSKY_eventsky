@@ -16,17 +16,6 @@
     errors: event.getErrors('endDate')
 }) }}
 
-{{ forms.textareaField({
-    label: 'translate.events.fields.eventDescription' | t('eventsky'),
-    site: site,
-    id: 'description',
-    name: 'description',
-    rows: 4,
-    value: event.description,
-    placeholder: 'translate.events.fields.placeholder.eventDescription' | t('eventsky'),
-    errors: event.getErrors('description') | merge(event.getErrors('uri'))
-}) }}
-
 {#<div class="field" id="assetId-field">#}
 {#    <div class="heading">#}
 {#        <label for="assetId">Image</label>#}

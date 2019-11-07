@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'eventsky' => 'eventsky/events/index',
     'eventsky/events' => 'eventsky/events/index',
     'eventsky/event/new' => 'eventsky/events/edit',
     'eventsky/event/<eventId:\d+><slug:(?:-[^\/]*)?>' => 'eventsky/events/edit',

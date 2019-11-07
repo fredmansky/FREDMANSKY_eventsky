@@ -6,46 +6,15 @@
 
 namespace fredmansky\eventsky\elements\db;
 
-use Craft;
-use craft\db\Query;
 use craft\elements\db\ElementQuery;
 use craft\helpers\Db;
 use fredmansky\eventsky\elements\Ticket;
 
-/**
- * TicketQuery represents a SELECT SQL statement for events in a way that is independent of DBMS.
- *
-// * @property string|string[]|TicketType $type The handle(s) of the entry type(s) that resulting entries must have.
- * @author Fredmansky
- * @since 3.0
- * @supports-structure-params
- * @supports-site-params
- * @supports-enabledforsite-param
- * @supports-title-param
- * @supports-slug-param
- * @supports-status-param
- * @supports-uri-param
- * @replace {element} ticket
- * @replace {elements} tickets
- * @replace {twig-method} craft.tickets()
- * @replace {myElement} Ticket
- * @replace {element-class} \fredmansky\eventsky\elements\Ticket
- */
 class TicketQuery extends ElementQuery
 {
-    public $title;
-    public $name;
     public $typeId;
     public $eventId;
-    public $authorId;
-    public $status;
-    public $dateDeleted;
-
-    public function name($value)
-    {
-        $this->name = $value;
-        return $this;
-    }
+    public $statusId;
 
     public function __construct(string $elementType, array $config = [])
     {
@@ -69,18 +38,20 @@ class TicketQuery extends ElementQuery
       return $this;
     }
 
+    public function statusId($value)
+    {
+      $this->statusId = $value;
+      return $this;
+    }
+
     protected function beforePrepare(): bool
     {
-        // join in the products table
         $this->joinElementTable('eventsky_tickets');
 
-        // select the price column
         $this->query->select([
           'eventsky_tickets.typeId',
           'eventsky_tickets.eventId',
-          'eventsky_tickets.name',
-          'eventsky_tickets.status',
-          'eventsky_tickets.dateDeleted',
+          'eventsky_tickets.statusId',
         ]);
 
         if ($this->typeId) {
@@ -91,13 +62,10 @@ class TicketQuery extends ElementQuery
           $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.eventId', $this->eventId));
         }
 
-        if ($this->name) {
-          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.name', $this->name));
+        if ($this->statusId) {
+          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.statusId', $this->statusId));
         }
 
-        if ($this->dateDeleted) {
-          $this->subQuery->andWhere(Db::parseParam('eventsky_tickets.dateDeleted', $this->dateDeleted));
-        }
         return parent::beforePrepare();
     }
 }

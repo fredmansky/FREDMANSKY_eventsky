@@ -21,9 +21,9 @@
 
         {{ forms.selectField({
             label: 'translate.ticket.fields.details.status' | t('eventsky'),
-            id: 'status',
-            name: 'status',
-            value: ticket.status,
+            id: 'statusId',
+            name: 'statusId',
+            value: ticket.statusId,
             options: ticketStatusOptions
         }) }}
     {% endblock %}

@@ -18,6 +18,7 @@ use craft\web\UrlManager;
 use fredmansky\eventsky\services\EventService;
 use fredmansky\eventsky\services\EventTypeService;
 use fredmansky\eventsky\services\TicketService;
+use fredmansky\eventsky\services\TicketStatusService;
 use fredmansky\eventsky\services\TicketTypeService;
 use fredmansky\vidsky\services\Video;
 use yii\base\Event;
@@ -42,6 +43,7 @@ class Eventsky extends Plugin
             'eventType' => EventTypeService::class,
             'ticket' => TicketService::class,
             'ticketType' => TicketTypeService::class,
+            'ticketStatus' => TicketStatusService::class,
         ]);
     }
 

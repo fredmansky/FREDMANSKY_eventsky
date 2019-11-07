@@ -29,9 +29,9 @@ use fredmansky\eventsky\Eventsky;
 class TicketType extends Model
 {
     public $id;
-    public $fieldLayoutId;
     public $name;
     public $handle;
+    public $fieldLayoutId;
     public $uid;
     public $dateCreated;
     public $dateUpdated;
