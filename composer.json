@@ -2,7 +2,7 @@
     "name": "fredmansky/eventsky",
     "description": "Craft plugin for event management and attendee registration",
     "type": "craft-plugin",
-    "version": "1.0.0-alpha.1",
+    "version": "1.0.0-alpha.2",
     "keywords": [
         "craft",
         "cms",
