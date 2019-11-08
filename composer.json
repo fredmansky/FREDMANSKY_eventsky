@@ -11,14 +11,16 @@
         "eventsky",
         "event management"
     ],
-    "support": {
-    },
     "authors": [
         {
             "name": "Fredmansky",
             "homepage": "https://fredmansky.at/"
         }
     ],
+    "support": {
+        "issues": "https://github.com/fredmansky/FREDMANSKY_eventsky/issues"
+    },
+    "license": "proprietary",
     "require": {
         "craftcms/cms": "^3.2.0"
     },
