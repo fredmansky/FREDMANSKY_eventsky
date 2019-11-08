@@ -7,6 +7,7 @@
 namespace fredmansky\eventsky\elements\db;
 
 use craft\elements\db\ElementQuery;
+use craft\helpers\Db;
 
 class EventQuery extends ElementQuery
 {
@@ -54,9 +55,9 @@ class EventQuery extends ElementQuery
             'eventsky_events.waitingListSize',
         ]);
 
-        // if ($this->description) {
-        //     $this->subQuery->andWhere(Db::parseParam('eventsky_events.description', $this->description));
-        // }
+        if ($this->typeId) {
+            $this->subQuery->andWhere(Db::parseParam('eventsky_events.typeId', $this->typeId));
+        }
 
         return parent::beforePrepare();
     }

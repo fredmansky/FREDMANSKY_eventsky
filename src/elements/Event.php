@@ -146,7 +146,8 @@ class Event extends Element
     protected static function defineSortOptions(): array
     {
         return [
-//            'title' => \Craft::t('app', 'Title'),
+            'title'       => \Craft::t('app', 'Title'),
+            'typeId'      => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.search.ticketType')),
         ];
     }
 
@@ -154,6 +155,7 @@ class Event extends Element
     {
         return [
             'title' => \Craft::t('app', 'Title'),
+            'typeId' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.typeId')),
         ];
     }
 

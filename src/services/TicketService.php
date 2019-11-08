@@ -42,37 +42,6 @@ class TicketService extends Component
         return $tickets;
     }
 
-//    public function saveTicket(Ticket $ticket, bool $runValidation = true)
-//    {
-//        $isNewTicket = !$ticket->id;
-//
-//        if ($this->hasEventHandlers(self::EVENT_BEFORE_SAVE_TICKET)) {
-//            $this->trigger(self::EVENT_BEFORE_SAVE_TICKET, new TicketEvent([
-//                'ticket' => $ticket,
-//                'isNew' => $isNewTicket
-//            ]));
-//        }
-//
-//        if ($runValidation && !$ticket->validate()) {
-//            \Craft::info('Ticket not saved due to validation error.', __METHOD__);
-//            return false;
-//        }
-//
-//        if ($isNewTicket) {
-//            $ticket->uid = StringHelper::UUID();
-//        } else if (!$ticket->uid) {
-//            $ticket->uid = Db::uidById(Table::TICKET_TYPES, $ticket->id);
-//        }
-//
-//        $fieldLayout = $ticket->getFieldLayout();
-//
-//        Craft::$app->getFields()->saveLayout($fieldLayout);
-//        Craft::$app->elements->saveElement($ticket);
-//
-//        // @TODO add exceptions when saving is failing
-//        return true;
-//    }
-
     public function deleteTicketById(int $id): bool
     {
         $ticket = $this->getTicketById($id);
@@ -106,9 +75,4 @@ class TicketService extends Component
 
         return true;
     }
-
-//    private function createTicketQuery(): ActiveQuery
-//    {
-//        return TicketRecord::find();
-//    }
 }

@@ -90,7 +90,7 @@ class EventsController extends Controller
         $data['eventTypeOptions'] = array_map(function($eventType) {
             return [
                 'label' => $eventType->name,
-                'value' => $eventType->id
+                'value' => $eventType->id,
             ];
         }, $eventTypes);
 

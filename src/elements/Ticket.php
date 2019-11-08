@@ -171,17 +171,17 @@ class Ticket extends Element
     protected static function defineSortOptions(): array
     {
         return [
-            'title'       => \Craft::t('app', 'Title'),
-            'typeId'      => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.search.ticketType')),
+            'title'  => \Craft::t('app', 'Title'),
+            'typeId' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.search.ticketType')),
         ];
     }
 
     protected static function defineTableAttributes(): array
     {
         return [
-            'id'            => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.name')),
-            'typeId'        => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.typeId')),
-            'eventId'       => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.eventId')),
+            'id' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.name')),
+            'typeId' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.typeId')),
+            'eventId' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.eventId')),
         ];
     }
 
