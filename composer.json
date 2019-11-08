@@ -21,8 +21,6 @@
     ],
     "require": {
         "craftcms/cms": "^3.2.0",
-        "tightenco/collect": "^6.0",
-        "nesbot/carbon": "^2.24"
     },
     "autoload": {
         "psr-4": {
