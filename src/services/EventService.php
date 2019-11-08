@@ -26,7 +26,6 @@ class EventService extends Component
 
         $this->events = Event::find()
         ->anyStatus()
-        ->typeId(Eventsky::$plugin->eventType->getAllEventTypes())
         ->all();
 
         return $this->events;
