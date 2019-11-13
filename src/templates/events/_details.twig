@@ -53,6 +53,13 @@
                 on: element.enabledForSite,
             }) }}
         {% endif %}
+
+        {{ forms.lightswitchField({
+            label: 'registrationEnabled' | t('eventsky'),
+            id: 'registrationEnabled',
+            name: 'registrationEnabled',
+            on: element.registrationEnabled,
+        }) }}
     {% endblock %}
 </div>
 

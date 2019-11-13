@@ -1,6 +1,6 @@
 {
   "name": "fredmansky_eventplugin",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fredmansky/FREDMANSKY_eventplugin.git"
+    "url": "git@github.com:fredmansky/FREDMANSKY_eventsky.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "proprietary",
   "bugs": {
-    "url": "https://github.com/fredmansky/FREDMANSKY_eventplugin/issues"
+    "url": "https://github.com/fredmansky/FREDMANSKY_eventsky/issues"
   },
-  "homepage": "https://github.com/fredmansky/FREDMANSKY_eventplugin#readme",
+  "homepage": "https://github.com/fredmansky/FREDMANSKY_eventsky",
   "devDependencies": {
     "cross-env": "^6.0.3",
     "laravel-mix": "^5.0.0",

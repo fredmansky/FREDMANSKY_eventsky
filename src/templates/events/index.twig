@@ -3,13 +3,11 @@
 {% set selectedSubnavItem = 'events' %}
 {% set title = "translate.events.title" | t('eventsky') %}
 {% set elementType = 'fredmansky\\eventsky\\elements\\Event' %}
-{#{% set elementType = 'craft\\elements\\Entry' %}#}
 
-{# {% do view.registerTranslations('app', ['New entry']) %}#}
-
-
-{# {% if sectionHandle is defined %}
-    {% js %}
-        window.defaultSectionHandle = '{{ sectionHandle }}';
-    {% endjs %}
-{% endif %} #}
+{% block actionButton %}
+    {% if eventTypes %}
+        <a href="{{ url('eventsky/event/new') }}" class="btn submit add icon">{{ "translate.event.new" | t('eventsky') }}</a>
+    {% else %}
+        Create at least one event type first.
+    {% endif %}
+{% endblock %}

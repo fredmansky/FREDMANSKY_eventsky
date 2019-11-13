@@ -4,17 +4,12 @@ namespace fredmansky\eventsky\services;
 
 use Craft;
 use craft\base\Component;
-use craft\db\ActiveRecord;
-use craft\db\Query;
-use craft\events\EntryTypeEvent;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
-use craft\models\Section;
-use craft\models\Site;
-use craft\records\FieldLayout;
 use fredmansky\eventsky\db\Table;
 use fredmansky\eventsky\events\EventTypeEvent;
 use fredmansky\eventsky\elements\Event;
+use fredmansky\eventsky\Eventsky;
 use fredmansky\eventsky\models\EventType;
 use fredmansky\eventsky\models\EventTypeSite;
 use fredmansky\eventsky\records\EventTypeRecord;
@@ -64,10 +59,6 @@ class EventTypeService extends Component
         return null;
     }
 
-    /**
-     * @param int $eventTypeId
-     * @return EventTypeSite[]
-     */
     public function getEventTypeSites(int $eventTypeId): array
     {
         $eventTypeSites = EventTypeSiteRecord::find()
@@ -91,7 +82,7 @@ class EventTypeService extends Component
         }
         
         if ($runValidation && !$eventType->validate()) {
-            \Craft::info('Event Type not daved due to validation error.', __METHOD__);
+            \Craft::info('Event Type not saved due to validation error.', __METHOD__);
             return false;
         }
         
@@ -112,17 +103,16 @@ class EventTypeService extends Component
         $fieldLayout = $eventType->getFieldLayout();
         \Craft::$app->getFields()->saveLayout($fieldLayout);
 
-        $eventTypeRecord->fieldLayoutId = (int) $fieldLayout->id;
         $eventTypeRecord->name = $eventType->name;
         $eventTypeRecord->handle = $eventType->handle;
-        $eventTypeRecord->fieldLayoutId = $eventType->fieldLayoutId;
-        $eventTypeRecord->uid = $eventType->uid;
-        $eventTypeRecord->isWaitingListEnabled = $eventType->isWaitingListEnabled;
-        $eventTypeRecord->isRegistrationEnabled = $eventType->isRegistrationEnabled;
+//        $eventTypeRecord->fieldLayoutId = (int) $fieldLayout->id;
         $eventTypeRecord->setFieldLayout($fieldLayout);
+        $eventTypeRecord->isRegistrationEnabled = $eventType->isRegistrationEnabled;
+        $eventTypeRecord->isWaitingListEnabled = $eventType->isWaitingListEnabled;
+        $eventTypeRecord->uid = $eventType->uid;
         $eventTypeRecord->save();
 
-        $eventTypeId = $eventTypeRecord->id;#
+        $eventTypeId = $eventTypeRecord->id;
 
         $allSiteIds = \Craft::$app->sites->getAllSiteIds();
         $eventTypeSites = $eventType->getEventTypeSites();
@@ -136,14 +126,11 @@ class EventTypeService extends Component
             }
         }
 
-
         foreach($eventTypeSites as $eventTypeSite) {
             $eventTypeSiteRecord = EventTypeSiteRecord::find()
                 ->where(['=', 'eventtypeId', $eventTypeId])
                 ->andWhere(['=', 'siteId', $eventTypeSite->siteId])
                 ->one();
-
-
 
             if (!$eventTypeSiteRecord) {
                 $eventTypeSiteRecord = new EventTypeSiteRecord();
@@ -177,19 +164,14 @@ class EventTypeService extends Component
     {
         $transaction = Craft::$app->getDb()->beginTransaction();
         try {
-
-            // delete events
+            // Delete all events of event type
             $eventQuery = Event::find()
                 ->anyStatus()
                 ->typeId($eventType->id);
 
-            $elementsService = Craft::$app->getElements();
-
             foreach (Craft::$app->getSites()->getAllSiteIds() as $siteId) {
                 foreach ($eventQuery->siteId($siteId)->each() as $event) {
-                    /** @var Event $event */
-                    $event->deletedWithEventType = true;
-                    $elementsService->deleteElement($event);
+                    Eventsky::$plugin->event->deleteEvent($event);
                 }
             }
 

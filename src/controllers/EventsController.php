@@ -8,22 +8,11 @@ namespace fredmansky\eventsky\controllers;
 
 use Craft;
 
-use craft\base\Element;
-use craft\base\Field;
-use craft\base\Plugin;
-use craft\db\Query;
-use craft\elements\Entry;
-use craft\helpers\ArrayHelper;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\ElementHelper;
 use craft\helpers\StringHelper;
-use craft\models\Section;
-use craft\models\Section_SiteSettings;
-use craft\models\Site;
 use fredmansky\eventsky\elements\Event;
 use fredmansky\eventsky\Eventsky;
-use fredmansky\eventsky\models\EventType;
-use fredmansky\eventsky\models\EventTypeSite;
 use fredmansky\eventsky\web\assets\editevent\EditEventAsset;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
@@ -51,7 +40,9 @@ class EventsController extends Controller
 
     public function actionIndex(array $variables = []): Response
     {
-        $data = [];
+        $data = [
+            'eventTypes' => Eventsky::$plugin->eventType->getAllEventTypes(),
+        ];
         return $this->renderTemplate('eventsky/events/index', $data);
     }
 
@@ -83,7 +74,6 @@ class EventsController extends Controller
             $eventType = $eventTypes[0];
             $event->siteId = $site->id;
             $event->typeId = $request->getQueryParam('typeId', $eventType->id);
-//                $event->authorId = $request->getQueryParam('authorId', Craft::$app->getUser()->getId());
             $event->slug = ElementHelper::tempSlug();
 
             // TODO: implement (SS)
@@ -100,7 +90,7 @@ class EventsController extends Controller
         $data['eventTypeOptions'] = array_map(function($eventType) {
             return [
                 'label' => $eventType->name,
-                'value' => $eventType->id
+                'value' => $eventType->id,
             ];
         }, $eventTypes);
 
@@ -134,6 +124,7 @@ class EventsController extends Controller
 //                'class' => $hasErrors ? 'error' : null,
             ],
         ];
+
         foreach ($eventType->getFieldLayout()->getTabs() as $index => $tab) {
             // Do any of the fields on this tab have errors?
 //            $hasErrors = false;
@@ -203,11 +194,14 @@ class EventsController extends Controller
             $event = new Event();
         }
 
-
         $event->title = $request->getBodyParam('title');
         $event->slug = $request->getBodyParam('slug');
         $event->typeId = $request->getBodyParam('typeId');
-        $event->description = $request->getBodyParam('description');
+        $event->needsRegistration = $request->getBodyParam('needsRegistration');
+        $event->registrationEnabled = $request->getBodyParam('registrationEnabled');
+        $event->totalTickets = $request->getBodyParam('totalTickets');
+        $event->hasWaitingList = $request->getBodyParam('hasWaitingList');
+        $event->waitingListSize = $request->getBodyParam('waitingListSize');
 
         // save values from custom fields to event
         $event->setFieldValuesFromRequest('fields');
@@ -248,9 +242,16 @@ class EventsController extends Controller
         return $this->redirectToPostedUrl($event);
     }
 
-//    public function actionDelete(): Response
-//    {
-//    }
+    public function actionDelete(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        $eventId = Craft::$app->getRequest()->getRequiredBodyParam('id');
+        Eventsky::$plugin->event->deleteEventById($eventId);
+
+        return $this->asJson(['success' => true]);
+    }
 
     private function getSiteForNewEvent($site) {
         $sitesService = Craft::$app->getSites();

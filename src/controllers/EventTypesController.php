@@ -14,10 +14,8 @@ use fredmansky\eventsky\elements\db\EventTypeQuery;
 use fredmansky\eventsky\Eventsky;
 use fredmansky\eventsky\models\EventType;
 use fredmansky\eventsky\models\EventTypeSite;
-use yii\helpers\VarDumper;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
-use yii\web\ForbiddenHttpException;
 
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;

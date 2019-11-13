@@ -7,23 +7,10 @@
 namespace fredmansky\eventsky\controllers;
 
 use Craft;
-// use fredmansky\eventsky\events\TicketEvent;
-use craft\base\Element;
-use craft\base\Field;
-use craft\base\Plugin;
-use craft\db\Query;
-use craft\elements\Entry;
-use craft\helpers\ArrayHelper;
-use craft\helpers\DateTimeHelper;
 use craft\helpers\ElementHelper;
 use craft\helpers\StringHelper;
-use craft\models\Section;
-use craft\models\Section_SiteSettings;
-use craft\models\Site;
-use craft\web\assets\editentry\EditEntryAsset;
 use fredmansky\eventsky\elements\Ticket;
 use fredmansky\eventsky\Eventsky;
-use fredmansky\eventsky\models\TicketType;
 use fredmansky\eventsky\web\assets\editticket\EditTicketAsset;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
@@ -43,314 +30,286 @@ class TicketsController extends Controller
 {
 //  public const EVENT_BEFORE_SWITCH_TICKET_TYPE = 'beforeSwitchTicketType';
 
-  public function init()
-  {
-    $this->requireAdmin();
-    parent::init();
-  }
-
-  public function actionIndex(array $variables = []): Response
-  {
-    $data = [
-      'tickets' => Eventsky::$plugin->ticket->getAllTickets(),
-      'ticketTypes' => Eventsky::$plugin->ticketType->getAllTicketTypes(),
-    ];
-
-    return $this->renderTemplate('eventsky/tickets/index', $data);
-  }
-
-  public function actionEdit(int $ticketId = null): Response
-  {
-    $data = [];
-
-    $ticketTypes = Eventsky::$plugin->ticketType->getAllTicketTypes();
-
-    $this->getView()->registerAssetBundle(EditTicketAsset::class);
-
-    if (!$ticketTypes) {
-      throw new NotFoundHttpException(Craft::t('eventsky', 'translate.ticketTypes.notFound'));
+    public function init()
+    {
+        $this->requireAdmin();
+        parent::init();
     }
 
-//    $ticketEvents = Eventsky::$plugin->events->getAllEvents();
-//    if (!$ticketEvents) {
-//      throw new NotFoundHttpException(Craft::t('eventsky', 'translate.events.notFound'));
-//    }
+    public function actionIndex(array $variables = []): Response
+    {
+        $data = [
+            'ticketTypes' => Eventsky::$plugin->ticketType->getAllTicketTypes(),
+            'ticketStatuses' => Eventsky::$plugin->ticketStatus->getAllTicketStatuses(),
+            'events' => Eventsky::$plugin->event->getAllEvents(),
+        ];
 
-    /** @var Ticket $ticket */
-    $ticket = null;
-
-    if ($ticketId !== null) {
-      $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
-
-      if (!$ticket) {
-        throw new NotFoundHttpException(Craft::t('eventsky', 'translate.ticket.notFound'));
-      }
-
-      $ticketType = $ticket->getType();
-//      $ticketEvent = $ticket->getEvent();
-      $data['title'] = trim($ticket->name) ?: Craft::t('eventsky', 'translate.ticket.edit');
-    } else {
-      $request = Craft::$app->getRequest();
-      $ticket = new Ticket();
-      $ticketType = $ticketTypes[0];
-//      $ticketEvent = $ticketEvents[0];
-      $ticket->typeId = $request->getQueryParam('typeId', $ticketType->id);
-      $ticket->slug = ElementHelper::tempSlug();
-
-      $ticket->setFieldValuesFromRequest('fields');
-      $data['title'] = Craft::t('eventsky', 'translate.ticket.new');
+        return $this->renderTemplate('eventsky/tickets/index', $data);
     }
 
-    $data['ticketId'] = $ticketId;
-    $data['ticketType'] = $ticketType;
-//    $data['ticketEvent'] = $ticketEvent;
 
-    $data['ticketTypeOptions'] = array_map(function($ticketType) {
-      return [
-        'label' => $ticketType->name,
-        'value' => $ticketType->id
-      ];
-    }, $ticketTypes);
+    public function actionEdit(int $ticketId = null): Response
+    {
+        $data = [];
 
-    $data['ticketStatusOptions'] = [
-      [
-        'label' => 'Waitlisted',
-        'value' => 'waitlisted',
-      ],
-      [
-        'label' => 'Reserved',
-        'value' => 'reserved',
-      ],
-      [
-        'label' => 'Confirmed',
-        'value' => 'confirmed',
-      ],
-    ];
+        $ticketTypes = Eventsky::$plugin->ticketType->getAllTicketTypes();
+        $events = Eventsky::$plugin->event->getAllEvents();
+        $ticketStatuses = Eventsky::$plugin->ticketStatus->getAllTicketStatuses();
 
-    $data['ticketEventOptions'] = [
-      [
-        'label' => 'Event one',
-        'value' => 1,
-      ],
-      [
-        'label' => 'Event two',
-        'value' => 2,
-      ],
-      [
-        'label' => 'Event three',
-        'value' => 3,
-      ],
-    ];
+        $this->getView()->registerAssetBundle(EditTicketAsset::class);
 
-//    $data['ticketEventOptions'] = array_map(function($ticketEvent) {
-//      return [
-//        'label' => $ticketEvent->name,
-//        'value' => $ticketEvent->id
-//      ];
-//    }, $ticketEvents);
+        /** @var Ticket $ticket */
+        $ticket = null;
 
-    $data['ticket'] = $ticket;
-    $data['element'] = $ticket;
+        if ($ticketId !== null) {
+            $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
 
-    $data['crumbs'] = [
-      [
-        'label' => Craft::t('eventsky', 'translate.tickets.cpTitle'),
-        'url' => UrlHelper::url('eventsky/tickets')
-      ],
-    ];
+            if (!$ticket) {
+                throw new NotFoundHttpException(Craft::t('eventsky', 'translate.ticket.notFound'));
+            }
 
-    $data['saveShortcutRedirect'] = 'eventsky/tickets'; // TODO: correct URL here (SS)
-    $data['redirectUrl'] = 'eventsky/tickets';
-    $data['shareUrl'] = '/admin/eventsky'; // TODO: implement
-    $data['saveSourceAction'] = 'entries/save-entry';
-    $data['isMultiSiteElement'] = Craft::$app->isMultiSite && count(Craft::$app->getSites()->allSiteIds) > 1;
-    $data['canUpdateSource'] = true;
+            $ticketType = $ticket->getType();
+            $event = $ticket->getEvent();
+            $status = $ticket->getStatus();
+            $data['title'] = trim($ticket->title) ?: Craft::t('eventsky', 'translate.ticket.edit');
+        } else {
+            $request = Craft::$app->getRequest();
+            $ticket = new Ticket();
+            $ticketType = $ticketTypes[0];
+            $event = $events[0];
+            $status = $ticketStatuses[0];
+            $ticket->typeId = $request->getQueryParam('typeId', $ticketType->id);
+            $ticket->eventId = $request->getQueryParam('eventId', $event->id);
+            $ticket->statusId = $request->getQueryParam('statusId', $status->id);
+            $ticket->slug = ElementHelper::tempSlug();
 
-    $data['tabs'] = [
-      [
-        'label' => Craft::t('eventsky', 'translate.ticket.tab.ticketData'),
-        'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.ticketData')),
-      ],
-    ];
+            $ticket->setFieldValuesFromRequest('fields');
+            $data['title'] = Craft::t('eventsky', 'translate.ticket.new');
+        }
 
-    foreach ($ticketType->getFieldLayout()->getTabs() as $index => $tab) {
-      $hasErrors = null;
+        $data['ticketId'] = $ticketId;
+        $data['ticketType'] = $ticketType;
+        $data['ticketEvent'] = $event;
+        $data['ticketStatus'] = $status;
 
-      $data['tabs'][] = [
-        'label' => $tab->name,
-        'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
-        'class' => $hasErrors ? 'error' : null,
-      ];
+        $data['ticketTypeOptions'] = array_map(function($ticketType) {
+            return [
+                'label' => $ticketType->name,
+                'value' => $ticketType->id,
+            ];
+        }, $ticketTypes);
+
+        $data['ticketStatusOptions'] = array_map(function($status) {
+            return [
+                'label' => $status->name,
+                'value' => $status->id,
+            ];
+        }, $ticketStatuses);
+
+        $data['ticketEventOptions'] = array_map(function($event) {
+            return [
+                'label' => $event->title,
+                'value' => $event->id,
+            ];
+        }, $events);
+
+        $data['ticket'] = $ticket;
+        $data['element'] = $ticket;
+
+        $data['crumbs'] = [
+            [
+                'label' => Craft::t('eventsky', 'translate.tickets.cpTitle'),
+                'url' => UrlHelper::url('eventsky/tickets')
+            ],
+        ];
+
+        $data['saveShortcutRedirect'] = 'eventsky/tickets'; // TODO: correct URL here (SS)
+        $data['redirectUrl'] = 'eventsky/tickets';
+        $data['shareUrl'] = '/admin/eventsky'; // TODO: implement
+        $data['saveSourceAction'] = 'entries/save-entry';
+        $data['isMultiSiteElement'] = false;
+        $data['canUpdateSource'] = true;
+
+        $data['tabs'] = [
+            [
+                'label' => Craft::t('eventsky', 'translate.ticket.tab.ticketData'),
+                'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.ticketData')),
+            ],
+        ];
+
+        foreach ($ticketType->getFieldLayout()->getTabs() as $index => $tab) {
+            $hasErrors = null;
+
+            $data['tabs'][] = [
+                'label' => $tab->name,
+                'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
+                'class' => $hasErrors ? 'error' : null,
+            ];
+        }
+
+        return $this->renderTemplate('eventsky/tickets/edit', $data);
     }
 
-    return $this->renderTemplate('eventsky/tickets/edit', $data);
-  }
 
-  public function actionSwitchTicketType(): Response
-  {
-    $this->requirePostRequest();
-    $this->requireAcceptsJson();
+    public function actionSwitchTicketType(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
 
-    $ticket = $this->getTicketModel();
-    $this->populateTicketModel($ticket);
+        $ticket = $this->getTicketModel();
+        $this->populateTicketModel($ticket);
 
-    $data = [];
-    $data['ticket'] = $ticket;
-    $data['element'] = $ticket;
+        $data = [];
+        $data['ticket'] = $ticket;
+        $data['element'] = $ticket;
 
-    $this->prepEditTicketVariables($data);
+        $this->prepEditTicketVariables($data);
+        $view = $this->getView();
 
-    $view = $this->getView();
+        $tabsHtml = !empty($data['tabs']) ? $view->renderTemplate('_includes/tabs', $data) : null;
+        $fieldsHtml = $view->renderTemplate('eventsky/tickets/_fields', $data);
 
-    $tabsHtml = !empty($data['tabs']) ? $view->renderTemplate('_includes/tabs', $data) : null;
-    $fieldsHtml = $view->renderTemplate('eventsky/tickets/_fields', $data);
-
-    return $this->asJson(compact(
-      'tabsHtml',
-      'fieldsHtml'
-    ));
-  }
-
-  public function actionSave(): Response
-  {
-    $this->requirePostRequest();
-
-    $request = Craft::$app->getRequest();
-    $ticketId = $request->getBodyParam('ticketId');
-
-    if ($ticketId) {
-      $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
-
-      if (!$ticket) {
-        throw new HttpException(404, Craft::t('eventsky', 'translate.ticket.notFound'));
-      }
-    } else {
-      $ticket = new Ticket();
+        return $this->asJson(compact(
+            'tabsHtml',
+            'fieldsHtml'
+        ));
     }
 
-    $ticket->id = $request->getBodyParam('ticketId');
-    $ticket->name = $request->getBodyParam('name');
-    // todo: always update handle or keep first handle even if title changes?
-    $ticket->handle = StringHelper::camelCase($ticket->name);
-    $ticket->status = $request->getBodyParam('status');
-    $ticket->typeId = $request->getBodyParam('typeId');
-    $ticket->eventId = $request->getBodyParam('eventId');
-    $ticket->title = $request->getBodyParam('name');
-    $ticket->slug = $request->getBodyParam('slug');
+    public function actionSave()
+    {
+        $this->requirePostRequest();
 
-    // save values from custom fields to event
-    $ticket->setFieldValuesFromRequest('fields');
+        $request = Craft::$app->getRequest();
+        $ticketId = $request->getBodyParam('ticketId');
 
-    if (!Craft::$app->getElements()->saveElement($ticket)) {
-      if ($request->getAcceptsJson()) {
-        return $this->asJson([
-          'success' => false,
-          'errors' => $ticket->getErrors(),
-        ]);
-      }
+        if ($ticketId) {
+            $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
 
-      Craft::$app->getSession()->setError(Craft::t('eventsky', 'translate.ticket.notSaved'));
+            if (!$ticket) {
+                throw new HttpException(404, Craft::t('eventsky', 'translate.ticket.notFound'));
+            }
+        } else {
+            $ticket = new Ticket();
+        }
 
-      Craft::$app->getUrlManager()->setRouteParams([
-        'ticket' => $ticket,
-      ]);
+        $ticket->title = $request->getBodyParam('title');
+        $ticket->slug = $request->getBodyParam('slug');
+        $ticket->typeId = $request->getBodyParam('typeId');
+        $ticket->eventId = $request->getBodyParam('eventId');
+        $ticket->statusId = $request->getBodyParam('statusId');
 
-      return null;
+        // save values from custom fields to event
+        $ticket->setFieldValuesFromRequest('fields');
+
+        if (!Craft::$app->getElements()->saveElement($ticket)) {
+            if ($request->getAcceptsJson()) {
+                return $this->asJson([
+                    'success' => false,
+                    'errors' => $ticket->getErrors(),
+                ]);
+            }
+
+            Craft::$app->getSession()->setError(Craft::t('eventsky', 'translate.ticket.notSaved'));
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'ticket' => $ticket,
+            ]);
+
+            return null;
+        }
+
+        Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'translate.ticket.saved'));
+        return $this->redirectToPostedUrl($ticket);
     }
 
-    Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'translate.ticket.saved'));
-    return $this->redirectToPostedUrl($ticket);
-  }
 
+    public function actionDelete(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
 
-  public function actionDelete(): Response
-  {
-    $this->requirePostRequest();
-    $this->requireAcceptsJson();
+        $ticketId = Craft::$app->getRequest()->getRequiredBodyParam('id');
+        Eventsky::$plugin->ticket->deleteTicketById($ticketId);
 
-    $ticketId = Craft::$app->getRequest()->getRequiredBodyParam('id');
-    Eventsky::$plugin->ticket->deleteTicketById($ticketId);
-
-    return $this->asJson(['success' => true]);
-  }
-
-  private function getTicketModel(): Ticket
-  {
-    $request = Craft::$app->getRequest();
-    $ticketId = $request->getBodyParam('ticketId');
-
-    if ($ticketId) {
-      $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
-
-      if (!$ticket) {
-        throw new NotFoundHttpException('Ticket not found');
-      }
-    } else {
-      $ticket = new Ticket();
+        return $this->asJson(['success' => true]);
     }
 
-    return $ticket;
-  }
+    private function getTicketModel(): Ticket
+    {
+        $request = Craft::$app->getRequest();
+        $ticketId = $request->getBodyParam('ticketId');
+        if ($ticketId) {
+            $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
 
-  private function populateTicketModel(Ticket $ticket)
-  {
-    $request = Craft::$app->getRequest();
+            if (!$ticket) {
+                throw new NotFoundHttpException('Ticket not found');
+            }
+        } else {
+            $ticket = new Ticket();
+        }
 
-    // Set the entry attributes, defaulting to the existing values for whatever is missing from the post data
-    $ticket->typeId = $request->getBodyParam('typeId', $ticket->typeId);
-    $ticket->slug = $request->getBodyParam('slug', $ticket->slug);
-    $ticket->title = $request->getBodyParam('title', $ticket->title);
-
-    if (!$ticket->typeId) {
-      // Default to the section's first entry type
-      $ticket->typeId = $ticket->getSection()->getEntryTypes()[0]->id;
+        return $ticket;
     }
 
-    // Prevent the last entry type's field layout from being used
-    $ticket->fieldLayoutId = null;
+    private function populateTicketModel(Ticket $ticket)
+    {
+        $request = Craft::$app->getRequest();
 
-    $fieldsLocation = $request->getParam('fieldsLocation', 'fields');
-    $ticket->setFieldValuesFromRequest($fieldsLocation);
+        // Set the entry attributes, defaulting to the existing values for whatever is missing from the post data
+        $ticket->typeId = $request->getBodyParam('typeId', $ticket->typeId);
+        $ticket->slug = $request->getBodyParam('slug', $ticket->slug);
+        $ticket->title = $request->getBodyParam('title', $ticket->title);
 
-    // Revision notes
-    $ticket->setRevisionNotes($request->getBodyParam('revisionNotes'));
-  }
+        if (!$ticket->typeId) {
+            // Default to the section's first entry type
+            $ticket->typeId = $ticket->getSection()->getEntryTypes()[0]->id;
+        }
 
-  private function prepEditTicketVariables(array &$data)
-  {
-    $ticketType = $data['ticket']->getType();
-    $data['ticketType'] = $ticketType;
+        // Prevent the last entry type's field layout from being used
+        $ticket->fieldLayoutId = null;
 
-    $data['tabs'] = [
-      [
-        'label' => Craft::t('eventsky', 'translate.ticket.tab.ticketData'),
-        'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.ticketData')),
-      ],
-    ];
+        $fieldsLocation = $request->getParam('fieldsLocation', 'fields');
+        $ticket->setFieldValuesFromRequest($fieldsLocation);
 
-    foreach ($ticketType->getFieldLayout()->getTabs() as $index => $tab) {
-      $hasErrors = null;
-
-      $data['tabs'][] = [
-        'label' => $tab->name,
-        'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
-        'class' => $hasErrors ? 'error' : null,
-      ];
+        // Revision notes
+        $ticket->setRevisionNotes($request->getBodyParam('revisionNotes'));
     }
 
-    $data['ticketEventOptions'] = [
-      [
-        'label' => 'Event one',
-        'value' => 1,
-      ],
-      [
-        'label' => 'Event two',
-        'value' => 2,
-      ],
-      [
-        'label' => 'Event three',
-        'value' => 3,
-      ],
-    ];
-  }
+    private function prepEditTicketVariables(array &$data)
+    {
+        $ticketType = $data['ticket']->getType();
+        $data['ticketType'] = $ticketType;
+
+        $data['tabs'] = [
+            [
+                'label' => Craft::t('eventsky', 'translate.ticket.tab.ticketData'),
+                'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.ticketData')),
+            ],
+        ];
+
+        foreach ($ticketType->getFieldLayout()->getTabs() as $index => $tab) {
+            $hasErrors = null;
+
+            $data['tabs'][] = [
+                'label' => $tab->name,
+                'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
+                'class' => $hasErrors ? 'error' : null,
+            ];
+        }
+
+        $data['ticketEventOptions'] = [
+            [
+                'label' => 'Event one',
+                'value' => 1,
+            ],
+            [
+                'label' => 'Event two',
+                'value' => 2,
+            ],
+            [
+                'label' => 'Event three',
+                'value' => 3,
+            ],
+        ];
+    }
 }
