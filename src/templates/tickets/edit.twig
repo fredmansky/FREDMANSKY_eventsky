@@ -38,50 +38,7 @@
 
     {% if ticket.id %}<input type="hidden" name="ticketId" value="{{ ticket.id }}">{% endif %}
 
-    <div id="fields">
-        {{ forms.textField({
-            first: true,
-            label: "Title"|t('app'),
-            instructions: "What this ticket will be called in the CP."|t('app'),
-            id: 'title',
-            name: 'title',
-            value: ticket.title,
-            errors: ticket.getErrors('title'),
-            autofocus: true,
-            maxlength: 250,
-            required: true,
-        }) }}
-
-        {#
-                {{ forms.textField({
-            label: "Title" | t('commerce'),
-            id: 'title',
-            name: 'title',
-            value: ticket.title,
-            placeholder: 'Enter title' | t('commerce'),
-            errors: ticket.getErrors('title'),
-            first: true,
-            autofocus: true,
-            required: true,
-            maxlength: 255
-        }) }}
-        #}
-
-        <div>
-            {% set tabs = ticketType.getFieldLayout().getTabs() %}
-            <div id="tabTicketData">
-                {% include "eventsky/tickets/_tabTicketData" %}
-            </div>
-            {% for tab in tabs %}
-                <div id="{{ ('tab' ~ tab.name) | camel }}" class="hidden">
-                    {% include "_includes/fields" with {
-                        fields: tab.getFields(),
-                        element: ticket,
-                    } only %}
-                </div>
-            {% endfor %}
-        </div>
-    </div>
+    {% include "eventsky/tickets/_fields" %}
 {% endblock %}
 
 {% block details %}
