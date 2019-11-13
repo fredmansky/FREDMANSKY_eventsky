@@ -41,6 +41,7 @@ class TicketsController extends Controller
         $data = [
             'ticketTypes' => Eventsky::$plugin->ticketType->getAllTicketTypes(),
             'ticketStatuses' => Eventsky::$plugin->ticketStatus->getAllTicketStatuses(),
+            'events' => Eventsky::$plugin->event->getAllEvents(),
         ];
 
         return $this->renderTemplate('eventsky/tickets/index', $data);
