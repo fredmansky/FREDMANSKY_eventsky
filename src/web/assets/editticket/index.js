@@ -81,15 +81,15 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/web/assets/editticket/src/EntryTypeSwitcher.js":
-/*!***********************************************************!*\
-  !*** ./src/web/assets/editticket/src/EntryTypeSwitcher.js ***!
-  \***********************************************************/
+/***/ "./src/web/assets/editticket/src/TicketTypeSwitcher.js":
+/*!*************************************************************!*\
+  !*** ./src/web/assets/editticket/src/TicketTypeSwitcher.js ***!
+  \*************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -107,10 +107,8 @@
     },
     onTypeChange: function onTypeChange(ev) {
       this.$spinner.removeClass('hidden');
-      console.log('FORM', Craft.cp.$primaryForm.serialize());
       Craft.postActionRequest('eventsky/tickets/switch-ticket-type', Craft.cp.$primaryForm.serialize(), $.proxy(function (response, textStatus) {
         this.$spinner.addClass('hidden');
-        console.log('response', textStatus);
 
         if (textStatus === 'success') {
           this.trigger('beforeTypeChange');
@@ -125,9 +123,8 @@
           $('#fields').html(response.fieldsHtml);
           Craft.initUiElements($('#fields'));
           Craft.appendHeadHtml(response.headHtml);
-          Craft.appendFootHtml(response.bodyHtml);
+          Craft.appendFootHtml(response.bodyHtml); // Update the slug generator with the new title input
 
-          // Update the slug generator with the new title input
           if (typeof slugGenerator !== 'undefined') {
             slugGenerator.setNewSource('#title');
           }
@@ -143,40 +140,28 @@
 /***/ }),
 
 /***/ "./src/web/assets/editticket/src/index.js":
-/*!***********************************************!*\
+/*!************************************************!*\
   !*** ./src/web/assets/editticket/src/index.js ***!
-  \***********************************************/
+  \************************************************/
 /*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _EntryTypeSwitcher__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./EntryTypeSwitcher */ "./src/web/assets/editticket/src/EntryTypeSwitcher.js");
-/* harmony import */ var _EntryTypeSwitcher__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_EntryTypeSwitcher__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _TicketTypeSwitcher__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TicketTypeSwitcher */ "./src/web/assets/editticket/src/TicketTypeSwitcher.js");
+/* harmony import */ var _TicketTypeSwitcher__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_TicketTypeSwitcher__WEBPACK_IMPORTED_MODULE_0__);
 
 
 /***/ }),
 
-/***/ "./src/web/assets/editticket/src/style.scss":
-/*!*************************************************!*\
-  !*** ./src/web/assets/editticket/src/style.scss ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-
-/***/ 0:
-/*!***********************************************************************************************!*\
-  !*** multi ./src/web/assets/editticket/src/index.js ./src/web/assets/editticket/src/style.scss ***!
-  \***********************************************************************************************/
+/***/ 1:
+/*!******************************************************!*\
+  !*** multi ./src/web/assets/editticket/src/index.js ***!
+  \******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editticket/src/index.js */"./src/web/assets/editticket/src/index.js");
-module.exports = __webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editticket/src/style.scss */"./src/web/assets/editticket/src/style.scss");
+module.exports = __webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editticket/src/index.js */"./src/web/assets/editticket/src/index.js");
 
 
 /***/ })

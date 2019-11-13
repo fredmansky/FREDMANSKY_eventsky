@@ -1,0 +1,35 @@
+{% import "_includes/forms" as forms %}
+
+<div id="fields">
+    {{ forms.textField({
+        label: "Title" | t('commerce'),
+        site: event.site,
+        id: 'title',
+        name: 'title',
+        value: event.title,
+        placeholder: 'Enter title' | t('commerce'),
+        errors: event.getErrors('title'),
+        first: true,
+        autofocus: true,
+        required: true,
+        maxlength: 255
+    }) }}
+
+    <div>
+        {% set tabs = eventType.getFieldLayout().getTabs() %}
+        <div id="tabEventData">
+            {% include "eventsky/events/_tabEventData" %}
+        </div>
+        <div id="tabTickets" class="hidden">
+            {% include "eventsky/events/_tabTickets" %}
+        </div>
+        {% for tab in tabs %}
+            <div id="{{ 'tab' ~ tab.name | title }}" class="hidden">
+                {% include "_includes/fields" with {
+                    fields: tab.getFields(),
+                    element: event,
+                } only %}
+            </div>
+        {% endfor %}
+    </div>
+</div>

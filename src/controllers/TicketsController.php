@@ -130,12 +130,7 @@ class TicketsController extends Controller
         $data['isMultiSiteElement'] = false;
         $data['canUpdateSource'] = true;
 
-        $data['tabs'] = [
-            [
-                'label' => Craft::t('eventsky', 'translate.ticket.tab.ticketData'),
-                'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.ticketData')),
-            ],
-        ];
+        $data['tabs'] = $this->getDefaultTabs();
 
         foreach ($ticketType->getFieldLayout()->getTabs() as $index => $tab) {
             $hasErrors = null;
@@ -234,10 +229,22 @@ class TicketsController extends Controller
         return $this->asJson(['success' => true]);
     }
 
+    private function getDefaultTabs() {
+        $tabs = [
+            [
+                'label' => Craft::t('eventsky', 'translate.ticket.tab.ticketData'),
+                'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.ticketData')),
+            ],
+        ];
+
+        return $tabs;
+    }
+
     private function getTicketModel(): Ticket
     {
         $request = Craft::$app->getRequest();
         $ticketId = $request->getBodyParam('ticketId');
+
         if ($ticketId) {
             $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
 
@@ -270,22 +277,13 @@ class TicketsController extends Controller
 
         $fieldsLocation = $request->getParam('fieldsLocation', 'fields');
         $ticket->setFieldValuesFromRequest($fieldsLocation);
-
-        // Revision notes
-        $ticket->setRevisionNotes($request->getBodyParam('revisionNotes'));
     }
 
     private function prepEditTicketVariables(array &$data)
     {
         $ticketType = $data['ticket']->getType();
         $data['ticketType'] = $ticketType;
-
-        $data['tabs'] = [
-            [
-                'label' => Craft::t('eventsky', 'translate.ticket.tab.ticketData'),
-                'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.ticketData')),
-            ],
-        ];
+        $data['tabs'] = $this->getDefaultTabs();
 
         foreach ($ticketType->getFieldLayout()->getTabs() as $index => $tab) {
             $hasErrors = null;
@@ -297,19 +295,11 @@ class TicketsController extends Controller
             ];
         }
 
-        $data['ticketEventOptions'] = [
-            [
-                'label' => 'Event one',
-                'value' => 1,
-            ],
-            [
-                'label' => 'Event two',
-                'value' => 2,
-            ],
-            [
-                'label' => 'Event three',
-                'value' => 3,
-            ],
-        ];
+        $data['ticketEventOptions'] = array_map(function($event) {
+            return [
+                'label' => $event->title,
+                'value' => $event->id,
+            ];
+        }, Eventsky::$plugin->event->getAllEvents());
     }
 }

@@ -202,8 +202,8 @@ class Install extends Migration
         $this->insert(TicketStatusRecord::tableName(), $data);
 
         $data = [
-            'name' => 'USD',
-            'handle' => 1,
+            'name' => 'Denied',
+            'handle' => 'denied',
             'color' => 'red',
         ];
         $this->insert(TicketStatusRecord::tableName(), $data);

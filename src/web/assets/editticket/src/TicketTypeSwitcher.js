@@ -16,13 +16,8 @@
             onTypeChange: function(ev) {
                 this.$spinner.removeClass('hidden');
 
-                console.log('FORM', Craft.cp.$primaryForm.serialize());
-
                 Craft.postActionRequest('eventsky/tickets/switch-ticket-type', Craft.cp.$primaryForm.serialize(), $.proxy(function(response, textStatus) {
                     this.$spinner.addClass('hidden');
-
-                    console.log('ASDF');
-                    console.log('response', textStatus);
 
                     if (textStatus === 'success') {
                         this.trigger('beforeTypeChange');
@@ -34,10 +29,10 @@
                             $(response.tabsHtml).insertBefore($('#content'))
                         }
 
-                        // $('#fields').html(response.fieldsHtml);
-                        // Craft.initUiElements($('#fields'));
-                        // Craft.appendHeadHtml(response.headHtml);
-                        // Craft.appendFootHtml(response.bodyHtml);
+                        $('#fields').html(response.fieldsHtml);
+                        Craft.initUiElements($('#fields'));
+                        Craft.appendHeadHtml(response.headHtml);
+                        Craft.appendFootHtml(response.bodyHtml);
 
                         // Update the slug generator with the new title input
                         if (typeof slugGenerator !== 'undefined') {

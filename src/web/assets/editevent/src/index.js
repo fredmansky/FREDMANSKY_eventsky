@@ -1,1 +1,1 @@
-import './EntryTypeSwitcher';
+import './EventTypeSwitcher';

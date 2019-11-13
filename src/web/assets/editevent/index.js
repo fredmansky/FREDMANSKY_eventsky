@@ -86,9 +86,9 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/web/assets/editevent/src/EntryTypeSwitcher.js":
+/***/ "./src/web/assets/editevent/src/EventTypeSwitcher.js":
 /*!***********************************************************!*\
-  !*** ./src/web/assets/editevent/src/EntryTypeSwitcher.js ***!
+  !*** ./src/web/assets/editevent/src/EventTypeSwitcher.js ***!
   \***********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
@@ -107,10 +107,8 @@
     },
     onTypeChange: function onTypeChange(ev) {
       this.$spinner.removeClass('hidden');
-      console.log('FORM', Craft.cp.$primaryForm.serialize());
-      Craft.postActionRequest('eventsky/events/switch-entry-type', Craft.cp.$primaryForm.serialize(), $.proxy(function (response, textStatus) {
+      Craft.postActionRequest('eventsky/events/switch-event-type', Craft.cp.$primaryForm.serialize(), $.proxy(function (response, textStatus) {
         this.$spinner.addClass('hidden');
-        console.log('response', textStatus);
 
         if (textStatus === 'success') {
           this.trigger('beforeTypeChange');
@@ -120,12 +118,12 @@
             $tabs.replaceWith(response.tabsHtml);
           } else {
             $(response.tabsHtml).insertBefore($('#content'));
-          } // $('#fields').html(response.fieldsHtml);
-          // Craft.initUiElements($('#fields'));
-          // Craft.appendHeadHtml(response.headHtml);
-          // Craft.appendFootHtml(response.bodyHtml);
-          // Update the slug generator with the new title input
+          }
 
+          $('#fields').html(response.fieldsHtml);
+          Craft.initUiElements($('#fields'));
+          Craft.appendHeadHtml(response.headHtml);
+          Craft.appendFootHtml(response.bodyHtml); // Update the slug generator with the new title input
 
           if (typeof slugGenerator !== 'undefined') {
             slugGenerator.setNewSource('#title');
@@ -150,8 +148,8 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _EntryTypeSwitcher__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./EntryTypeSwitcher */ "./src/web/assets/editevent/src/EntryTypeSwitcher.js");
-/* harmony import */ var _EntryTypeSwitcher__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_EntryTypeSwitcher__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _EventTypeSwitcher__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./EventTypeSwitcher */ "./src/web/assets/editevent/src/EventTypeSwitcher.js");
+/* harmony import */ var _EventTypeSwitcher__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_EventTypeSwitcher__WEBPACK_IMPORTED_MODULE_0__);
 
 
 /***/ }),
@@ -167,15 +165,27 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/web/assets/editticket/src/style.scss":
+/*!**************************************************!*\
+  !*** ./src/web/assets/editticket/src/style.scss ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
 /***/ 0:
-/*!***********************************************************************************************!*\
-  !*** multi ./src/web/assets/editevent/src/index.js ./src/web/assets/editevent/src/style.scss ***!
-  \***********************************************************************************************/
+/*!******************************************************************************************************************************************!*\
+  !*** multi ./src/web/assets/editevent/src/index.js ./src/web/assets/editevent/src/style.scss ./src/web/assets/editticket/src/style.scss ***!
+  \******************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editevent/src/index.js */"./src/web/assets/editevent/src/index.js");
-module.exports = __webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editevent/src/style.scss */"./src/web/assets/editevent/src/style.scss");
+__webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editevent/src/style.scss */"./src/web/assets/editevent/src/style.scss");
+module.exports = __webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editticket/src/style.scss */"./src/web/assets/editticket/src/style.scss");
 
 
 /***/ })

@@ -17,6 +17,7 @@ use fredmansky\eventsky\web\assets\editevent\EditEventAsset;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 
+use yii\web\BadRequestHttpException;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -38,7 +39,7 @@ class EventsController extends Controller
         parent::init();
     }
 
-    public function actionIndex(array $variables = []): Response
+    public function actionIndex(array $data = []): Response
     {
         $data = [
             'eventTypes' => Eventsky::$plugin->eventType->getAllEventTypes(),
@@ -112,18 +113,7 @@ class EventsController extends Controller
         $data['isMultiSiteElement'] = Craft::$app->isMultiSite && count(Craft::$app->getSites()->allSiteIds) > 1;
         $data['canUpdateSource'] = true;
 
-        $data['tabs'] = [
-            [
-                'label' => Craft::t('eventsky', 'translate.events.tab.eventData'),
-                'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.events.tab.eventData')),
-//                'class' => $hasErrors ? 'error' : null,
-            ],
-            [
-                'label' => Craft::t('eventsky', 'translate.events.tab.tickets'),
-                'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.events.tab.tickets')),
-//                'class' => $hasErrors ? 'error' : null,
-            ],
-        ];
+        $data['tabs'] = $this->getDefaultTabs();
 
         foreach ($eventType->getFieldLayout()->getTabs() as $index => $tab) {
             // Do any of the fields on this tab have errors?
@@ -148,33 +138,39 @@ class EventsController extends Controller
         return $this->renderTemplate('eventsky/events/edit', $data);
     }
 
-    public function actionSwitchEntryType(): Response
+    public function actionSwitchEventType(): Response
     {
         $this->requirePostRequest();
         $this->requireAcceptsJson();
+
 
         $event = $this->getEventModel();
         $this->populateEventModel($event);
 
         $data = [];
         $data['event'] = $event;
-//
-//        if (($response = $this->_prepEditEntryVariables($variables)) !== null) {
-//            return $response;
-//        }
+        $data['element'] = $event;
+
+        if (($response = $this->prepEditEventVariables($data)) !== null) {
+            return $response;
+        }
 
         $view = $this->getView();
-        $tabsHtml = !empty($variables['tabs']) ? $view->renderTemplate('_includes/tabs', $data) : null;
-//        $fieldsHtml = $view->renderTemplate('entries/_fields', $variables);
-//        $headHtml = $view->getHeadHtml();
-//        $bodyHtml = $view->getBodyHtml();
+        $tabsHtml = !empty($data['tabs']) ? $view->renderTemplate('_includes/tabs', $data) : null;
+        $fieldsHtml = $view->renderTemplate('eventsky/events/_fields', $data);
+        $headHtml = $view->getHeadHtml();
+        $bodyHtml = $view->getBodyHtml();
+
+//        dump($this->asJson(compact(
+//            'tabsHtml'
+//        ))); die();
 //
         return $this->asJson(compact(
-            'tabsHtml'
+            'tabsHtml',
+            'fieldsHtml',
+            'headHtml',
+            'bodyHtml'
         ));
-//            'fieldsHtml',
-//            'headHtml',
-//            'bodyHtml'
     }
 
     public function actionSave()
@@ -253,6 +249,23 @@ class EventsController extends Controller
         return $this->asJson(['success' => true]);
     }
 
+    private function getDefaultTabs() {
+        $tabs = [
+            [
+                'label' => Craft::t('eventsky', 'translate.events.tab.eventData'),
+                'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.events.tab.eventData')),
+//                'class' => $hasErrors ? 'error' : null,
+            ],
+            [
+                'label' => Craft::t('eventsky', 'translate.events.tab.tickets'),
+                'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.events.tab.tickets')),
+//                'class' => $hasErrors ? 'error' : null,
+            ],
+        ];
+
+        return $tabs;
+    }
+
     private function getSiteForNewEvent($site) {
         $sitesService = Craft::$app->getSites();
         $siteIds = $sitesService->allSiteIds;
@@ -278,6 +291,70 @@ class EventsController extends Controller
         }
 
         return $site;
+    }
+
+    private function prepEditEventVariables(array &$data)
+    {
+        $request = Craft::$app->getRequest();
+
+
+        if (empty($data['event'])) {
+            if (empty($data['eventId'])) {
+                throw new BadRequestHttpException('Request missing required eventId param');
+            }
+
+            $data['event'] = Event::find()
+                ->id($data['eventId'])
+//                ->siteId($site->id)
+                ->anyStatus()
+                ->one();
+
+            if (!$data['event']) {
+                throw new NotFoundHttpException('Entry not found');
+            }
+        }
+
+        // Override the event type?
+        $typeId = $request->getParam('typeId');
+
+        if (!$typeId) {
+            // Default to the section's first entry type
+            $typeId = $data['entry']->typeId ?? Eventsky::$plugin->eventType->getAllEventTypes()[0]->id;
+        }
+
+//        echo 'getting here'; die();
+        $data['event']->typeId = $typeId;
+        $data['eventType'] = $data['event']->getType();
+
+        // Prevent the last entry type's field layout from being used
+        $data['event']->fieldLayoutId = null;
+
+        // Define the content tabs
+        // ---------------------------------------------------------------------
+
+        $data['tabs'] = $this->getDefaultTabs();
+
+        foreach ($data['eventType']->getFieldLayout()->getTabs() as $index => $tab) {
+            // Do any of the fields on this tab have errors?
+//            $hasErrors = false;
+//            if ($event->hasErrors()) {
+//                foreach ($tab->getFields() as $field) {
+//                    /** @var Field $field */
+//                    if ($hasErrors = $event->hasErrors($field->handle . '.*')) {
+//                        break;
+//                    }
+//                }
+//            }
+            $hasErrors = null;
+
+            $data['tabs'][] = [
+                'label' => $tab->name,
+                'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
+                'class' => $hasErrors ? 'error' : null,
+            ];
+        }
+
+        return null;
     }
 
     private function getEventModel(): Event
@@ -308,48 +385,27 @@ class EventsController extends Controller
         $request = Craft::$app->getRequest();
 
         // Set the entry attributes, defaulting to the existing values for whatever is missing from the post data
-        $entry->typeId = $request->getBodyParam('typeId', $entry->typeId);
-        $entry->slug = $request->getBodyParam('slug', $entry->slug);
+        $event->typeId = $request->getBodyParam('typeId', $event->typeId);
+        $event->slug = $request->getBodyParam('slug', $event->slug);
         if (($postDate = $request->getBodyParam('postDate')) !== null) {
-            $entry->postDate = DateTimeHelper::toDateTime($postDate) ?: null;
+            $event->postDate = DateTimeHelper::toDateTime($postDate) ?: null;
         }
         if (($expiryDate = $request->getBodyParam('expiryDate')) !== null) {
-            $entry->expiryDate = DateTimeHelper::toDateTime($expiryDate) ?: null;
+            $event->expiryDate = DateTimeHelper::toDateTime($expiryDate) ?: null;
         }
-        $entry->enabled = (bool)$request->getBodyParam('enabled', $entry->enabled);
-        $entry->enabledForSite = (bool)$request->getBodyParam('enabledForSite', $entry->enabledForSite);
-        $entry->title = $request->getBodyParam('title', $entry->title);
+        $event->enabled = (bool)$request->getBodyParam('enabled', $event->enabled);
+        $event->enabledForSite = (bool)$request->getBodyParam('enabledForSite', $event->enabledForSite);
+        $event->title = $request->getBodyParam('title', $event->title);
 
-        if (!$entry->typeId) {
+        if (!$event->typeId) {
             // Default to the section's first entry type
-            $entry->typeId = $entry->getSection()->getEntryTypes()[0]->id;
+            $event->typeId = Eventsky::$plugin->eventType->getAllEventTypes()[0]->id;
         }
 
         // Prevent the last entry type's field layout from being used
-        $entry->fieldLayoutId = null;
+        $event->fieldLayoutId = null;
 
         $fieldsLocation = $request->getParam('fieldsLocation', 'fields');
-        $entry->setFieldValuesFromRequest($fieldsLocation);
-
-        // Author
-        $authorId = $request->getBodyParam('author', ($entry->authorId ?: Craft::$app->getUser()->getIdentity()->id));
-
-        if (is_array($authorId)) {
-            $authorId = $authorId[0] ?? null;
-        }
-
-        $entry->authorId = $authorId;
-
-        // Parent
-        if (($parentId = $request->getBodyParam('parentId')) !== null) {
-            if (is_array($parentId)) {
-                $parentId = reset($parentId) ?: '';
-            }
-
-            $entry->newParentId = $parentId ?: '';
-        }
-
-        // Revision notes
-        $entry->setRevisionNotes($request->getBodyParam('revisionNotes'));
+        $event->setFieldValuesFromRequest($fieldsLocation);
     }
 }
