@@ -130,17 +130,7 @@ class TicketsController extends Controller
         $data['isMultiSiteElement'] = false;
         $data['canUpdateSource'] = true;
 
-        $data['tabs'] = $this->getDefaultTabs();
-
-        foreach ($ticketType->getFieldLayout()->getTabs() as $index => $tab) {
-            $hasErrors = null;
-
-            $data['tabs'][] = [
-                'label' => $tab->name,
-                'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
-                'class' => $hasErrors ? 'error' : null,
-            ];
-        }
+        $data['tabs'] = $this->getTabs($data['ticketType']->getFieldLayout());
 
         return $this->renderTemplate('eventsky/tickets/edit', $data);
     }
@@ -174,27 +164,11 @@ class TicketsController extends Controller
     {
         $this->requirePostRequest();
 
+        $ticket = $this->getTicketModel();
         $request = Craft::$app->getRequest();
-        $ticketId = $request->getBodyParam('ticketId');
 
-        if ($ticketId) {
-            $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
-
-            if (!$ticket) {
-                throw new HttpException(404, Craft::t('eventsky', 'translate.ticket.notFound'));
-            }
-        } else {
-            $ticket = new Ticket();
-        }
-
-        $ticket->title = $request->getBodyParam('title');
-        $ticket->slug = $request->getBodyParam('slug');
-        $ticket->typeId = $request->getBodyParam('typeId');
-        $ticket->eventId = $request->getBodyParam('eventId');
-        $ticket->statusId = $request->getBodyParam('statusId');
-
-        // save values from custom fields to event
-        $ticket->setFieldValuesFromRequest('fields');
+        // Populate the ticket with post data
+        $this->populateTicketModel($ticket);
 
         if (!Craft::$app->getElements()->saveElement($ticket)) {
             if ($request->getAcceptsJson()) {
@@ -229,13 +203,23 @@ class TicketsController extends Controller
         return $this->asJson(['success' => true]);
     }
 
-    private function getDefaultTabs() {
+    private function getTabs($fieldLayout) {
         $tabs = [
             [
                 'label' => Craft::t('eventsky', 'translate.ticket.tab.ticketData'),
                 'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.ticketData')),
             ],
         ];
+
+        foreach ($fieldLayout->getTabs() as $index => $tab) {
+            $hasErrors = null;
+
+            $tabs[] = [
+                'label' => $tab->name,
+                'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
+                'class' => $hasErrors ? 'error' : null,
+            ];
+        }
 
         return $tabs;
     }
@@ -249,7 +233,7 @@ class TicketsController extends Controller
             $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
 
             if (!$ticket) {
-                throw new NotFoundHttpException('Ticket not found');
+                throw new HttpException(404, Craft::t('eventsky', 'translate.ticket.notFound'));
             }
         } else {
             $ticket = new Ticket();
@@ -263,13 +247,23 @@ class TicketsController extends Controller
         $request = Craft::$app->getRequest();
 
         // Set the entry attributes, defaulting to the existing values for whatever is missing from the post data
-        $ticket->typeId = $request->getBodyParam('typeId', $ticket->typeId);
-        $ticket->slug = $request->getBodyParam('slug', $ticket->slug);
         $ticket->title = $request->getBodyParam('title', $ticket->title);
+        $ticket->slug = $request->getBodyParam('slug', $ticket->slug);
+        $ticket->typeId = $request->getBodyParam('typeId', $ticket->typeId);
+        $ticket->eventId = $request->getBodyParam('eventId', $ticket->eventId);
+        $ticket->statusId = $request->getBodyParam('statusId', $ticket->statusId);
 
         if (!$ticket->typeId) {
-            // Default to the section's first entry type
-            $ticket->typeId = $ticket->getSection()->getEntryTypes()[0]->id;
+            // Default to the first ticket type
+            $ticket->typeId = Eventsky::$plugin->ticketType->getAllTicketTypes()[0]->id;
+        }
+        if (!$ticket->eventId) {
+            // Default to the first event
+            $ticket->eventId = Eventsky::$plugin->event->getAllEvents()[0]->id;
+        }
+        if (!$ticket->statusId) {
+            // Default to the first status
+            $ticket->statusId = Eventsky::$plugin->ticketStatus->getAllTicketStatuses()[0]->id;
         }
 
         // Prevent the last entry type's field layout from being used
@@ -283,17 +277,7 @@ class TicketsController extends Controller
     {
         $ticketType = $data['ticket']->getType();
         $data['ticketType'] = $ticketType;
-        $data['tabs'] = $this->getDefaultTabs();
-
-        foreach ($ticketType->getFieldLayout()->getTabs() as $index => $tab) {
-            $hasErrors = null;
-
-            $data['tabs'][] = [
-                'label' => $tab->name,
-                'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
-                'class' => $hasErrors ? 'error' : null,
-            ];
-        }
+        $data['tabs'] = $this->getTabs($data['ticketType']->getFieldLayout());
 
         $data['ticketEventOptions'] = array_map(function($event) {
             return [

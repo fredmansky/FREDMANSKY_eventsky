@@ -113,27 +113,7 @@ class EventsController extends Controller
         $data['isMultiSiteElement'] = Craft::$app->isMultiSite && count(Craft::$app->getSites()->allSiteIds) > 1;
         $data['canUpdateSource'] = true;
 
-        $data['tabs'] = $this->getDefaultTabs();
-
-        foreach ($eventType->getFieldLayout()->getTabs() as $index => $tab) {
-            // Do any of the fields on this tab have errors?
-//            $hasErrors = false;
-//            if ($event->hasErrors()) {
-//                foreach ($tab->getFields() as $field) {
-//                    /** @var Field $field */
-//                    if ($hasErrors = $event->hasErrors($field->handle . '.*')) {
-//                        break;
-//                    }
-//                }
-//            }
-            $hasErrors = null;
-
-            $data['tabs'][] = [
-                'label' => $tab->name,
-                'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
-                'class' => $hasErrors ? 'error' : null,
-            ];
-        }
+        $data['tabs'] = $this->getTabs($data['eventType']->getFieldLayout());
 
         return $this->renderTemplate('eventsky/events/edit', $data);
     }
@@ -172,43 +152,11 @@ class EventsController extends Controller
     {
         $this->requirePostRequest();
 
+        $event = $this->getEventModel();
         $request = Craft::$app->getRequest();
-        $eventId = $request->getBodyParam('eventId');
 
-        if ($eventId) {
-            $event = Eventsky::$plugin->event->getEventById($eventId);
-
-            if (!$event) {
-                throw new HttpException(404, Craft::t('eventsky', 'translate.event.notFound'));
-            }
-        } else {
-            $event = new Event();
-        }
-
-        $event->title = $request->getBodyParam('title');
-        $event->slug = $request->getBodyParam('slug');
-        $event->typeId = $request->getBodyParam('typeId');
-        $event->needsRegistration = $request->getBodyParam('needsRegistration');
-        $event->registrationEnabled = $request->getBodyParam('registrationEnabled');
-        $event->totalTickets = $request->getBodyParam('totalTickets');
-        $event->hasWaitingList = $request->getBodyParam('hasWaitingList');
-        $event->waitingListSize = $request->getBodyParam('waitingListSize');
-
-        // save values from custom fields to event
-        $event->setFieldValuesFromRequest('fields');
-
-        if (($postDate = $request->getBodyParam('postDate')) !== null) {
-            $event->postDate = DateTimeHelper::toDateTime($postDate) ?: null;
-        }
-        if (($expiryDate = $request->getBodyParam('expiryDate')) !== null) {
-            $event->expiryDate = DateTimeHelper::toDateTime($expiryDate) ?: null;
-        }
-        if (($startDate = $request->getBodyParam('startDate')) !== null) {
-            $event->startDate = DateTimeHelper::toDateTime($startDate) ?: null;
-        }
-        if (($endDate = $request->getBodyParam('endDate')) !== null) {
-            $event->endDate = DateTimeHelper::toDateTime($endDate) ?: null;
-        }
+        // Populate the event with post data
+        $this->populateEventModel($event);
 
         if (!Craft::$app->getElements()->saveElement($event)) {
             if ($request->getAcceptsJson()) {
@@ -244,7 +192,7 @@ class EventsController extends Controller
         return $this->asJson(['success' => true]);
     }
 
-    private function getDefaultTabs() {
+    private function getTabs($fieldLayout) {
         $tabs = [
             [
                 'label' => Craft::t('eventsky', 'translate.events.tab.eventData'),
@@ -257,6 +205,26 @@ class EventsController extends Controller
 //                'class' => $hasErrors ? 'error' : null,
             ],
         ];
+
+        foreach ($fieldLayout->getTabs() as $index => $tab) {
+            // Do any of the fields on this tab have errors?
+//            $hasErrors = false;
+//            if ($event->hasErrors()) {
+//                foreach ($tab->getFields() as $field) {
+//                    /** @var Field $field */
+//                    if ($hasErrors = $event->hasErrors($field->handle . '.*')) {
+//                        break;
+//                    }
+//                }
+//            }
+            $hasErrors = null;
+
+            $tabs[] = [
+                'label' => $tab->name,
+                'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
+                'class' => $hasErrors ? 'error' : null,
+            ];
+        }
 
         return $tabs;
     }
@@ -292,7 +260,6 @@ class EventsController extends Controller
     {
         $request = Craft::$app->getRequest();
 
-
         if (empty($data['event'])) {
             if (empty($data['eventId'])) {
                 throw new BadRequestHttpException('Request missing required eventId param');
@@ -326,28 +293,7 @@ class EventsController extends Controller
 
         // Define the content tabs
         // ---------------------------------------------------------------------
-
-        $data['tabs'] = $this->getDefaultTabs();
-
-        foreach ($data['eventType']->getFieldLayout()->getTabs() as $index => $tab) {
-            // Do any of the fields on this tab have errors?
-//            $hasErrors = false;
-//            if ($event->hasErrors()) {
-//                foreach ($tab->getFields() as $field) {
-//                    /** @var Field $field */
-//                    if ($hasErrors = $event->hasErrors($field->handle . '.*')) {
-//                        break;
-//                    }
-//                }
-//            }
-            $hasErrors = null;
-
-            $data['tabs'][] = [
-                'label' => $tab->name,
-                'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
-                'class' => $hasErrors ? 'error' : null,
-            ];
-        }
+        $data['tabs'] = $this->getTabs($data['eventType']->getFieldLayout());
 
         return null;
     }
@@ -362,7 +308,7 @@ class EventsController extends Controller
             $event = Eventsky::$plugin->event->getEventById($eventId);
 
             if (!$event) {
-                throw new NotFoundHttpException('Event not found');
+                throw new HttpException(404, Craft::t('eventsky', 'translate.event.notFound'));
             }
         } else {
             $event = new Event();
@@ -380,26 +326,40 @@ class EventsController extends Controller
         $request = Craft::$app->getRequest();
 
         // Set the entry attributes, defaulting to the existing values for whatever is missing from the post data
-        $event->typeId = $request->getBodyParam('typeId', $event->typeId);
+        $event->title = $request->getBodyParam('title', $event->title);
         $event->slug = $request->getBodyParam('slug', $event->slug);
+        $event->typeId = $request->getBodyParam('typeId', $event->typeId);
+        $event->needsRegistration = $request->getBodyParam('needsRegistration', $event->needsRegistration);
+        $event->registrationEnabled = $request->getBodyParam('registrationEnabled', $event->registrationEnabled);
+        $event->totalTickets = $request->getBodyParam('totalTickets', $event->totalTickets);
+        $event->hasWaitingList = $request->getBodyParam('hasWaitingList', $event->hasWaitingList);
+        $event->waitingListSize = $request->getBodyParam('waitingListSize', $event->waitingListSize);
+
         if (($postDate = $request->getBodyParam('postDate')) !== null) {
             $event->postDate = DateTimeHelper::toDateTime($postDate) ?: null;
         }
         if (($expiryDate = $request->getBodyParam('expiryDate')) !== null) {
             $event->expiryDate = DateTimeHelper::toDateTime($expiryDate) ?: null;
         }
-        $event->enabled = (bool)$request->getBodyParam('enabled', $event->enabled);
-        $event->enabledForSite = (bool)$request->getBodyParam('enabledForSite', $event->enabledForSite);
-        $event->title = $request->getBodyParam('title', $event->title);
+        if (($startDate = $request->getBodyParam('startDate')) !== null) {
+            $event->startDate = DateTimeHelper::toDateTime($startDate) ?: null;
+        }
+        if (($endDate = $request->getBodyParam('endDate')) !== null) {
+            $event->endDate = DateTimeHelper::toDateTime($endDate) ?: null;
+        }
+
+        $event->enabled = (bool) $request->getBodyParam('enabled', $event->enabled);
+        $event->enabledForSite = (bool) $request->getBodyParam('enabledForSite', $event->enabledForSite);
 
         if (!$event->typeId) {
             // Default to the section's first entry type
             $event->typeId = Eventsky::$plugin->eventType->getAllEventTypes()[0]->id;
         }
 
-        // Prevent the last entry type's field layout from being used
+        // Prevent the last events type's field layout from being used
         $event->fieldLayoutId = null;
 
+        // save values from custom fields to event
         $fieldsLocation = $request->getParam('fieldsLocation', 'fields');
         $event->setFieldValuesFromRequest($fieldsLocation);
     }
