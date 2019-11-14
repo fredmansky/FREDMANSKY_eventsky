@@ -143,7 +143,6 @@ class EventsController extends Controller
         $this->requirePostRequest();
         $this->requireAcceptsJson();
 
-
         $event = $this->getEventModel();
         $this->populateEventModel($event);
 
@@ -161,10 +160,6 @@ class EventsController extends Controller
         $headHtml = $view->getHeadHtml();
         $bodyHtml = $view->getBodyHtml();
 
-//        dump($this->asJson(compact(
-//            'tabsHtml'
-//        ))); die();
-//
         return $this->asJson(compact(
             'tabsHtml',
             'fieldsHtml',

@@ -36,9 +36,7 @@ class TicketStatusService extends Component
             return $this->statuses;
         }
 
-//        $condition = ['eventsky_eventtypes.dateDeleted' => null];
         $results = $this->createEventTypeQuery()
-//            ->where($condition)
             ->all();
 
         $this->statuses = array_map(function($status) {
