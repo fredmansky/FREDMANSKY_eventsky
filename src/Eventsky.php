@@ -14,12 +14,14 @@ namespace fredmansky\eventsky;
 use Craft;
 use craft\base\Plugin;
 use craft\events\RegisterUrlRulesEvent;
+use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
 use fredmansky\eventsky\services\EventService;
 use fredmansky\eventsky\services\EventTypeService;
 use fredmansky\eventsky\services\TicketService;
 use fredmansky\eventsky\services\TicketStatusService;
 use fredmansky\eventsky\services\TicketTypeService;
+use fredmansky\eventsky\services\TwigTemplateService;
 use fredmansky\vidsky\services\Video;
 use yii\base\Event;
 
@@ -38,6 +40,8 @@ class Eventsky extends Plugin
         $this->hasCpSection = true;
 
         $this->installEventListeners();
+        $this->installTwigExtensions();
+
         $this->setComponents([
             'event' => EventService::class,
             'eventType' => EventTypeService::class,
@@ -99,6 +103,17 @@ class Eventsky extends Plugin
                 );
             }
         );
+    }
+
+    protected function installTwigExtensions()
+    {
+        Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $e) {
+            /** @var CraftVariable $variable */
+            $variable = $e->sender;
+
+            // Attach a service:
+            $variable->set('eventsky', TwigTemplateService::class);
+        });
     }
 
     protected function customAdminCpRoutes(): array

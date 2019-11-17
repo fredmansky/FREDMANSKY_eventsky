@@ -59,6 +59,19 @@ class EventTypeService extends Component
         return null;
     }
 
+    public function getEventTypeByHandle(String $handle): ?EventType
+    {
+        $result = $this->createEventTypeQuery()
+            ->where(['=', 'handle', $handle])
+            ->one();
+
+        if ($result) {
+            return new EventType($result);
+        }
+
+        return null;
+    }
+
     public function getEventTypeSites(int $eventTypeId): array
     {
         $eventTypeSites = EventTypeSiteRecord::find()
