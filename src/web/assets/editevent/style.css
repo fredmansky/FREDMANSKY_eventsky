@@ -1,0 +1,33 @@
+@media (min-width: 500px) {
+  .editEvent .flexContainer {
+    display: flex;
+  }
+
+  .editEvent .flexContainer:not(:first-of-type) {
+    margin-top: 24px;
+  }
+
+  .editEvent .flexContainer > * {
+    flex-shrink: 0;
+    flex-grow: 0;
+    min-width: 142px;
+  }
+
+  .editEvent .flexContainer > *:not(:first-child) {
+    margin-left: 24px;
+  }
+
+  .editEvent .flexContainer .field {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+.editEvent .visually-hidden {
+  visibility: hidden;
+}
+
+.editEvent .titlebar {
+  padding-left: 14px !important;
+}
+

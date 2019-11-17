@@ -1,0 +1,32 @@
+{% import "_includes/forms" as forms %}
+
+<div class="matrix matrix-field">
+    <div class="blocks">
+        {% set totalNewMappings = 0 %}
+        {% for ticketTypeMapping in mappedTicketTypes %}
+            {% set mappingId = ticketTypeMapping.id %}
+            {% if not mappingId %}
+                {% set totalNewMappings = totalNewMappings + 1 %}
+                {% set mappingId = 'new'~totalNewMappings %}
+            {% endif %}
+
+            {% include "eventsky/_components/EventTicketTypeMapping/_ticketTypeBlock" with {
+                ticketTypeMapping: ticketTypeMapping
+            } only %}
+        {% endfor %}
+    </div>
+    <div class="buttons">test
+        {% if allTicketTypes | length > mappedTicketTypes | length %}
+            <div class="btn add icon menubtn">{{ 'translate.fields.eventTicketTypeMapping.addType' | t('eventsky') }}</div>
+        {% endif %}
+        <div class="menu">
+            <ul>
+                {% for ticketType in allTicketTypes %}
+                    {% if ticketType.id not in mappedTicketTypes | map(ticketMapping => ticketMapping.getTicketType().id) %}
+                        <li><a data-type="{{ ticketType.handle }}" class="js-ticketTypeLink">{{ ticketType.name }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

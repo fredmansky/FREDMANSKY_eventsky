@@ -13,7 +13,9 @@ use craft\helpers\ElementHelper;
 use craft\helpers\StringHelper;
 use fredmansky\eventsky\elements\Event;
 use fredmansky\eventsky\Eventsky;
+use fredmansky\eventsky\fields\EventTicketTypeMappingField;
 use fredmansky\eventsky\web\assets\editevent\EditEventAsset;
+use fredmansky\eventsky\web\assets\availableTicketField\EventTicketTypeMappingAsset;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 
@@ -54,6 +56,7 @@ class EventsController extends Controller
         $eventTypes = Eventsky::$plugin->eventType->getAllEventTypes();
 
         $this->getView()->registerAssetBundle(EditEventAsset::class);
+        $this->getView()->registerAssetBundle(EventTicketTypeMappingAsset::class);
 
         /** @var Event $event */
         $event = null;
@@ -114,6 +117,8 @@ class EventsController extends Controller
         $data['canUpdateSource'] = true;
 
         $data['tabs'] = $this->getTabs($data['eventType']->getFieldLayout());
+
+        $this->prepTicketTypeMappingVariables($data);
 
         return $this->renderTemplate('eventsky/events/edit', $data);
     }
@@ -254,6 +259,12 @@ class EventsController extends Controller
         }
 
         return $site;
+    }
+
+    private function prepTicketTypeMappingVariables(array &$data)
+    {
+        $data['eventTicketTypeMappingField'] = Eventsky::$plugin->fieldService->getFieldByHandle(EventTicketTypeMappingField::FIELD_HANDLE);
+        $data['ticketTypes'] = Eventsky::$plugin->ticketType->getAllTicketTypes();
     }
 
     private function prepEditEventVariables(array &$data)

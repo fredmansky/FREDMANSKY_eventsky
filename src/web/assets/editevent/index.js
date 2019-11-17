@@ -86,6 +86,17 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/web/assets/availableticketfield/src/style.scss":
+/*!************************************************************!*\
+  !*** ./src/web/assets/availableticketfield/src/style.scss ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
 /***/ "./src/web/assets/editevent/src/EventTypeSwitcher.js":
 /*!***********************************************************!*\
   !*** ./src/web/assets/editevent/src/EventTypeSwitcher.js ***!
@@ -139,6 +150,72 @@
 
 /***/ }),
 
+/***/ "./src/web/assets/editevent/src/RegistrationToggle.js":
+/*!************************************************************!*\
+  !*** ./src/web/assets/editevent/src/RegistrationToggle.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function ($) {
+  /** global: Craft */
+
+  /** global: Garnish */
+  Craft.RegistrationToggle = Garnish.Base.extend({
+    $registrationToggle: null,
+    $totalTickets: null,
+    init: function init() {
+      this.$registrationToggle = $('#needsRegistration');
+      this.$totalTickets = $('#totalTickets-field')[0];
+      this.addListener(this.$registrationToggle, 'click', 'onChange');
+    },
+    onChange: function onChange(evt) {
+      var toggleIsOn = evt.currentTarget.getAttribute('aria-checked');
+
+      if (toggleIsOn === 'true') {
+        this.$totalTickets.classList.remove('visually-hidden');
+      } else {
+        this.$totalTickets.classList.add('visually-hidden');
+      }
+    }
+  });
+})(jQuery);
+
+/***/ }),
+
+/***/ "./src/web/assets/editevent/src/WaitlistToggle.js":
+/*!********************************************************!*\
+  !*** ./src/web/assets/editevent/src/WaitlistToggle.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function ($) {
+  /** global: Craft */
+
+  /** global: Garnish */
+  Craft.WaitlistToggle = Garnish.Base.extend({
+    $registrationToggle: null,
+    $totalTickets: null,
+    init: function init() {
+      this.$registrationToggle = $('#hasWaitingList');
+      this.$totalTickets = $('#waitingListSize-field')[0];
+      this.addListener(this.$registrationToggle, 'click', 'onChange');
+    },
+    onChange: function onChange(evt) {
+      var toggleIsOn = evt.currentTarget.getAttribute('aria-checked');
+
+      if (toggleIsOn === 'true') {
+        this.$totalTickets.classList.remove('visually-hidden');
+      } else {
+        this.$totalTickets.classList.add('visually-hidden');
+      }
+    }
+  });
+})(jQuery);
+
+/***/ }),
+
 /***/ "./src/web/assets/editevent/src/index.js":
 /*!***********************************************!*\
   !*** ./src/web/assets/editevent/src/index.js ***!
@@ -150,6 +227,12 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _EventTypeSwitcher__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./EventTypeSwitcher */ "./src/web/assets/editevent/src/EventTypeSwitcher.js");
 /* harmony import */ var _EventTypeSwitcher__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_EventTypeSwitcher__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _RegistrationToggle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./RegistrationToggle */ "./src/web/assets/editevent/src/RegistrationToggle.js");
+/* harmony import */ var _RegistrationToggle__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_RegistrationToggle__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _WaitlistToggle__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./WaitlistToggle */ "./src/web/assets/editevent/src/WaitlistToggle.js");
+/* harmony import */ var _WaitlistToggle__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_WaitlistToggle__WEBPACK_IMPORTED_MODULE_2__);
+
+
 
 
 /***/ }),
@@ -177,15 +260,16 @@ __webpack_require__.r(__webpack_exports__);
 /***/ }),
 
 /***/ 0:
-/*!******************************************************************************************************************************************!*\
-  !*** multi ./src/web/assets/editevent/src/index.js ./src/web/assets/editevent/src/style.scss ./src/web/assets/editticket/src/style.scss ***!
-  \******************************************************************************************************************************************/
+/*!***********************************************************************************************************************************************************************************************!*\
+  !*** multi ./src/web/assets/editevent/src/index.js ./src/web/assets/editevent/src/style.scss ./src/web/assets/editticket/src/style.scss ./src/web/assets/availableticketfield/src/style.scss ***!
+  \***********************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editevent/src/index.js */"./src/web/assets/editevent/src/index.js");
 __webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editevent/src/style.scss */"./src/web/assets/editevent/src/style.scss");
-module.exports = __webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editticket/src/style.scss */"./src/web/assets/editticket/src/style.scss");
+__webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editticket/src/style.scss */"./src/web/assets/editticket/src/style.scss");
+module.exports = __webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/availableticketfield/src/style.scss */"./src/web/assets/availableticketfield/src/style.scss");
 
 
 /***/ })

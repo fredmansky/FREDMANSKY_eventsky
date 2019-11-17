@@ -1,31 +1,39 @@
 {% import "_includes/forms" as forms %}
 
-{{ forms.lightswitchField({
-    label: 'translate.events.fields.tickets.needsRegistration' | t('eventsky'),
-    id: 'needsRegistration',
-    name: 'needsRegistration',
-    on: element.needsRegistration,
-}) }}
+<div class="flexContainer">
+    {{ forms.lightswitchField({
+        label: 'translate.events.fields.tickets.needsRegistration' | t('eventsky'),
+        id: 'needsRegistration',
+        name: 'needsRegistration',
+        on: element.needsRegistration,
+    }) }}
+    {{ forms.textField({
+        label: 'translate.events.fields.tickets.totalTickets' | t('eventsky'),
+        id: 'totalTickets',
+        name: 'totalTickets',
+        value: event.totalTickets,
+        placeholder: 'totalTickets' | t('eventsky'),
+    }) }}
+</div>
 
-{{ forms.textField({
-    label: 'translate.events.fields.tickets.totalTickets' | t('eventsky'),
-    id: 'totalTickets',
-    name: 'totalTickets',
-    value: event.totalTickets,
-    placeholder: 'totalTickets' | t('eventsky'),
-}) }}
+<div class="flexContainer">
+    {{ forms.lightswitchField({
+        label: 'translate.events.fields.tickets.hasWaitingList' | t('eventsky'),
+        id: 'hasWaitingList',
+        name: 'hasWaitingList',
+        on: element.hasWaitingList,
+    }) }}
+    {{ forms.textField({
+        label: 'translate.events.fields.tickets.waitingListSize' | t('eventsky'),
+        id: 'waitingListSize',
+        name: 'waitingListSize',
+        value: event.waitingListSize,
+        placeholder: 'waitingListSize' | t('eventsky'),
+    }) }}
+</div>
 
-{{ forms.lightswitchField({
-    label: 'translate.events.fields.tickets.hasWaitingList' | t('eventsky'),
-    id: 'hasWaitingList',
-    name: 'hasWaitingList',
-    on: element.hasWaitingList,
-}) }}
-
-{{ forms.textField({
-    label: 'translate.events.fields.tickets.waitingListSize' | t('eventsky'),
-    id: 'waitingListSize',
-    name: 'waitingListSize',
-    value: event.waitingListSize,
-    placeholder: 'waitingListSize' | t('eventsky'),
-}) }}
+{% include "_includes/field" with {
+    field: eventTicketTypeMappingField,
+    required: true,
+    element: element,
+} only %}

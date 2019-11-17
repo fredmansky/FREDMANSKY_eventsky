@@ -1,0 +1,46 @@
+{% import "_includes/forms" as forms %}
+
+<div class="matrixblock" style="margin-left: 0; width: 100%; box-sizing: border-box;" data-id="{{ mappingId }}">
+{#                    {{ hiddenInput("#{name}[#{blockId}][type]", block.getType().handle) }}#}
+{#                    {{ hiddenInput("#{name}[#{blockId}][enabled]", block.enabled ? '1' : '') }}#}
+    <div class="titlebar">
+        <div class="blocktype{% if ticketTypeMapping.hasErrors() %} error{% endif %}">
+            {{ ticketTypeMapping.getTicketType().name }}
+{#                            {% if block.hasErrors() %}<span data-icon="alert"></span>{% endif %}#}
+        </div>
+        <div class="preview"></div>
+    </div>
+    <div class="actions">
+        <a class="settings icon menubtn" title="{{ 'Actions'|t('app') }}" role="button"></a>
+        <div class="menu">
+                <ul class="padded">
+                    <li><a class="error" data-icon="remove" data-action="delete">{{ "Delete"|t('app') }}</a></li>
+                </ul>
+        </div>
+    </div>
+    <div class="fields">
+        <div class="flexContainer">
+            {{ forms.dateTimeField({
+                label: 'translate.events.fields.ticketType.registrationStart' | t('eventsky'),
+                id: 'registrationStart',
+                name: 'registrationStart',
+                value: ticketTypeMapping.registrationStartDate,
+            }) }}
+
+            {{ forms.dateTimeField({
+                label: 'translate.events.fields.ticketType.registrationEnd' | t('eventsky'),
+                id: 'registrationEnd',
+                name: 'registrationEnd',
+                value: ticketTypeMapping.registrationEndDate,
+            }) }}
+{#                        errors: event.getErrors('startDate')#}
+        </div>
+
+        {{ forms.textField({
+            label: 'translate.events.fields.ticketType.limit' | t('eventsky'),
+            id: 'limit',
+            name: 'limit',
+            value: ticketTypeMapping.limit,
+        }) }}
+    </div>
+</div>
