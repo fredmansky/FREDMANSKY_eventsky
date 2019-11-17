@@ -28,6 +28,11 @@ use yii\db\Exception;
  */
 class Event extends Element
 {
+
+    const STATUS_LIVE = 'live';
+    const STATUS_PENDING = 'pending';
+    const STATUS_EXPIRED = 'expired';
+
     public $typeId;
     public $startDate;
     public $endDate;
