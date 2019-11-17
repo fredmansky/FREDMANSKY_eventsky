@@ -6,8 +6,14 @@
 
 namespace fredmansky\eventsky\elements\db;
 
+use craft\db\Query;
 use craft\elements\db\ElementQuery;
 use craft\helpers\Db;
+use fredmansky\eventsky\elements\Event;
+use fredmansky\eventsky\Eventsky;
+use fredmansky\eventsky\models\EventType;
+use yii\base\InvalidConfigException;
+use yii\helpers\Console;
 
 class EventQuery extends ElementQuery
 {
@@ -26,7 +32,7 @@ class EventQuery extends ElementQuery
     {
         // Default status
         if (!isset($config['status'])) {
-            $config['status'] = ['live'];
+            $config['status'] = [Event::STATUS_LIVE];
         }
 
         parent::__construct($elementType, $config);
@@ -36,6 +42,66 @@ class EventQuery extends ElementQuery
     {
         $this->typeId = $value;
         return $this;
+    }
+
+    public function type($value)
+    {
+         if ($value instanceof EventType) {
+             $this->typeId = $value->id;
+         } else if ($value !== null) {
+             $this->typeId = Eventsky::$plugin->eventType->getEventTypeByHandle($value);
+
+             if (!$this->typeId) {
+                 throw new InvalidConfigException('Invalid event type: ' . $value);
+             }
+         } else {
+             $this->typeId = null;
+         }
+
+        return $this;
+    }
+
+    protected function statusCondition(string $status)
+    {
+        $currentTimeDb = Db::prepareDateForDb(new \DateTime());
+
+        switch ($status) {
+            case Event::STATUS_LIVE:
+                return [
+                    'and',
+                    [
+                        'elements.enabled' => true,
+                        'elements_sites.enabled' => true
+                    ],
+                    ['<=', 'eventsky_events.postDate', $currentTimeDb],
+                    [
+                        'or',
+                        ['eventsky_events.expiryDate' => null],
+                        ['>', 'eventsky_events.expiryDate', $currentTimeDb]
+                    ]
+                ];
+            case Event::STATUS_PENDING:
+                return [
+                    'and',
+                    [
+                        'elements.enabled' => true,
+                        'elements_sites.enabled' => true,
+                    ],
+                    ['>', 'eventsky_events.postDate', $currentTimeDb]
+                ];
+            case Event::STATUS_EXPIRED:
+                return [
+                    'and',
+                    [
+                        'elements.enabled' => true,
+                        'elements_sites.enabled' => true
+                    ],
+                    ['not', ['eventsky_events.expiryDate' => null]],
+                    ['<=', 'eventsky_events.expiryDate', $currentTimeDb]
+                ];
+            default:
+                return parent::statusCondition($status);
+        }
     }
 
     protected function beforePrepare(): bool
