@@ -15,12 +15,12 @@
             } only %}
         {% endfor %}
     </div>
-    <div class="buttons">test
+    <div class="buttons">
         {% if allTicketTypes | length > mappedTicketTypes | length %}
             <div class="btn add icon menubtn">{{ 'translate.fields.eventTicketTypeMapping.addType' | t('eventsky') }}</div>
         {% endif %}
         <div class="menu">
-            <ul>
+            <ul  class="js-ticketTypeList">
                 {% for ticketType in allTicketTypes %}
                     {% if ticketType.id not in mappedTicketTypes | map(ticketMapping => ticketMapping.getTicketType().id) %}
                         <li><a data-type="{{ ticketType.handle }}" class="js-ticketTypeLink">{{ ticketType.name }}</a></li>

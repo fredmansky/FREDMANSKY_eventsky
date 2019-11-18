@@ -14,6 +14,7 @@ use craft\helpers\StringHelper;
 use fredmansky\eventsky\elements\Event;
 use fredmansky\eventsky\Eventsky;
 use fredmansky\eventsky\fields\EventTicketTypeMappingField;
+use fredmansky\eventsky\models\EventTicketTypeMapping;
 use fredmansky\eventsky\web\assets\editevent\EditEventAsset;
 use fredmansky\eventsky\web\assets\availableTicketField\EventTicketTypeMappingAsset;
 use craft\helpers\UrlHelper;
@@ -150,6 +151,30 @@ class EventsController extends Controller
             'fieldsHtml',
             'headHtml',
             'bodyHtml'
+        ));
+    }
+
+    public function actionAddNewTicketType(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        $request = Craft::$app->getRequest();
+
+        $handle = $request->getBodyParam('ticketType');
+        $ticketType = Eventsky::$plugin->ticketType->getTicketTypeByHandle($handle);
+        $ticketTypeMapping = new EventTicketTypeMapping();
+        $ticketTypeMapping->setTicketType($ticketType);
+
+        $data = [
+            'ticketTypeMapping' => $ticketTypeMapping,
+        ];
+
+        $view = $this->getView();
+        $fieldHtml = $view->renderTemplate('eventsky/_components/fieldTypes/EventTicketTypeMapping/_ticketTypeBlock', $data);
+
+        return $this->asJson(compact(
+            'fieldHtml'
         ));
     }
 

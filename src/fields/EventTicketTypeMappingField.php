@@ -39,10 +39,6 @@ class EventTicketTypeMappingField extends Field
 
     public function normalizeValue($value, ElementInterface $element = null)
     {
-//        if ($value instanceof ElementQueryInterface) {
-//            return $value;
-//        }
-
         $mappedTicketTypes = [];
 
         // Existing element?

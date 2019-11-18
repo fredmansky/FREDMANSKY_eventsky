@@ -3,52 +3,61 @@
     /** global: Garnish */
     Craft.TicketTypeSelector = Garnish.Base.extend(
         {
+            $typeSelect: null,
             $typeSelectLinks: null,
+            $ticketTypeList: null,
+            $blockContainer: null,
+            $selectButton: null,
+            $spinner: null,
 
             init: function() {
-                this.$typeSelectLinks = $('.js-ticketTypeLink');
-                // this.$typeSelectLinks = $('a');
-                console.log('this.$typeSelectLinks', this.$typeSelectLinks);
-                // this.$spinner = $('<div class="spinner hidden"/>').insertAfter(this.$typeSelect.parent());
+                this.$typeSelect = document.querySelector('#availableTickets-field .buttons');
+                this.$typeSelectLinks = document.querySelectorAll('.js-ticketTypeLink');
+                this.$ticketTypeList = document.querySelector('.js-ticketTypeList');
+                this.$blockContainer = document.querySelector('#availableTickets-field .blocks');
+                this.$selectButton = document.querySelector('#availableTickets-field .menubtn');
+                this.$spinner = $('<div class="spinner hidden" style="margin-left: 24px;" />').appendTo(this.$typeSelect);
+
                 this.$typeSelectLinks.forEach(link => {
                     this.addListener(link, 'click', (evt) => {
-                        this.onTypeChange(evt, 'test');
+                        const ticketTypeHandle = evt.currentTarget.dataset['type'];
+                        this.onTypeChange(evt, ticketTypeHandle);
                     });
                 });
             },
 
             onTypeChange: function(evt, ticketTypeHandle) {
-                console.log('ticketTypeHandle', ticketTypeHandle);
-                // this.$spinner.removeClass('hidden');
-                //
-                // Craft.postActionRequest('eventsky/events/switch-event-type', Craft.cp.$primaryForm.serialize(), $.proxy(function(response, textStatus) {
-                //     this.$spinner.addClass('hidden');
-                //
-                //     if (textStatus === 'success') {
-                //         this.trigger('beforeTypeChange');
-                //
-                //         var $tabs = $('#tabs');
-                //         if ($tabs.length) {
-                //             $tabs.replaceWith(response.tabsHtml);
-                //         } else {
-                //             $(response.tabsHtml).insertBefore($('#content'))
-                //         }
-                //
-                //         $('#fields').html(response.fieldsHtml);
-                //         Craft.initUiElements($('#fields'));
-                //         Craft.appendHeadHtml(response.headHtml);
-                //         Craft.appendFootHtml(response.bodyHtml);
-                //
-                //         // Update the slug generator with the new title input
-                //         if (typeof slugGenerator !== 'undefined') {
-                //             slugGenerator.setNewSource('#title');
-                //         }
-                //
-                //         Craft.cp.initTabs();
-                //
-                //         this.trigger('typeChange');
-                //     }
-                // }, this));
+                this.$spinner.removeClass('hidden');
+
+                Craft.postActionRequest('eventsky/events/add-new-ticket-type', {'ticketType': ticketTypeHandle}, $.proxy(function(response, textStatus) {
+                    this.$spinner.addClass('hidden');
+
+                    if (textStatus === 'success') {
+
+                        this.addMappingBlock(response.fieldHtml);
+                        this.removeBlockTypeFromMenu(evt);
+
+                        if (this.allTicketTypesMapped()) {
+                            this.hideAddTicketTypeButton();
+                        }
+                    }
+                }, this));
+            },
+
+            addMappingBlock(html) {
+                this.$blockContainer.insertAdjacentHTML('beforeend', html);
+            },
+
+            removeBlockTypeFromMenu(evt) {
+                const li = $(evt.currentTarget).parent().remove();
+            },
+
+            hideAddTicketTypeButton() {
+                $(this.$selectButton).addClass('hidden');
+            },
+
+            allTicketTypesMapped() {
+                return this.$ticketTypeList.children.length === 0;
             }
         });
 })(jQuery);

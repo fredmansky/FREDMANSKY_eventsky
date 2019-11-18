@@ -49,9 +49,10 @@ class EventTicketTypeMapping extends Model
 
         return $this->ticketType;
     }
-//
-//    public function setEventType(EventType $eventType)
-//    {
-//        $this->eventType = $eventType;
-//    }
+
+    public function setTicketType(TicketType $ticketType)
+    {
+        $this->tickettypeId = $ticketType->id;
+        $this->ticketType = $ticketType;
+    }
 }

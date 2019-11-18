@@ -79,43 +79,22 @@ class Event extends Element
         return parent::getFieldLayout() ?? $this->getType()->getFieldLayout();
     }
 
-//    public function getFieldValue(string $fieldHandle)
-//    {
-//        // Make sure the value has been normalized
-//        $this->normalizeFieldValue($fieldHandle);
-//
-//        return $this->getBehavior('customFields')->$fieldHandle;
-//    }
+    protected function normalizeFieldValue(string $fieldHandle)
+    {
+        if (strcmp('availableTickets', $fieldHandle) === 0) {
+            $field = Eventsky::$plugin->fieldService->getFieldByHandle($fieldHandle);
 
-//    public function getFieldValue(string $fieldHandle)
-//    {
-//        if (strcmp('eventTicketTypeMapping', $fieldHandle) === 0) {
-////            dump($fieldHandle);
-//
-//            // Make sure the value has been normalized
-//            $this->normalizeFieldValue($fieldHandle);
-//
-//            dump($this->getBehavior('customFields'));
-//            die();
-//            return 'TEST';
-//        }
-//
-//        return parent::getFieldValue($fieldHandle);
-//    }
+            if (!$field) {
+                throw new Exception('Invalid field handle: ' . $fieldHandle);
+            }
 
-//    protected function normalizeFieldValue(string $fieldHandle)
-//    {
-//        // Have we already normalized this value?
-//        if (isset($this->_normalizedFieldValues[$fieldHandle])) {
-//            return;
-//        }
-//
-//        $field = new Event;
-//
-//        $behavior = $this->getBehavior('customFields');
-//        $field->normalizeValue($behavior->$fieldHandle, $this);
-//        $this->_normalizedFieldValues[$fieldHandle] = true;
-//    }
+            $behavior = $this->getBehavior('customFields');
+            $behavior->$fieldHandle = $field->normalizeValue($behavior->$fieldHandle, $this);
+            return;
+        }
+
+        parent::normalizeFieldValue($fieldHandle);
+    }
 
     public function getType(): EventType
     {
