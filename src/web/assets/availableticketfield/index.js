@@ -111,7 +111,7 @@
       this.$typeSelectLinks = document.querySelectorAll('.js-ticketTypeLink');
       this.$ticketTypeList = document.querySelector('.js-ticketTypeList');
       this.$blockContainer = document.querySelector('#availableTickets-field .blocks');
-      this.$selectButton = document.querySelector('#availableTickets-field .menubtn');
+      this.$selectButton = document.querySelector('#availableTickets-field .buttons .menubtn');
       this.$spinner = $('<div class="spinner hidden" style="margin-left: 24px;" />').appendTo(this.$typeSelect);
       this.$typeSelectLinks.forEach(function (link) {
         _this.addListener(link, 'click', function (evt) {
@@ -130,7 +130,7 @@
 
         if (textStatus === 'success') {
           this.addMappingBlock(response);
-          this.removeBlockTypeFromMenu(evt);
+          this.hideBlockTypeFromMenu(evt);
 
           if (this.allTicketTypesMapped()) {
             this.hideAddTicketTypeButton();
@@ -140,21 +140,18 @@
     },
     addMappingBlock: function addMappingBlock(response) {
       var html = response.fieldHtml;
-      this.$blockContainer.insertAdjacentHTML('beforeend', html); // Craft.initUiElements(this.$blockContainer);
-
-      Craft.initUiElements($(this.$blockContainer)); // Craft.appendHeadHtml(response.headHtml);
-
-      Craft.appendFootHtml(response.bodyHtml); //
-      // Craft.cp.initTabs();
+      this.$blockContainer.insertAdjacentHTML('beforeend', html);
+      Craft.initUiElements($(this.$blockContainer));
+      Craft.appendFootHtml(response.bodyHtml);
     },
-    removeBlockTypeFromMenu: function removeBlockTypeFromMenu(evt) {
-      var li = $(evt.currentTarget).parent().remove();
+    hideBlockTypeFromMenu: function hideBlockTypeFromMenu(evt) {
+      var li = $(evt.currentTarget).parent().addClass('hidden');
     },
     hideAddTicketTypeButton: function hideAddTicketTypeButton() {
       $(this.$selectButton).addClass('hidden');
     },
     allTicketTypesMapped: function allTicketTypesMapped() {
-      return this.$ticketTypeList.children.length === 0;
+      return this.$ticketTypeList.querySelectorAll('li:not(.hidden)').length === 0;
     }
   });
 })(jQuery);

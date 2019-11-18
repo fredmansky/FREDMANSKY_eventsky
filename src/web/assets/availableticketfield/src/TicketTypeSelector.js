@@ -15,7 +15,7 @@
                 this.$typeSelectLinks = document.querySelectorAll('.js-ticketTypeLink');
                 this.$ticketTypeList = document.querySelector('.js-ticketTypeList');
                 this.$blockContainer = document.querySelector('#availableTickets-field .blocks');
-                this.$selectButton = document.querySelector('#availableTickets-field .menubtn');
+                this.$selectButton = document.querySelector('#availableTickets-field .buttons .menubtn');
                 this.$spinner = $('<div class="spinner hidden" style="margin-left: 24px;" />').appendTo(this.$typeSelect);
 
                 this.$typeSelectLinks.forEach(link => {
@@ -34,7 +34,7 @@
 
                     if (textStatus === 'success') {
                         this.addMappingBlock(response);
-                        this.removeBlockTypeFromMenu(evt);
+                        this.hideBlockTypeFromMenu(evt);
 
                         if (this.allTicketTypesMapped()) {
                             this.hideAddTicketTypeButton();
@@ -51,8 +51,8 @@
                 Craft.appendFootHtml(response.bodyHtml);
             },
 
-            removeBlockTypeFromMenu(evt) {
-                const li = $(evt.currentTarget).parent().remove();
+            hideBlockTypeFromMenu(evt) {
+                const li = $(evt.currentTarget).parent().addClass('hidden');
             },
 
             hideAddTicketTypeButton() {
@@ -60,7 +60,7 @@
             },
 
             allTicketTypesMapped() {
-                return this.$ticketTypeList.children.length === 0;
+                return this.$ticketTypeList.querySelectorAll('li:not(.hidden)').length === 0;
             }
         });
 })(jQuery);
