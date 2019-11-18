@@ -10,7 +10,7 @@
                 {% set mappingId = 'new'~totalNewMappings %}
             {% endif %}
 
-            {% include "eventsky/_components/EventTicketTypeMapping/_ticketTypeBlock" with {
+            {% include "eventsky/_components/fieldTypes/EventTicketTypeMapping/_ticketTypeBlock" with {
                 ticketTypeMapping: ticketTypeMapping
             } only %}
         {% endfor %}

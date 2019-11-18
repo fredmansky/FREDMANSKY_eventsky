@@ -43,7 +43,6 @@ class Eventsky extends Plugin
         $this->setComponents([
             'event' => EventService::class,
             'eventType' => EventTypeService::class,
-            'eventTicketTypeMapping' => EventTicketTypeMappingService::class,
             'ticket' => TicketService::class,
             'ticketType' => TicketTypeService::class,
             'ticketStatus' => TicketStatusService::class,

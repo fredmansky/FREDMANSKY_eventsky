@@ -129,7 +129,7 @@
         this.$spinner.addClass('hidden');
 
         if (textStatus === 'success') {
-          this.addMappingBlock(response.fieldHtml);
+          this.addMappingBlock(response);
           this.removeBlockTypeFromMenu(evt);
 
           if (this.allTicketTypesMapped()) {
@@ -138,8 +138,14 @@
         }
       }, this));
     },
-    addMappingBlock: function addMappingBlock(html) {
-      this.$blockContainer.insertAdjacentHTML('beforeend', html);
+    addMappingBlock: function addMappingBlock(response) {
+      var html = response.fieldHtml;
+      this.$blockContainer.insertAdjacentHTML('beforeend', html); // Craft.initUiElements(this.$blockContainer);
+
+      Craft.initUiElements($(this.$blockContainer)); // Craft.appendHeadHtml(response.headHtml);
+
+      Craft.appendFootHtml(response.bodyHtml); //
+      // Craft.cp.initTabs();
     },
     removeBlockTypeFromMenu: function removeBlockTypeFromMenu(evt) {
       var li = $(evt.currentTarget).parent().remove();

@@ -43,7 +43,7 @@ class EventTicketTypeMappingField extends Field
 
         // Existing element?
         if ($element && $element->id) {
-            $mappedTicketTypes = Eventsky::$plugin->eventTicketTypeMapping->getAllTicketTypesByEventId($element->id);
+            $mappedTicketTypes = Eventsky::$plugin->event->getAllTicketTypesByEventId($element->id);
         }
 
         return $mappedTicketTypes;

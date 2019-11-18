@@ -55,4 +55,16 @@ class EventTicketTypeMapping extends Model
         $this->tickettypeId = $ticketType->id;
         $this->ticketType = $ticketType;
     }
+
+    public function datetimeAttributes(): array
+    {
+        $attributes = [];
+
+        $attributes[] = 'registrationStartDate';
+        $attributes[] = 'registrationEndDate';
+        $attributes[] = 'dateCreated';
+        $attributes[] = 'dateUpdated';
+
+        return $attributes;
+    }
 }

@@ -172,9 +172,11 @@ class EventsController extends Controller
 
         $view = $this->getView();
         $fieldHtml = $view->renderTemplate('eventsky/_components/fieldTypes/EventTicketTypeMapping/_ticketTypeBlock', $data);
+        $bodyHtml = $view->getBodyHtml();
 
         return $this->asJson(compact(
-            'fieldHtml'
+            'fieldHtml',
+            'bodyHtml'
         ));
     }
 
@@ -187,6 +189,15 @@ class EventsController extends Controller
 
         // Populate the event with post data
         $this->populateEventModel($event);
+
+        $ticketTypeMappings = $request->getBodyParam('availableTicketTypes');
+
+        foreach ($ticketTypeMappings as $ticketTypeMappingData) {
+            $ticketTypeId = $ticketTypeMappingData['typeId'];
+            $ticketTypeMapping = $this->getTicketTypeMappingModel($event->id, $ticketTypeId);
+            $this->populateTicketTypeMappingModel($ticketTypeMapping, $ticketTypeMappingData);
+            Eventsky::$plugin->event->saveEventTicketTypeMapping($ticketTypeMapping);
+        }
 
         if (!Craft::$app->getElements()->saveElement($event)) {
             if ($request->getAcceptsJson()) {
@@ -320,7 +331,6 @@ class EventsController extends Controller
             $typeId = $data['entry']->typeId ?? Eventsky::$plugin->eventType->getAllEventTypes()[0]->id;
         }
 
-//        echo 'getting here'; die();
         $data['event']->typeId = $typeId;
         $data['eventType'] = $data['event']->getType();
 
@@ -355,6 +365,19 @@ class EventsController extends Controller
         }
 
         return $event;
+    }
+
+    private function getTicketTypeMappingModel($eventId, $ticketTypeId): EventTicketTypeMapping
+    {
+        $mapping = Eventsky::$plugin->event->getTicketTypeMapping($eventId, $ticketTypeId);
+
+        if (!$mapping) {
+            $mapping = new EventTicketTypeMapping();
+            $mapping->eventId = $eventId;
+            $mapping->tickettypeId = $ticketTypeId;
+        }
+
+        return $mapping;
     }
 
     private function populateEventModel(Event $event)
@@ -398,5 +421,18 @@ class EventsController extends Controller
         // save values from custom fields to event
         $fieldsLocation = $request->getParam('fieldsLocation', 'fields');
         $event->setFieldValuesFromRequest($fieldsLocation);
+    }
+
+    private function populateTicketTypeMappingModel(EventTicketTypeMapping $mapping, array $data)
+    {
+        $mapping->limit = $data['limit'];
+
+        if (($registrationStartDate = $data['registrationStart']) !== null) {
+            $mapping->registrationStartDate = DateTimeHelper::toDateTime($registrationStartDate) ?: null;
+        }
+
+        if (($registrationEndDate = $data['registrationEnd']) !== null) {
+            $mapping->registrationEndDate = DateTimeHelper::toDateTime($registrationEndDate) ?: null;
+        }
     }
 }

@@ -33,8 +33,7 @@
                     this.$spinner.addClass('hidden');
 
                     if (textStatus === 'success') {
-
-                        this.addMappingBlock(response.fieldHtml);
+                        this.addMappingBlock(response);
                         this.removeBlockTypeFromMenu(evt);
 
                         if (this.allTicketTypesMapped()) {
@@ -44,8 +43,12 @@
                 }, this));
             },
 
-            addMappingBlock(html) {
+            addMappingBlock(response) {
+                const html = response.fieldHtml;
                 this.$blockContainer.insertAdjacentHTML('beforeend', html);
+
+                Craft.initUiElements($(this.$blockContainer));
+                Craft.appendFootHtml(response.bodyHtml);
             },
 
             removeBlockTypeFromMenu(evt) {

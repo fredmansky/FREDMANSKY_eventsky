@@ -176,15 +176,16 @@ class Event extends Element
         ];
     }
 
-//    public function datetimeAttributes(): array
-//    {
-//        $attributes = parent::datetimeAttributes();
-//        $attributes[] = 'postDate';
-//        $attributes[] = 'expiryDate';
-//        $attributes[] = 'startDate';
-//        $attributes[] = 'endDate';
-//        return $attributes;
-//    }
+    public function datetimeAttributes(): array
+    {
+        $attributes = parent::datetimeAttributes();
+        $attributes[] = 'postDate';
+        $attributes[] = 'expiryDate';
+        $attributes[] = 'startDate';
+        $attributes[] = 'endDate';
+
+        return $attributes;
+    }
 
     public function getIsEditable(): bool
     {
