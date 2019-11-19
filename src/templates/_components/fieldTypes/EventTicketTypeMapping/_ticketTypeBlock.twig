@@ -4,11 +4,13 @@
 {% set ticketType = ticketTypeMapping.getTicketType() ?? null %}
 {% set ticketTypeName = ticketType.name ?? null %}
 {% set ticketTypeHandle = ticketType.handle ?? null %}
+{% set ticketTypeId = ticketType.id ?? null %}
 
 <div id="{{ ticketTypeHandle }}" class="matrixblock" style="margin-left: 0; width: 100%; box-sizing: border-box;"> {# data-id="{{ mappingId }}" #}
 
-    <input type="hidden" name="{{ 'availableTicketTypes[' ~ ticketTypeHandle ~ ']' }}" value="">
-    <input type="hidden" name="{{ 'availableTicketTypes[' ~ ticketTypeHandle ~ '][typeId]' }}" value="{{ ticketType.id }}">
+    <input type="hidden" name="{{ 'availableTicketTypes[' ~ ticketTypeId ~ ']' }}" value="">
+    <input type="hidden" name="{{ 'availableTicketTypes[' ~ ticketTypeId ~ '][typeId]' }}" value="{{ ticketType.id }}">
+    <input type="hidden" name="{{ 'availableTicketTypes[' ~ ticketTypeId ~ '][typeHandle]' }}" value="{{ ticketTypeHandle }}">
 
     <div class="titlebar">
         <div class="blocktype{% if ticketTypeMapping.hasErrors() %} error{% endif %}">
@@ -30,14 +32,14 @@
             {{ forms.dateTimeField({
                 label: 'translate.events.fields.ticketType.registrationStart' | t('eventsky'),
                 id: 'availableTicketTypes_' ~ ticketTypeHandle ~ '_registrationStart',
-                name: 'availableTicketTypes[' ~ ticketTypeHandle ~ '][registrationStart]',
+                name: 'availableTicketTypes[' ~ ticketTypeId ~ '][registrationStart]',
                 value: ticketTypeMapping.registrationStartDate,
             }) }}
 
             {{ forms.dateTimeField({
                 label: 'translate.events.fields.ticketType.registrationEnd' | t('eventsky'),
                 id: 'availableTicketTypes_' ~ ticketTypeHandle ~ '_registrationEnd',
-                name: 'availableTicketTypes[' ~ ticketTypeHandle ~ '][registrationEnd]',
+                name: 'availableTicketTypes[' ~ ticketTypeId ~ '][registrationEnd]',
                 value: ticketTypeMapping.registrationEndDate,
             }) }}
 {#                        errors: event.getErrors('startDate')#}
@@ -46,7 +48,7 @@
         {{ forms.textField({
             label: 'translate.events.fields.ticketType.limit' | t('eventsky'),
             id: 'availableTicketTypes_' ~ ticketTypeHandle ~ '_limit',
-            name: 'availableTicketTypes[' ~ ticketTypeHandle ~ '][limit]',
+            name: 'availableTicketTypes[' ~ ticketTypeId ~ '][limit]',
             value: ticketTypeMapping.limit,
         }) }}
     </div>

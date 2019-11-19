@@ -190,14 +190,7 @@ class EventsController extends Controller
         // Populate the event with post data
         $this->populateEventModel($event);
 
-        $ticketTypeMappings = $request->getBodyParam('availableTicketTypes');
-
-        foreach ($ticketTypeMappings as $ticketTypeMappingData) {
-            $ticketTypeId = $ticketTypeMappingData['typeId'];
-            $ticketTypeMapping = $this->getTicketTypeMappingModel($event->id, $ticketTypeId);
-            $this->populateTicketTypeMappingModel($ticketTypeMapping, $ticketTypeMappingData);
-            Eventsky::$plugin->event->saveEventTicketTypeMapping($ticketTypeMapping);
-        }
+        $this->saveEventTicketTypesMappings($event);
 
         if (!Craft::$app->getElements()->saveElement($event)) {
             if ($request->getAcceptsJson()) {
@@ -231,6 +224,36 @@ class EventsController extends Controller
         Eventsky::$plugin->event->deleteEventById($eventId);
 
         return $this->asJson(['success' => true]);
+    }
+
+    private function saveEventTicketTypesMappings($event) {
+        $request = Craft::$app->getRequest();
+
+        $currentTicketTypeMappings = Eventsky::$plugin->event->getAllTicketTypeMappingsByEventId($event->id);
+        $newTicketTypeMappings = $request->getBodyParam('availableTicketTypes') ?? [];
+
+        $oldTicketTypeMappings = array_filter($currentTicketTypeMappings, function ($mapping) use ($newTicketTypeMappings) {
+            return !array_key_exists($mapping->tickettypeId, $newTicketTypeMappings);
+        });
+
+        $this->deleteOldTicketTypeMappings($oldTicketTypeMappings);
+        $this->saveTicketTypeMappings($event, $newTicketTypeMappings);
+
+    }
+
+    private function deleteOldTicketTypeMappings($ticketTypeMappings) {
+        foreach ($ticketTypeMappings as $ticketTypeMapping) {
+            Eventsky::$plugin->event->deleteEventTicketTypeMapping($ticketTypeMapping);
+        }
+    }
+
+    private function saveTicketTypeMappings($event, $ticketTypeMappings) {
+        foreach ($ticketTypeMappings as $ticketTypeMappingData) {
+            $ticketTypeId = $ticketTypeMappingData['typeId'];
+            $ticketTypeMapping = $this->getTicketTypeMappingModel($event->id, $ticketTypeId);
+            $this->populateTicketTypeMappingModel($ticketTypeMapping, $ticketTypeMappingData);
+            Eventsky::$plugin->event->saveEventTicketTypeMapping($ticketTypeMapping);
+        }
     }
 
     private function getTabs($fieldLayout) {

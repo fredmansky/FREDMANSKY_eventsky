@@ -25,21 +25,9 @@
 
             deleteTicketTypeMapping: function(evt) {
                 const deleteBtn = evt.currentTarget;
-                const mappingId = deleteBtn.dataset['id'];
                 const ticketTypeHandle = deleteBtn.dataset['handle'];
 
-                console.log('getting here too', mappingId, ticketTypeHandle);
-                // this.$spinner.removeClass('hidden');
-
-                if (mappingId) {
-                    Craft.postActionRequest('eventsky/events/remove-ticket-type', { mappingId }, $.proxy(function(response, textStatus) {
-                        if (textStatus === 'success') {
-                            this.deleteAction(evt, ticketTypeHandle);
-                        }
-                    }, this));
-                } else {
-                    this.deleteAction(evt, ticketTypeHandle);
-                }
+                this.deleteAction(evt, ticketTypeHandle);
             },
 
             deleteAction(evt, ticketTypeHandle) {

@@ -2,13 +2,12 @@
 
 <div class="matrix matrix-field">
     <div class="blocks">
-        {% set totalNewMappings = 0 %}
         {% for ticketTypeMapping in mappedTicketTypes %}
 
             {% include "eventsky/_components/fieldTypes/EventTicketTypeMapping/_ticketTypeBlock" with {
                 ticketTypeMapping: ticketTypeMapping
             } only %}
-            
+
         {% endfor %}
     </div>
     <div class="buttons">

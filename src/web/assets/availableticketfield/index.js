@@ -120,21 +120,8 @@
     },
     deleteTicketTypeMapping: function deleteTicketTypeMapping(evt) {
       var deleteBtn = evt.currentTarget;
-      var mappingId = deleteBtn.dataset['id'];
       var ticketTypeHandle = deleteBtn.dataset['handle'];
-      console.log('getting here too', mappingId, ticketTypeHandle); // this.$spinner.removeClass('hidden');
-
-      if (mappingId) {
-        Craft.postActionRequest('eventsky/events/remove-ticket-type', {
-          mappingId: mappingId
-        }, $.proxy(function (response, textStatus) {
-          if (textStatus === 'success') {
-            this.deleteAction(evt, ticketTypeHandle);
-          }
-        }, this));
-      } else {
-        this.deleteAction(evt, ticketTypeHandle);
-      }
+      this.deleteAction(evt, ticketTypeHandle);
     },
     deleteAction: function deleteAction(evt, ticketTypeHandle) {
       this.removeMappingBlock(ticketTypeHandle);

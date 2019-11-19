@@ -68,7 +68,7 @@ class EventService extends Component
         return true;
     }
 
-    public function getAllTicketTypesByEventId(int $eventId): array
+    public function getAllTicketTypeMappingsByEventId(int $eventId): array
     {
         $results = $this->createEventTicketTypeMappingQuery()
             ->where(['=', 'eventId', $eventId])
@@ -122,6 +122,19 @@ class EventService extends Component
 
         // @TODO add exceptions when saving is failing
         return true;
+    }
+
+    public function deleteEventTicketTypeMapping(EventTicketTypeMapping $eventTicketTypeMapping)
+    {
+        $eventTicketTypeMappingRecord = EventTicketTypeMappingRecord::find()
+            ->where(['=', 'id', $eventTicketTypeMapping->id])
+            ->one();
+
+        if (!$eventTicketTypeMappingRecord) {
+            return false;
+        }
+
+        return $eventTicketTypeMappingRecord->delete();
     }
 
     private function createEventTicketTypeMappingQuery(): ActiveQuery
