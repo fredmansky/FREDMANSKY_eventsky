@@ -84,6 +84,23 @@ class Event extends Element
         return parent::getFieldLayout() ?? $this->getType()->getFieldLayout();
     }
 
+    protected function normalizeFieldValue(string $fieldHandle)
+    {
+        if (strcmp('availableTickets', $fieldHandle) === 0) {
+            $field = Eventsky::$plugin->fieldService->getFieldByHandle($fieldHandle);
+
+            if (!$field) {
+                throw new Exception('Invalid field handle: ' . $fieldHandle);
+            }
+
+            $behavior = $this->getBehavior('customFields');
+            $behavior->$fieldHandle = $field->normalizeValue($behavior->$fieldHandle, $this);
+            return;
+        }
+
+        parent::normalizeFieldValue($fieldHandle);
+    }
+
     public function getType(): EventType
     {
         if ($this->typeId === null) {
@@ -164,15 +181,16 @@ class Event extends Element
         ];
     }
 
-//    public function datetimeAttributes(): array
-//    {
-//        $attributes = parent::datetimeAttributes();
-//        $attributes[] = 'postDate';
-//        $attributes[] = 'expiryDate';
-//        $attributes[] = 'startDate';
-//        $attributes[] = 'endDate';
-//        return $attributes;
-//    }
+    public function datetimeAttributes(): array
+    {
+        $attributes = parent::datetimeAttributes();
+        $attributes[] = 'postDate';
+        $attributes[] = 'expiryDate';
+        $attributes[] = 'startDate';
+        $attributes[] = 'endDate';
+
+        return $attributes;
+    }
 
     public function getIsEditable(): bool
     {
@@ -234,10 +252,5 @@ class Event extends Element
         $this->id = $record->id;
 
         parent::afterSave($isNew);
-    }
-
-    private function _shouldSaveRevision(): bool
-    {
-        return false;
     }
 }

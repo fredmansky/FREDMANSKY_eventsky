@@ -13,7 +13,10 @@ use craft\helpers\ElementHelper;
 use craft\helpers\StringHelper;
 use fredmansky\eventsky\elements\Event;
 use fredmansky\eventsky\Eventsky;
+use fredmansky\eventsky\fields\EventTicketTypeMappingField;
+use fredmansky\eventsky\models\EventTicketTypeMapping;
 use fredmansky\eventsky\web\assets\editevent\EditEventAsset;
+use fredmansky\eventsky\web\assets\availableTicketField\EventTicketTypeMappingAsset;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 
@@ -54,6 +57,7 @@ class EventsController extends Controller
         $eventTypes = Eventsky::$plugin->eventType->getAllEventTypes();
 
         $this->getView()->registerAssetBundle(EditEventAsset::class);
+        $this->getView()->registerAssetBundle(EventTicketTypeMappingAsset::class);
 
         /** @var Event $event */
         $event = null;
@@ -115,6 +119,8 @@ class EventsController extends Controller
 
         $data['tabs'] = $this->getTabs($data['eventType']->getFieldLayout());
 
+        $this->prepTicketTypeMappingVariables($data);
+
         return $this->renderTemplate('eventsky/events/edit', $data);
     }
 
@@ -148,6 +154,32 @@ class EventsController extends Controller
         ));
     }
 
+    public function actionAddNewTicketType(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        $request = Craft::$app->getRequest();
+
+        $handle = $request->getBodyParam('ticketType');
+        $ticketType = Eventsky::$plugin->ticketType->getTicketTypeByHandle($handle);
+        $ticketTypeMapping = new EventTicketTypeMapping();
+        $ticketTypeMapping->setTicketType($ticketType);
+
+        $data = [
+            'ticketTypeMapping' => $ticketTypeMapping,
+        ];
+
+        $view = $this->getView();
+        $fieldHtml = $view->renderTemplate('eventsky/_components/fieldTypes/EventTicketTypeMapping/_ticketTypeBlock', $data);
+        $bodyHtml = $view->getBodyHtml();
+
+        return $this->asJson(compact(
+            'fieldHtml',
+            'bodyHtml'
+        ));
+    }
+
     public function actionSave()
     {
         $this->requirePostRequest();
@@ -157,6 +189,8 @@ class EventsController extends Controller
 
         // Populate the event with post data
         $this->populateEventModel($event);
+
+        $this->saveEventTicketTypesMappings($event);
 
         if (!Craft::$app->getElements()->saveElement($event)) {
             if ($request->getAcceptsJson()) {
@@ -190,6 +224,36 @@ class EventsController extends Controller
         Eventsky::$plugin->event->deleteEventById($eventId);
 
         return $this->asJson(['success' => true]);
+    }
+
+    private function saveEventTicketTypesMappings($event) {
+        $request = Craft::$app->getRequest();
+
+        $currentTicketTypeMappings = Eventsky::$plugin->event->getAllTicketTypeMappingsByEventId($event->id);
+        $newTicketTypeMappings = $request->getBodyParam('availableTicketTypes') ?? [];
+
+        $oldTicketTypeMappings = array_filter($currentTicketTypeMappings, function ($mapping) use ($newTicketTypeMappings) {
+            return !array_key_exists($mapping->tickettypeId, $newTicketTypeMappings);
+        });
+
+        $this->deleteOldTicketTypeMappings($oldTicketTypeMappings);
+        $this->saveTicketTypeMappings($event, $newTicketTypeMappings);
+
+    }
+
+    private function deleteOldTicketTypeMappings($ticketTypeMappings) {
+        foreach ($ticketTypeMappings as $ticketTypeMapping) {
+            Eventsky::$plugin->event->deleteEventTicketTypeMapping($ticketTypeMapping);
+        }
+    }
+
+    private function saveTicketTypeMappings($event, $ticketTypeMappings) {
+        foreach ($ticketTypeMappings as $ticketTypeMappingData) {
+            $ticketTypeId = $ticketTypeMappingData['typeId'];
+            $ticketTypeMapping = $this->getTicketTypeMappingModel($event->id, $ticketTypeId);
+            $this->populateTicketTypeMappingModel($ticketTypeMapping, $ticketTypeMappingData);
+            Eventsky::$plugin->event->saveEventTicketTypeMapping($ticketTypeMapping);
+        }
     }
 
     private function getTabs($fieldLayout) {
@@ -256,6 +320,12 @@ class EventsController extends Controller
         return $site;
     }
 
+    private function prepTicketTypeMappingVariables(array &$data)
+    {
+        $data['eventTicketTypeMappingField'] = Eventsky::$plugin->fieldService->getFieldByHandle(EventTicketTypeMappingField::FIELD_HANDLE);
+        $data['ticketTypes'] = Eventsky::$plugin->ticketType->getAllTicketTypes();
+    }
+
     private function prepEditEventVariables(array &$data)
     {
         $request = Craft::$app->getRequest();
@@ -284,7 +354,6 @@ class EventsController extends Controller
             $typeId = $data['entry']->typeId ?? Eventsky::$plugin->eventType->getAllEventTypes()[0]->id;
         }
 
-//        echo 'getting here'; die();
         $data['event']->typeId = $typeId;
         $data['eventType'] = $data['event']->getType();
 
@@ -319,6 +388,19 @@ class EventsController extends Controller
         }
 
         return $event;
+    }
+
+    private function getTicketTypeMappingModel($eventId, $ticketTypeId): EventTicketTypeMapping
+    {
+        $mapping = Eventsky::$plugin->event->getTicketTypeMapping($eventId, $ticketTypeId);
+
+        if (!$mapping) {
+            $mapping = new EventTicketTypeMapping();
+            $mapping->eventId = $eventId;
+            $mapping->tickettypeId = $ticketTypeId;
+        }
+
+        return $mapping;
     }
 
     private function populateEventModel(Event $event)
@@ -362,5 +444,18 @@ class EventsController extends Controller
         // save values from custom fields to event
         $fieldsLocation = $request->getParam('fieldsLocation', 'fields');
         $event->setFieldValuesFromRequest($fieldsLocation);
+    }
+
+    private function populateTicketTypeMappingModel(EventTicketTypeMapping $mapping, array $data)
+    {
+        $mapping->limit = $data['limit'];
+
+        if (($registrationStartDate = $data['registrationStart']) !== null) {
+            $mapping->registrationStartDate = DateTimeHelper::toDateTime($registrationStartDate) ?: null;
+        }
+
+        if (($registrationEndDate = $data['registrationEnd']) !== null) {
+            $mapping->registrationEndDate = DateTimeHelper::toDateTime($registrationEndDate) ?: null;
+        }
     }
 }

@@ -1,0 +1,29 @@
+{% import "_includes/forms" as forms %}
+
+<div class="matrix matrix-field">
+    <div class="blocks">
+        {% for ticketTypeMapping in mappedTicketTypes %}
+
+            {% include "eventsky/_components/fieldTypes/EventTicketTypeMapping/_ticketTypeBlock" with {
+                ticketTypeMapping: ticketTypeMapping
+            } only %}
+
+        {% endfor %}
+    </div>
+    <div class="buttons">
+        <div class="btn add icon menubtn {{ (allTicketTypes | length <= mappedTicketTypes | length) ? 'hidden' : '' }}">
+            {{ 'translate.fields.eventTicketTypeMapping.addType' | t('eventsky') }}
+        </div>
+        <div class="menu">
+            <ul  class="js-ticketTypeList">
+                {% for ticketType in allTicketTypes %}
+                    {% set class = '' %}
+                    {% if ticketType.id in mappedTicketTypes | map(ticketMapping => ticketMapping.getTicketType().id) %}
+                        {% set class = 'hidden' %}
+                    {% endif %}
+                    <li class="{{ class }} {{ ticketType.handle }}"><a data-type="{{ ticketType.handle }}" class="js-ticketTypeLink">{{ ticketType.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

@@ -17,7 +17,9 @@ use craft\events\RegisterUrlRulesEvent;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
 use fredmansky\eventsky\services\EventService;
+use fredmansky\eventsky\services\EventTicketTypeMappingService;
 use fredmansky\eventsky\services\EventTypeService;
+use fredmansky\eventsky\services\FieldService;
 use fredmansky\eventsky\services\TicketService;
 use fredmansky\eventsky\services\TicketStatusService;
 use fredmansky\eventsky\services\TicketTypeService;
@@ -48,6 +50,7 @@ class Eventsky extends Plugin
             'ticket' => TicketService::class,
             'ticketType' => TicketTypeService::class,
             'ticketStatus' => TicketStatusService::class,
+            'fieldService' => FieldService::class,
         ]);
     }
 

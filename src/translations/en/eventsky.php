@@ -55,6 +55,13 @@ return [
     'translate.events.fields.details.placeholder.slug' => 'Enter slug',
     'translate.events.fields.details.postDate' => 'Post Date',
     'translate.events.fields.details.expiryDate' => 'Expiry Date',
+    'translate.events.fields.tickets.needsRegistration' => 'Registration needed',
+    'translate.events.fields.tickets.totalTickets' => 'Total Number of Tickets',
+    'translate.events.fields.tickets.hasWaitingList' => 'Waiting List',
+    'translate.events.fields.tickets.waitingListSize' => 'Waiting List Size',
+    'translate.events.fields.ticketType.registrationStart' => 'Registration Start Date',
+    'translate.events.fields.ticketType.registrationEnd' => 'Registration End Date',
+    'translate.events.fields.ticketType.limit' => 'Ticket Limit',
     'translate.events.tab.eventData' => 'Event Data',
     'translate.events.tab.tickets' => 'Tickets',
     'translate.elements.Event.displayName' => 'Event',
@@ -140,4 +147,11 @@ return [
     'translate.ticketType.fieldLayout.headline' => 'Field layout of event type “{name}”',
     
     'translate.fieldlayout.notFound' => 'Field layout not found.',
+
+    // ------------------
+    // ----- Fields -----
+    // ------------------
+
+    'translate.fields.eventTicketTypeMapping.displayName' => 'Available Tickets',
+    'translate.fields.eventTicketTypeMapping.addType' => 'Add a ticket type',
 ];

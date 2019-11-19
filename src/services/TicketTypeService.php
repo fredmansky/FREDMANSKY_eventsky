@@ -56,6 +56,19 @@ class TicketTypeService extends Component
         return null;
     }
 
+    public function getTicketTypeByHandle(string $handle): ?TicketType
+    {
+        $result = $this->createTicketTypeQuery()
+            ->where(['=', 'handle', $handle])
+            ->one();
+
+        if ($result) {
+            return new TicketType($result);
+        }
+
+        return null;
+    }
+
     public function saveTicketType(TicketType $ticketType, bool $runValidation = true)
     {
         $isNewTicketType = !$ticketType->id;

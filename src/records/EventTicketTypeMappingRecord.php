@@ -11,7 +11,7 @@ use fredmansky\eventsky\elements\Event;
 use fredmansky\eventsky\models\TicketType;
 use yii\db\ActiveQueryInterface;
 
-class EventTicketTypeRecord extends ActiveRecord
+class EventTicketTypeMappingRecord extends ActiveRecord
 {
     public static function tableName()
     {
