@@ -45,14 +45,21 @@
 
             addMappingBlock(response) {
                 const html = response.fieldHtml;
-                this.$blockContainer.insertAdjacentHTML('beforeend', html);
+                const node = $(html)[0];
+                const button = node.querySelector('.deleteMappingLink');
+
+                console.log('button', button);
+
+                window.eventTicketTypeMappingRemover.initDeleteButton(button);
+
+                this.$blockContainer.append(node);
 
                 Craft.initUiElements($(this.$blockContainer));
                 Craft.appendFootHtml(response.bodyHtml);
             },
 
             hideBlockTypeFromMenu(evt) {
-                const li = $(evt.currentTarget).parent().addClass('hidden');
+                $(evt.currentTarget).parent().addClass('hidden');
             },
 
             hideAddTicketTypeButton() {

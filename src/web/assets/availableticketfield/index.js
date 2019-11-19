@@ -86,6 +86,79 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/web/assets/availableticketfield/src/EventTicketTypeMappingRemover.js":
+/*!**********************************************************************************!*\
+  !*** ./src/web/assets/availableticketfield/src/EventTicketTypeMappingRemover.js ***!
+  \**********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function ($) {
+  /** global: Craft */
+
+  /** global: Garnish */
+  Craft.EventTicketTypeMappingRemover = Garnish.Base.extend({
+    $deleteLinks: null,
+    $selectButton: null,
+    // $spinner: null,
+    init: function init() {
+      var _this = this;
+
+      this.$deleteLinks = document.querySelectorAll('.deleteMappingLink');
+      this.$selectButton = document.querySelector('#availableTickets-field .buttons .menubtn'); // this.$spinner = $('<div class="spinner hidden" style="margin-left: 24px;" />').appendTo(this.$typeSelect);
+
+      this.$deleteLinks.forEach(function (link) {
+        _this.initDeleteButton(link);
+      });
+    },
+    initDeleteButton: function initDeleteButton(button) {
+      var _this2 = this;
+
+      this.addListener(button, 'click', function (evt) {
+        _this2.deleteTicketTypeMapping(evt);
+      });
+    },
+    deleteTicketTypeMapping: function deleteTicketTypeMapping(evt) {
+      var deleteBtn = evt.currentTarget;
+      var mappingId = deleteBtn.dataset['id'];
+      var ticketTypeHandle = deleteBtn.dataset['handle'];
+      console.log('getting here too', mappingId, ticketTypeHandle); // this.$spinner.removeClass('hidden');
+
+      if (mappingId) {
+        Craft.postActionRequest('eventsky/events/remove-ticket-type', {
+          mappingId: mappingId
+        }, $.proxy(function (response, textStatus) {
+          if (textStatus === 'success') {
+            this.deleteAction(evt, ticketTypeHandle);
+          }
+        }, this));
+      } else {
+        this.deleteAction(evt, ticketTypeHandle);
+      }
+    },
+    deleteAction: function deleteAction(evt, ticketTypeHandle) {
+      this.removeMappingBlock(ticketTypeHandle);
+      this.showBlockTypeInMenu(ticketTypeHandle);
+      this.showAddTicketTypeButton();
+    },
+    removeMappingBlock: function removeMappingBlock(typeHandle) {
+      $("#availableTickets-field .blocks #".concat(typeHandle)).remove();
+    },
+    showBlockTypeInMenu: function showBlockTypeInMenu(ticketTypeHandle) {
+      var blockTypeLink = document.querySelector(".js-ticketTypeList li.".concat(ticketTypeHandle));
+
+      if (blockTypeLink) {
+        blockTypeLink.classList.remove('hidden');
+      }
+    },
+    showAddTicketTypeButton: function showAddTicketTypeButton() {
+      $(this.$selectButton).removeClass('hidden');
+    }
+  });
+})(jQuery);
+
+/***/ }),
+
 /***/ "./src/web/assets/availableticketfield/src/TicketTypeSelector.js":
 /*!***********************************************************************!*\
   !*** ./src/web/assets/availableticketfield/src/TicketTypeSelector.js ***!
@@ -140,12 +213,16 @@
     },
     addMappingBlock: function addMappingBlock(response) {
       var html = response.fieldHtml;
-      this.$blockContainer.insertAdjacentHTML('beforeend', html);
+      var node = $(html)[0];
+      var button = node.querySelector('.deleteMappingLink');
+      console.log('button', button);
+      window.eventTicketTypeMappingRemover.initDeleteButton(button);
+      this.$blockContainer.append(node);
       Craft.initUiElements($(this.$blockContainer));
       Craft.appendFootHtml(response.bodyHtml);
     },
     hideBlockTypeFromMenu: function hideBlockTypeFromMenu(evt) {
-      var li = $(evt.currentTarget).parent().addClass('hidden');
+      $(evt.currentTarget).parent().addClass('hidden');
     },
     hideAddTicketTypeButton: function hideAddTicketTypeButton() {
       $(this.$selectButton).addClass('hidden');
@@ -169,6 +246,9 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _TicketTypeSelector__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TicketTypeSelector */ "./src/web/assets/availableticketfield/src/TicketTypeSelector.js");
 /* harmony import */ var _TicketTypeSelector__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_TicketTypeSelector__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _EventTicketTypeMappingRemover__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./EventTicketTypeMappingRemover */ "./src/web/assets/availableticketfield/src/EventTicketTypeMappingRemover.js");
+/* harmony import */ var _EventTicketTypeMappingRemover__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_EventTicketTypeMappingRemover__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 /***/ }),

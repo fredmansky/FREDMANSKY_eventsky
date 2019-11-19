@@ -4,15 +4,11 @@
     <div class="blocks">
         {% set totalNewMappings = 0 %}
         {% for ticketTypeMapping in mappedTicketTypes %}
-            {% set mappingId = ticketTypeMapping.id %}
-            {% if not mappingId %}
-                {% set totalNewMappings = totalNewMappings + 1 %}
-                {% set mappingId = 'new'~totalNewMappings %}
-            {% endif %}
 
             {% include "eventsky/_components/fieldTypes/EventTicketTypeMapping/_ticketTypeBlock" with {
                 ticketTypeMapping: ticketTypeMapping
             } only %}
+            
         {% endfor %}
     </div>
     <div class="buttons">
@@ -26,7 +22,7 @@
                     {% if ticketType.id in mappedTicketTypes | map(ticketMapping => ticketMapping.getTicketType().id) %}
                         {% set class = 'hidden' %}
                     {% endif %}
-                    <li class="{{ class }}"><a data-type="{{ ticketType.handle }}" class="js-ticketTypeLink">{{ ticketType.name }}</a></li>
+                    <li class="{{ class }} {{ ticketType.handle }}"><a data-type="{{ ticketType.handle }}" class="js-ticketTypeLink">{{ ticketType.name }}</a></li>
                 {% endfor %}
             </ul>
         </div>

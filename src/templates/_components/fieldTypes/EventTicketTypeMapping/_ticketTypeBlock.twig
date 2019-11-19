@@ -1,10 +1,11 @@
 {% import "_includes/forms" as forms %}
 
+{% set mappingId = ticketTypeMapping.id ?? null %}
 {% set ticketType = ticketTypeMapping.getTicketType() ?? null %}
 {% set ticketTypeName = ticketType.name ?? null %}
 {% set ticketTypeHandle = ticketType.handle ?? null %}
 
-<div class="matrixblock" style="margin-left: 0; width: 100%; box-sizing: border-box;"> {# data-id="{{ mappingId }}" #}
+<div id="{{ ticketTypeHandle }}" class="matrixblock" style="margin-left: 0; width: 100%; box-sizing: border-box;"> {# data-id="{{ mappingId }}" #}
 
     <input type="hidden" name="{{ 'availableTicketTypes[' ~ ticketTypeHandle ~ ']' }}" value="">
     <input type="hidden" name="{{ 'availableTicketTypes[' ~ ticketTypeHandle ~ '][typeId]' }}" value="{{ ticketType.id }}">
@@ -19,9 +20,9 @@
     <div class="actions">
         <a class="settings icon menubtn" title="{{ 'Actions'|t('app') }}" role="button"></a>
         <div class="menu">
-                <ul class="padded">
-                    <li><a class="error" data-icon="remove" data-action="delete">{{ "Delete"|t('app') }}</a></li>
-                </ul>
+            <ul class="padded">
+                <li><a class="error deleteMappingLink" data-handle="{{ ticketTypeHandle }}" data-id="{{ mappingId }}" data-icon="remove" data-action="delete">{{ "Delete"|t('app') }}</a></li>
+            </ul>
         </div>
     </div>
     <div class="fields">
