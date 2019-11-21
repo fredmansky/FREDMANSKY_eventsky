@@ -74,6 +74,11 @@ class Event extends Element
         return true;
     }
 
+    public static function isLocalized(): bool
+    {
+        return true;
+    }
+
     public static function find(): ElementQueryInterface
     {
         return new EventQuery(static::class);
@@ -132,6 +137,11 @@ class Event extends Element
             $sources[] = [
                 'key' => $eventType->handle,
                 'label' => $eventType->name,
+                'sites' => $eventType->getSiteIds(),
+                'data' => [
+                    'type' => 'channel',
+                    'handle' => $eventType->handle,
+                ],
                 'criteria' => [
                     'typeId' => $eventType->id,
                 ],
@@ -168,8 +178,8 @@ class Event extends Element
     protected static function defineSortOptions(): array
     {
         return [
-            'title'       => \Craft::t('app', 'Title'),
-            'typeId'      => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.search.ticketType')),
+            'title' => \Craft::t('app', 'Title'),
+            'typeId' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.search.ticketType')),
         ];
     }
 
@@ -204,9 +214,30 @@ class Event extends Element
             ($this->slug && strpos($this->slug, '__') !== 0 ? '-' . $this->slug : '');
 
         $params = [];
+        if (Craft::$app->getIsMultiSite()) {
+            $params['site'] = $this->getSite()->handle;
+        }
+
         return UrlHelper::cpUrl($path, $params);
     }
 
+    public function getSupportedSites(): array
+    {
+        $eventType = $this->getType();
+        $eventTypeSites = $eventType->getEventTypeSites();
+        $supportedSites = [];
+
+
+        foreach ($eventTypeSites as $site) {
+            if ($site->siteId == $this->siteId) {
+                $supportedSites[] = [
+                    'siteId' => $site->siteId,
+                    'enabledByDefault' => $site->enabledByDefault,
+                ];
+            }
+        }
+        return $supportedSites;
+    }
 
     public function beforeSave(bool $isNew): bool
     {
@@ -225,32 +256,34 @@ class Event extends Element
 
     public function afterSave(bool $isNew)
     {
-        if (!$isNew) {
-            $record = EventRecord::findOne($this->id);
+        if (!$this->propagating) {
+            if (!$isNew) {
+                $record = EventRecord::findOne($this->id);
 
-            if (!$record) {
-                throw new Exception('Invalid event ID: ' . $this->id);
+                if (!$record) {
+                    throw new Exception('Invalid event ID: ' . $this->id);
+                }
+            } else {
+                $record = new EventRecord();
+                $record->id = $this->id;
             }
-        } else {
-            $record = new EventRecord();
-            $record->id = $this->id;
+
+            $record->typeId = $this->typeId;
+            $record->startDate = $this->startDate;
+            $record->endDate = $this->endDate;
+            $record->postDate = $this->postDate;
+            $record->expiryDate = $this->expiryDate;
+            $record->needsRegistration = $this->needsRegistration;
+            $record->registrationEnabled = $this->registrationEnabled;
+            $record->totalTickets = $this->totalTickets;
+            $record->hasWaitingList = $this->hasWaitingList;
+            $record->waitingListSize = $this->waitingListSize;
+
+            $record->save(false);
+
+            $this->id = $record->id;
+
         }
-
-        $record->typeId = $this->typeId;
-        $record->startDate = $this->startDate;
-        $record->endDate = $this->endDate;
-        $record->postDate = $this->postDate;
-        $record->expiryDate = $this->expiryDate;
-        $record->needsRegistration = $this->needsRegistration;
-        $record->registrationEnabled = $this->registrationEnabled;
-        $record->totalTickets = $this->totalTickets;
-        $record->hasWaitingList = $this->hasWaitingList;
-        $record->waitingListSize = $this->waitingListSize;
-
-        $record->save(false);
-
-        $this->id = $record->id;
-
         parent::afterSave($isNew);
     }
 }

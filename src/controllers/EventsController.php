@@ -64,8 +64,12 @@ class EventsController extends Controller
 
         $site = $this->getSiteForNewEvent($site);
 
+        if ($site instanceof \yii\base\Response) {
+            return $site;
+        }
+
         if ($eventId !== null) {
-            $event = Eventsky::$plugin->event->getEventById($eventId);
+            $event = Eventsky::$plugin->event->getEventById($eventId, $site->id);
 
             if (!$event) {
                 throw new NotFoundHttpException(Craft::t('eventsky', 'translate.event.notFound'));
@@ -190,9 +194,7 @@ class EventsController extends Controller
         // Populate the event with post data
         $this->populateEventModel($event);
 
-        $this->saveEventTicketTypesMappings($event);
-
-        if (!Craft::$app->getElements()->saveElement($event)) {
+        if (!Craft::$app->getElements()->saveElement($event) || !$this->saveEventTicketTypesMappings($event)) {
             if ($request->getAcceptsJson()) {
                 return $this->asJson([
                     'success' => false,
@@ -215,30 +217,35 @@ class EventsController extends Controller
         return $this->redirectToPostedUrl($event);
     }
 
-    public function actionDelete(): Response
-    {
-        $this->requirePostRequest();
-        $this->requireAcceptsJson();
-
-        $eventId = Craft::$app->getRequest()->getRequiredBodyParam('id');
-        Eventsky::$plugin->event->deleteEventById($eventId);
-
-        return $this->asJson(['success' => true]);
-    }
+//    public function actionDelete(): Response
+//    {
+//        $this->requirePostRequest();
+//        $this->requireAcceptsJson();
+//
+//        $eventId = Craft::$app->getRequest()->getRequiredBodyParam('eventId');
+//        $siteId = Craft::$app->getRequest()->getRequiredBodyParam('siteId');
+//        die();
+//        Eventsky::$plugin->event->deleteEventById($eventId, $siteId);
+//
+//        return $this->asJson(['success' => true]);
+//    }
 
     private function saveEventTicketTypesMappings($event) {
         $request = Craft::$app->getRequest();
 
-        $currentTicketTypeMappings = Eventsky::$plugin->event->getAllTicketTypeMappingsByEventId($event->id);
         $newTicketTypeMappings = $request->getBodyParam('availableTicketTypes') ?? [];
 
-        $oldTicketTypeMappings = array_filter($currentTicketTypeMappings, function ($mapping) use ($newTicketTypeMappings) {
-            return !array_key_exists($mapping->tickettypeId, $newTicketTypeMappings);
-        });
+        if ($event->id) {
+            $currentTicketTypeMappings = Eventsky::$plugin->event->getAllTicketTypeMappingsByEventId($event->id);
 
-        $this->deleteOldTicketTypeMappings($oldTicketTypeMappings);
-        $this->saveTicketTypeMappings($event, $newTicketTypeMappings);
+            $oldTicketTypeMappings = array_filter($currentTicketTypeMappings, function ($mapping) use ($newTicketTypeMappings) {
+                return !array_key_exists($mapping->tickettypeId, $newTicketTypeMappings);
+            });
 
+            $this->deleteOldTicketTypeMappings($oldTicketTypeMappings);
+        }
+
+        return $this->saveTicketTypeMappings($event, $newTicketTypeMappings);
     }
 
     private function deleteOldTicketTypeMappings($ticketTypeMappings) {
@@ -254,6 +261,8 @@ class EventsController extends Controller
             $this->populateTicketTypeMappingModel($ticketTypeMapping, $ticketTypeMappingData);
             Eventsky::$plugin->event->saveEventTicketTypeMapping($ticketTypeMapping);
         }
+
+        return true;
     }
 
     private function getTabs($fieldLayout) {
@@ -312,9 +321,9 @@ class EventsController extends Controller
         // If we still don't know the site, give the user a chance to pick one
         if ($site === null) {
             return $this->renderTemplate('_special/sitepicker', [
-                'siteIds' => $siteIds,
-                'baseUrl' => "entries/event/new",
+                'baseUrl' => "eventsky/event/new",
             ]);
+            // TODO: 'siteIds' => $siteIds,
         }
 
         return $site;
@@ -374,7 +383,7 @@ class EventsController extends Controller
         $siteId = $request->getBodyParam('siteId');
 
         if ($eventId) {
-            $event = Eventsky::$plugin->event->getEventById($eventId);
+            $event = Eventsky::$plugin->event->getEventById($eventId, $siteId);
 
             if (!$event) {
                 throw new HttpException(404, Craft::t('eventsky', 'translate.event.notFound'));

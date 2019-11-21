@@ -37,18 +37,18 @@ class EventService extends Component
         return $this->events;
     }
 
-    public function getEventById(int $id): ?ElementInterface
+    public function getEventById(int $eventId, int $siteId = null): ?ElementInterface
     {
-        if (!$id) {
+        if (!$eventId) {
             return null;
         }
 
-        return Craft::$app->getElements()->getElementById($id, Event::class);
+        return Craft::$app->getElements()->getElementById($eventId, Event::class, $siteId);
     }
 
-    public function deleteEventById(int $id): bool
+    public function deleteEventById(int $eventId, int $siteId = null): bool
     {
-        $event = $this->getEventById($id);
+        $event = $this->getEventById($eventId, $siteId);
 
         if (!$event) {
             return false;
@@ -79,8 +79,12 @@ class EventService extends Component
         }, $results);
     }
 
-    public function getTicketTypeMapping(int $eventId, int $ticketTypeId): ?EventTicketTypeMapping
+    public function getTicketTypeMapping(int $eventId = null, int $ticketTypeId = null): ?EventTicketTypeMapping
     {
+        if (!$eventId || !$ticketTypeId) {
+            return null;
+        }
+
         $result = $this->createEventTicketTypeMappingQuery()
             ->where(['=', 'eventId', $eventId])
             ->andWhere(['=', 'tickettypeId', $ticketTypeId])

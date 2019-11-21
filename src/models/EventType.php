@@ -101,4 +101,12 @@ class EventType extends Model
             $eventTypeSite->setEventType($this);
         }
     }
+
+    public function getSiteIds(): array
+    {
+        $eventTypeSites = $this->getEventTypeSites();
+        return array_map(function($site) {
+            return $site->siteId;
+        }, $eventTypeSites);
+    }
 }
