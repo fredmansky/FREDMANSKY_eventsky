@@ -8,7 +8,7 @@
             name: 'slug',
             value: ticket.slug,
             placeholder: 'Enter slug' | t('eventsky'),
-            errors: ticket.getErrors('slug') | merge(ticket.getErrors('uri'))
+            errors: ticket.getErrors('slug') | merge(ticket.getErrors('uri')),
         }) }}
 
         {{ forms.selectField({
@@ -16,7 +16,8 @@
             id: 'typeId',
             name: 'typeId',
             value: ticketType.id,
-            options: ticketTypeOptions
+            errors: ticket.getErrors('typeId'),
+            options: ticketTypeOptions,
         }) }}
 
         {{ forms.selectField({
@@ -24,7 +25,8 @@
             id: 'statusId',
             name: 'statusId',
             value: ticket.statusId,
-            options: ticketStatusOptions
+            errors: ticket.getErrors('statusId'),
+            options: ticketStatusOptions,
         }) }}
     {% endblock %}
 </div>

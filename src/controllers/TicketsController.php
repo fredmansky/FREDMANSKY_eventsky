@@ -48,7 +48,14 @@ class TicketsController extends Controller
     }
 
 
-    public function actionEdit(int $ticketId = null): Response
+  /**
+   * @param int|null $ticketId
+   * @param Ticket|null $ticket The ticket being edited, if there were any validation errors.
+   * @return Response
+   * @throws NotFoundHttpException
+   * @throws \yii\base\InvalidConfigException
+   */
+    public function actionEdit(int $ticketId = null, Ticket $ticket = null): Response
     {
         $data = [];
 
@@ -58,14 +65,17 @@ class TicketsController extends Controller
 
         $this->getView()->registerAssetBundle(EditTicketAsset::class);
 
-        /** @var Ticket $ticket */
-        $ticket = null;
-
-        if ($ticketId !== null) {
+        if ($ticket) {
+            $ticketType = $ticket->getType();
+            $event = $ticket->getEvent();
+            $status = $ticket->getStatus();
+            $data['title'] = trim($ticket->title) ?: Craft::t('eventsky', 'translate.ticket.edit');
+        }
+        else if ($ticketId !== null) {
             $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
 
             if (!$ticket) {
-                throw new NotFoundHttpException(Craft::t('eventsky', 'translate.ticket.notFound'));
+              throw new NotFoundHttpException(Craft::t('eventsky', 'translate.ticket.notFound'));
             }
 
             $ticketType = $ticket->getType();
