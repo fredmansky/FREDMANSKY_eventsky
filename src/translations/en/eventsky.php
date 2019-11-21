@@ -154,4 +154,7 @@ return [
 
     'translate.fields.eventTicketTypeMapping.displayName' => 'Available Tickets',
     'translate.fields.eventTicketTypeMapping.addType' => 'Add a ticket type',
+
+    'translate.fields.event.displayName' => 'Event',
+    'translate.fields.event.addType' => 'Add a event',
 ];
