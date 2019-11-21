@@ -67,6 +67,7 @@ class TicketType extends Model
     public function rules()
     {
         $rules = parent::rules();
+        $rules[] = [['name', 'handle'], 'required'];
         return $rules;
     }
 
