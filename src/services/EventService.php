@@ -37,6 +37,14 @@ class EventService extends Component
         return $this->events;
     }
 
+    public function getAllEventIds(): array
+    {
+        $allEvents = $this->getAllEvents();
+        return array_map(function($event) {
+            return $event->id;
+        }, $allEvents);
+    }
+
     public function getEventById(int $id): ?ElementInterface
     {
         if (!$id) {
