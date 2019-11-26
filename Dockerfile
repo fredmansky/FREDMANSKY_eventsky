@@ -1,0 +1,1 @@
+FROM wyveo/craftcms-docker:latest
