@@ -48,8 +48,6 @@
                 const node = $(html)[0];
                 const button = node.querySelector('.deleteMappingLink');
 
-                console.log('button', button);
-
                 window.eventTicketTypeMappingRemover.initDeleteButton(button);
 
                 this.$blockContainer.append(node);
