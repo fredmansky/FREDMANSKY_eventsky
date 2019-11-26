@@ -47,14 +47,6 @@ class TicketsController extends Controller
         return $this->renderTemplate('eventsky/tickets/index', $data);
     }
 
-
-  /**
-   * @param int|null $ticketId
-   * @param Ticket|null $ticket The ticket being edited, if there were any validation errors.
-   * @return Response
-   * @throws NotFoundHttpException
-   * @throws \yii\base\InvalidConfigException
-   */
     public function actionEdit(int $ticketId = null, Ticket $ticket = null): Response
     {
         $data = [];
@@ -70,8 +62,7 @@ class TicketsController extends Controller
             $event = $ticket->getEvent();
             $status = $ticket->getStatus();
             $data['title'] = trim($ticket->title) ?: Craft::t('eventsky', 'translate.ticket.edit');
-        }
-        else if ($ticketId !== null) {
+        } else if ($ticketId !== null) {
             $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
 
             if (!$ticket) {
@@ -145,7 +136,6 @@ class TicketsController extends Controller
         return $this->renderTemplate('eventsky/tickets/edit', $data);
     }
 
-
     public function actionSwitchTicketType(): Response
     {
         $this->requirePostRequest();
@@ -200,7 +190,6 @@ class TicketsController extends Controller
         Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'translate.ticket.saved'));
         return $this->redirectToPostedUrl($ticket);
     }
-
 
     public function actionDelete(): Response
     {

@@ -50,15 +50,6 @@ class EventsController extends Controller
         return $this->renderTemplate('eventsky/events/index', $data);
     }
 
-  /**
-   * @param int|null $eventId
-   * @param string|null $site
-   * @param Event|null $event The event being edited, if there were any validation errors.
-   * @return Response
-   * @throws BadRequestHttpException
-   * @throws NotFoundHttpException
-   * @throws \yii\base\InvalidConfigException
-   */
     public function actionEdit(int $eventId = null, string $site = null, Event $event = null): Response
     {
         $data = [];
@@ -73,8 +64,7 @@ class EventsController extends Controller
         if ($event) {
           $eventType = $event->getType();
           $data['title'] = trim($event->title) ?: Craft::t('eventsky', 'translate.event.edit');
-        }
-        else if ($eventId !== null) {
+        } else if ($eventId !== null) {
             $event = Eventsky::$plugin->event->getEventById($eventId);
 
             if (!$event) {

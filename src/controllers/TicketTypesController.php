@@ -39,12 +39,6 @@ class TicketTypesController extends Controller
         return $this->renderTemplate('eventsky/ticketTypes/index', $data);
     }
 
-  /**
-   * @param int|null $ticketTypeId
-   * @param TicketType|null $ticketType The ticketType being edited, if there were any validation errors.
-   * @return Response
-   * @throws NotFoundHttpException
-   */
     public function actionEdit(int $ticketTypeId = null, TicketType $ticketType = null): Response
     {
         $data = [
@@ -62,14 +56,12 @@ class TicketTypesController extends Controller
 
             $data['title'] = trim($ticketType->name) ?: Craft::t('eventsky', 'translate.ticketTypes.edit');
             $data['fieldlayout'] = $fieldlayout;
-          }
-          else {
+          } else {
             $data['brandNewTicketType'] = true;
             $data['title'] = Craft::t('eventsky', 'translate.ticketTypes.new');
             $data['fieldlayout'] = new FieldLayout();
           }
-        }
-        else if ($ticketTypeId !== null) {
+        } else if ($ticketTypeId !== null) {
             $ticketType = Eventsky::$plugin->ticketType->getTicketTypeById($ticketTypeId);
 
             if (!$ticketType) {
