@@ -117,7 +117,7 @@ class EventsController extends Controller
         $data['isMultiSiteElement'] = Craft::$app->isMultiSite && count(Craft::$app->getSites()->allSiteIds) > 1;
         $data['canUpdateSource'] = true;
 
-        $data['tabs'] = $this->getTabs($data['eventType']->getFieldLayout());
+        $data['tabs'] = $this->getTabs($data['eventType']->getFieldLayout(), $event);
 
         $this->prepTicketTypeMappingVariables($data);
 
@@ -256,7 +256,7 @@ class EventsController extends Controller
         }
     }
 
-    private function getTabs($fieldLayout) {
+    private function getTabs($fieldLayout, $event) {
         $tabs = [
             [
                 'label' => Craft::t('eventsky', 'translate.events.tab.eventData'),
@@ -272,16 +272,21 @@ class EventsController extends Controller
 
         foreach ($fieldLayout->getTabs() as $index => $tab) {
             // Do any of the fields on this tab have errors?
-//            $hasErrors = false;
-//            if ($event->hasErrors()) {
-//                foreach ($tab->getFields() as $field) {
-//                    /** @var Field $field */
-//                    if ($hasErrors = $event->hasErrors($field->handle . '.*')) {
-//                        break;
-//                    }
-//                }
-//            }
-            $hasErrors = null;
+            $hasErrors = false;
+
+            dump($event->hasErrors());
+            die();
+
+            if ($event->hasErrors()) {
+                foreach ($tab->getFields() as $field) {
+                    /** @var Field $field */
+                    if ($hasErrors = $event->hasErrors($field->handle . '.*')) {
+                        break;
+                    }
+                }
+            }
+
+//            $hasErrors = null;
 
             $tabs[] = [
                 'label' => $tab->name,
@@ -362,7 +367,7 @@ class EventsController extends Controller
 
         // Define the content tabs
         // ---------------------------------------------------------------------
-        $data['tabs'] = $this->getTabs($data['eventType']->getFieldLayout());
+        $data['tabs'] = $this->getTabs($data['eventType']->getFieldLayout(), $data['event']);
 
         return null;
     }

@@ -131,7 +131,7 @@ class TicketsController extends Controller
         $data['isMultiSiteElement'] = false;
         $data['canUpdateSource'] = true;
 
-        $data['tabs'] = $this->getTabs($data['ticketType']->getFieldLayout());
+        $data['tabs'] = $this->getTabs($data['ticketType']->getFieldLayout(), $ticket);
 
         return $this->renderTemplate('eventsky/tickets/edit', $data);
     }
@@ -202,16 +202,30 @@ class TicketsController extends Controller
         return $this->asJson(['success' => true]);
     }
 
-    private function getTabs($fieldLayout) {
+    private function getTabs($fieldLayout, $ticket) {
         $tabs = [
             [
                 'label' => Craft::t('eventsky', 'translate.ticket.tab.ticketData'),
                 'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.ticketData')),
             ],
         ];
+//            dump('getting here');
 
         foreach ($fieldLayout->getTabs() as $index => $tab) {
-            $hasErrors = null;
+            // Do any of the fields on this tab have errors?
+            $hasErrors = false;
+//            dump('getting here too');
+//            dump($ticket->hasErrors());
+//            die();
+
+            if ($ticket->hasErrors()) {
+                foreach ($tab->getFields() as $field) {
+                    /** @var Field $field */
+                    if ($hasErrors = $ticket->hasErrors($field->handle . '.*')) {
+                        break;
+                    }
+                }
+            }
 
             $tabs[] = [
                 'label' => $tab->name,
@@ -220,6 +234,7 @@ class TicketsController extends Controller
             ];
         }
 
+//        die();
         return $tabs;
     }
 
@@ -276,7 +291,7 @@ class TicketsController extends Controller
     {
         $ticketType = $data['ticket']->getType();
         $data['ticketType'] = $ticketType;
-        $data['tabs'] = $this->getTabs($data['ticketType']->getFieldLayout());
+        $data['tabs'] = $this->getTabs($data['ticketType']->getFieldLayout(), $data['ticket']);
 
         $data['ticketEventOptions'] = array_map(function($event) {
             return [

@@ -192,6 +192,19 @@ class Event extends Element
         return $attributes;
     }
 
+    public function rules()
+    {
+        $rules = parent::rules();
+        $rules[] = [['sectionId', 'typeId', 'authorId', 'newParentId'], 'number', 'integerOnly' => true];
+        $rules[] = [['postDate', 'expiryDate'], DateTimeValidator::class];
+
+        if ($this->getSection()->type !== Section::TYPE_SINGLE) {
+            $rules[] = [['authorId'], 'required', 'on' => self::SCENARIO_LIVE];
+        }
+
+        return $rules;
+    }
+
     public function getIsEditable(): bool
     {
         return true;
