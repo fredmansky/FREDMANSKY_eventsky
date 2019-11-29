@@ -164,12 +164,63 @@ class TicketsController extends Controller
     {
         $this->requirePostRequest();
 
-        $ticket = $this->getTicketModel();
         $request = Craft::$app->getRequest();
+        $ticket = $this->getTicketModel();
+        $eventIds = $request->getBodyParam('eventIds');
+        $eventId = $request->getBodyParam('eventId');
 
         // Populate the ticket with post data
         $this->populateTicketModel($ticket);
 
+        if (is_array($eventIds)) {
+            $ticket->id = null;
+            $this->saveMultipleTickets($ticket, $eventIds);
+        } else if ($eventId) {
+            $this->saveSingleTicket($ticket);
+        } else {
+            throw new HttpException(404, Craft::t('eventsky', 'translate.event.notFound'));
+        }
+    }
+
+
+    public function actionDelete(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        $ticketId = Craft::$app->getRequest()->getRequiredBodyParam('id');
+        Eventsky::$plugin->ticket->deleteTicketById($ticketId);
+
+        return $this->asJson(['success' => true]);
+    }
+
+    private function saveMultipleTickets($ticket, $eventIds) {
+        $errors = [];
+        $eventIds = array_unique($eventIds);
+        $allEventIds = Eventsky::$plugin->event->getAllEventIds();
+
+        foreach ($eventIds as $eventId) {
+            if (!in_array($eventId, $allEventIds)) {
+                $errors[$eventId] = Craft::t('eventsky', 'translate.ticket.notSaved');
+            }
+        }
+
+        if(!empty($errors)) {
+            throw new HttpException(404, Craft::t('eventsky', 'translate.ticket.notSaved'));
+        }
+
+        foreach ($eventIds as $eventId) {
+            $ticket->id = null;
+            $ticket->eventId = $eventId;
+            if (!Craft::$app->getElements()->saveElement(clone $ticket)) {
+                throw new HttpException(404, Craft::t('eventsky', 'translate.ticket.notSaved'));
+            }
+        }
+
+        return true;
+    }
+
+    private function saveSingleTicket($ticket) {
         if (!Craft::$app->getElements()->saveElement($ticket)) {
             if ($request->getAcceptsJson()) {
                 return $this->asJson([
