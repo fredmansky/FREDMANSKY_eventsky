@@ -30,12 +30,6 @@ class TicketsController extends Controller
 {
 //  public const EVENT_BEFORE_SWITCH_TICKET_TYPE = 'beforeSwitchTicketType';
 
-    public function init()
-    {
-        $this->requireAdmin();
-        parent::init();
-    }
-
     public function actionIndex(array $variables = []): Response
     {
         $data = [
