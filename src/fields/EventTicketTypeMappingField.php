@@ -12,6 +12,7 @@ use yii\helpers\Html;
 class EventTicketTypeMappingField extends Field
 {
     const FIELD_HANDLE = 'availableTickets';
+    const FIELD_CONTEXT = 'fredmansky\\eventsky\\eventTicketTypeMappingField';
 
     public static function displayName(): string
     {

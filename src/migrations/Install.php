@@ -6,9 +6,18 @@
 
 namespace fredmansky\eventsky\migrations;
 
+use Craft;
 use craft\db\Migration;
+use craft\events\PluginEvent;
+use craft\records\Field;
+use craft\services\Fields;
+use craft\services\Plugins;
 use fredmansky\eventsky\db\Table;
+use fredmansky\eventsky\Eventsky;
+use fredmansky\eventsky\fields\EventField;
+use fredmansky\eventsky\fields\EventTicketTypeMappingField;
 use fredmansky\eventsky\records\TicketStatusRecord;
+use yii\base\Event;
 
 class Install extends Migration
 {
@@ -18,6 +27,7 @@ class Install extends Migration
         $this->createTables();
         $this->addForeignKeys();
         $this->insertDefaultData();
+
         return true;
     }
 
@@ -25,6 +35,13 @@ class Install extends Migration
     public function safeDown() : bool
     {
         $this->dropTables();
+
+        Event::on(Plugins::class, Plugins::EVENT_AFTER_UNINSTALL_PLUGIN, function(PluginEvent $event) {
+            if ($event->plugin instanceof Eventsky) {
+                $this->deleteFields();
+            }
+        });
+
         return true;
     }
 
@@ -176,11 +193,11 @@ class Install extends Migration
 
     protected function dropTables()
     {
-        $this->dropTableIfExists(Table::EVENTS);
         $this->dropTableIfExists(Table::EVENT_TICKET_TYPES);
-        $this->dropTableIfExists(Table::EVENT_TYPES);
-        $this->dropTableIfExists(Table::EVENT_TYPES_SITES);
         $this->dropTableIfExists(Table::TICKETS);
+        $this->dropTableIfExists(Table::EVENTS);
+        $this->dropTableIfExists(Table::EVENT_TYPES_SITES);
+        $this->dropTableIfExists(Table::EVENT_TYPES);
         $this->dropTableIfExists(Table::TICKET_STATUSES);
         $this->dropTableIfExists(Table::TICKET_TYPES);
     }
@@ -207,5 +224,10 @@ class Install extends Migration
             'color' => 'red',
         ];
         $this->insert(TicketStatusRecord::tableName(), $data);
+    }
+    
+    private function deleteFields()
+    {
+        Field::deleteAll(['type' => EventField::class]);
     }
 }
