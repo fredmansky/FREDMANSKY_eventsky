@@ -76,7 +76,7 @@ class EventService extends Component
         return true;
     }
 
-    public function getAllTicketTypeMappingsByEventId(int $eventId): array
+    public function getAllTicketTypeMappingsByEventId(int $eventId = null): array
     {
         $results = $this->createEventTicketTypeMappingQuery()
             ->where(['=', 'eventId', $eventId])
@@ -87,7 +87,7 @@ class EventService extends Component
         }, $results);
     }
 
-    public function getTicketTypeMapping(int $eventId, int $ticketTypeId): ?EventTicketTypeMapping
+    public function getTicketTypeMapping(int $eventId = null, int $ticketTypeId = null): ?EventTicketTypeMapping
     {
         $result = $this->createEventTicketTypeMappingQuery()
             ->where(['=', 'eventId', $eventId])

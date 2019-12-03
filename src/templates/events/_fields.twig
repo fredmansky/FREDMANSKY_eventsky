@@ -25,7 +25,7 @@
             {% include "eventsky/events/_tabTickets" %}
         </div>
         {% for tab in tabs %}
-            <div id="{{ 'tab' ~ tab.name | title }}" class="hidden">
+            <div id="{{ 'tab' ~ tab.name | pascal }}" class="hidden">
                 {% include "_includes/fields" with {
                     fields: tab.getFields(),
                     element: event,
