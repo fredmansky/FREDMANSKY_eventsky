@@ -55,7 +55,7 @@ class EventsController extends Controller
         /** @var Event $event */
         $event = null;
 
-        $site = $this->getSiteForNewEvent($site);
+//        $site = $this->getSiteForNewEvent($site);
 
         if ($eventId !== null) {
             $event = Eventsky::$plugin->event->getEventById($eventId);
@@ -70,7 +70,7 @@ class EventsController extends Controller
             $request = Craft::$app->getRequest();
             $event = new Event();
             $eventType = $eventTypes[0];
-            $event->siteId = $site->id;
+//            $event->siteId = $site->id;
             $event->typeId = $request->getQueryParam('typeId', $eventType->id);
             $event->slug = ElementHelper::tempSlug();
 
