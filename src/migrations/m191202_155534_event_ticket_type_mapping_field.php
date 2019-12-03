@@ -15,20 +15,16 @@ class m191202_155534_event_ticket_type_mapping_field extends Migration
 {
     public function safeUp()
     {
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN, function(PluginEvent $event) {
-            if ($event->plugin instanceof Eventsky) {
-                $field = Craft::$app->fields->createField([
-                    'name' => EventTicketTypeMappingField::displayName(),
-                    'handle' => EventTicketTypeMappingField::FIELD_HANDLE,
-                    'context' => EventTicketTypeMappingField::FIELD_CONTEXT,
-                    'translationMethod' => 'none',
-                    'type' => EventTicketTypeMappingField::class,
-                    'settings' => ['minBlocks' => null, 'maxBlocks' => null],
-                ]);
+        $field = Craft::$app->fields->createField([
+            'name' => EventTicketTypeMappingField::displayName(),
+            'handle' => EventTicketTypeMappingField::FIELD_HANDLE,
+            'context' => EventTicketTypeMappingField::FIELD_CONTEXT,
+            'translationMethod' => 'none',
+            'type' => EventTicketTypeMappingField::class,
+            'settings' => ['minBlocks' => null, 'maxBlocks' => null],
+        ]);
 
-                Craft::$app->fields->saveField($field);
-            }
-        });
+        Craft::$app->fields->saveField($field);
     }
 
     public function safeDown()
