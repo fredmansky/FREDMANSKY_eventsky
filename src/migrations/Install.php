@@ -28,12 +28,6 @@ class Install extends Migration
         $this->addForeignKeys();
         $this->insertDefaultData();
 
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN, function(PluginEvent $event) {
-            if ($event->plugin instanceof Eventsky) {
-                $this->insertEventTicketTypeMappingField();
-            }
-        });
-
         return true;
     }
 
@@ -231,23 +225,9 @@ class Install extends Migration
         ];
         $this->insert(TicketStatusRecord::tableName(), $data);
     }
-
-    private function insertEventTicketTypeMappingField()
-    {
-        $field = Craft::$app->fields->createField([
-            'name' => EventTicketTypeMappingField::displayName(),
-            'handle' => EventTicketTypeMappingField::FIELD_HANDLE,
-            'context' => EventTicketTypeMappingField::FIELD_CONTEXT,
-            'translationMethod' => 'none',
-            'type' => EventTicketTypeMappingField::class,
-            'settings' => ['minBlocks' => null, 'maxBlocks' => null],
-        ]);
-        Craft::$app->fields->saveField($field);
-    }
     
     private function deleteFields()
     {
-        Field::deleteAll(['type' => EventTicketTypeMappingField::class]);
         Field::deleteAll(['type' => EventField::class]);
     }
 }
