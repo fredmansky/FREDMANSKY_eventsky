@@ -31,13 +31,6 @@ use yii\web\Response;
  */
 class EventTypesController extends Controller
 {
-  
-    public function init()
-    {
-        $this->requireAdmin();
-        parent::init();
-    }
-    
     public function actionIndex(array $variables = []): Response
     {
         $data = [

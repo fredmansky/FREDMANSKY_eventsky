@@ -13,9 +13,12 @@ namespace fredmansky\eventsky;
 
 use Craft;
 use craft\base\Plugin;
+use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\services\Fields;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
+use fredmansky\eventsky\fields\EventField;
 use fredmansky\eventsky\services\EventService;
 use fredmansky\eventsky\services\EventTicketTypeMappingService;
 use fredmansky\eventsky\services\EventTypeService;
@@ -31,7 +34,7 @@ class Eventsky extends Plugin
 {
     public static $plugin;
 
-    public $schemaVersion = '0.0.1';
+    public $schemaVersion = '1.4.1';
 
     public function init()
     {
@@ -86,6 +89,7 @@ class Eventsky extends Plugin
     {
       $request = Craft::$app->getRequest();
       $this->installCpEventListeners();
+      $this->installFieldTypesEventListener();
     }
 
     protected function installCpEventListeners()
@@ -106,6 +110,16 @@ class Eventsky extends Plugin
                 );
             }
         );
+    }
+
+    protected function installFieldTypesEventListener()
+    {
+        Event::on(
+            Fields::class,
+            Fields::EVENT_REGISTER_FIELD_TYPES,
+            function(RegisterComponentTypesEvent $event) {
+                $event->types[] = EventField::class;
+        });
     }
 
     protected function installTwigExtensions()

@@ -35,13 +35,6 @@ use yii\web\Response;
  */
 class EventsController extends Controller
 {
-
-    public function init()
-    {
-        $this->requireAdmin();
-        parent::init();
-    }
-
     public function actionIndex(array $data = []): Response
     {
         $data = [
@@ -77,7 +70,7 @@ class EventsController extends Controller
             $request = Craft::$app->getRequest();
             $event = new Event();
             $eventType = $eventTypes[0];
-            $event->siteId = $site->id;
+//            $event->siteId = $site->id;
             $event->typeId = $request->getQueryParam('typeId', $eventType->id);
             $event->slug = ElementHelper::tempSlug();
 

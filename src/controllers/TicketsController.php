@@ -10,6 +10,7 @@ use Craft;
 use craft\helpers\ElementHelper;
 use craft\helpers\StringHelper;
 use fredmansky\eventsky\elements\Ticket;
+use fredmansky\eventsky\events\TicketSaveEvent;
 use fredmansky\eventsky\Eventsky;
 use fredmansky\eventsky\web\assets\editticket\EditTicketAsset;
 use craft\helpers\UrlHelper;
@@ -28,13 +29,7 @@ use yii\web\Response;
  */
 class TicketsController extends Controller
 {
-//  public const EVENT_BEFORE_SWITCH_TICKET_TYPE = 'beforeSwitchTicketType';
-
-    public function init()
-    {
-        $this->requireAdmin();
-        parent::init();
-    }
+    const EVENT_SAVE_TICKET = 'saveEventskyTicket';
 
     public function actionIndex(array $variables = []): Response
     {
@@ -212,8 +207,17 @@ class TicketsController extends Controller
         foreach ($eventIds as $eventId) {
             $ticket->id = null;
             $ticket->eventId = $eventId;
+
             if (!Craft::$app->getElements()->saveElement(clone $ticket)) {
                 throw new HttpException(404, Craft::t('eventsky', 'translate.ticket.notSaved'));
+            }
+
+            if ($this->hasEventHandlers(self::EVENT_SAVE_TICKET)) {
+                $this->trigger(self::EVENT_SAVE_TICKET, new TicketSaveEvent([
+                    'ticket' => $ticket,
+                    'eventId' => $eventId,
+                    'isNew' => true,
+                ]));
             }
         }
 
@@ -221,6 +225,8 @@ class TicketsController extends Controller
     }
 
     private function saveSingleTicket($ticket) {
+        $isNew = !(bool) $ticket->id;
+
         if (!Craft::$app->getElements()->saveElement($ticket)) {
             if ($request->getAcceptsJson()) {
                 return $this->asJson([
@@ -236,6 +242,14 @@ class TicketsController extends Controller
             ]);
 
             return null;
+        }
+
+        if ($this->hasEventHandlers(self::EVENT_SAVE_TICKET)) {
+            $this->trigger(self::EVENT_SAVE_TICKET, new TicketSaveEvent([
+                'ticket' => $ticket,
+                'eventId' => $ticket->eventId,
+                'isNew' => $isNew,
+            ]));
         }
 
         Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'translate.ticket.saved'));
