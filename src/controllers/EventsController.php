@@ -16,7 +16,7 @@ use fredmansky\eventsky\Eventsky;
 use fredmansky\eventsky\fields\EventTicketTypeMappingField;
 use fredmansky\eventsky\models\EventTicketTypeMapping;
 use fredmansky\eventsky\web\assets\editevent\EditEventAsset;
-use fredmansky\eventsky\web\assets\availableTicketField\EventTicketTypeMappingAsset;
+use fredmansky\eventsky\web\assets\availableticketfield\EventTicketTypeMappingAsset;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 
