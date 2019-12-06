@@ -91,7 +91,7 @@ class EventService extends Component
     {
         $result = $this->createEventTicketTypeMappingQuery()
             ->where(['=', 'eventId', $eventId])
-            ->where(['=', 'tickettypeId', $ticketTypeId])
+            ->andWhere(['=', 'tickettypeId', $ticketTypeId])
             ->one();
 
         if($result) {
