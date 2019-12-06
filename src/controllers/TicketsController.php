@@ -42,8 +42,7 @@ class TicketsController extends Controller
         return $this->renderTemplate('eventsky/tickets/index', $data);
     }
 
-
-    public function actionEdit(int $ticketId = null): Response
+    public function actionEdit(int $ticketId = null, Ticket $ticket = null): Response
     {
         $data = [];
 
@@ -53,14 +52,16 @@ class TicketsController extends Controller
 
         $this->getView()->registerAssetBundle(EditTicketAsset::class);
 
-        /** @var Ticket $ticket */
-        $ticket = null;
-
-        if ($ticketId !== null) {
+        if ($ticket) {
+            $ticketType = $ticket->getType();
+            $event = $ticket->getEvent();
+            $status = $ticket->getStatus();
+            $data['title'] = trim($ticket->title) ?: Craft::t('eventsky', 'translate.ticket.edit');
+        } else if ($ticketId !== null) {
             $ticket = Eventsky::$plugin->ticket->getTicketById($ticketId);
 
             if (!$ticket) {
-                throw new NotFoundHttpException(Craft::t('eventsky', 'translate.ticket.notFound'));
+              throw new NotFoundHttpException(Craft::t('eventsky', 'translate.ticket.notFound'));
             }
 
             $ticketType = $ticket->getType();
@@ -125,11 +126,10 @@ class TicketsController extends Controller
         $data['isMultiSiteElement'] = false;
         $data['canUpdateSource'] = true;
 
-        $data['tabs'] = $this->getTabs($data['ticketType']->getFieldLayout());
+        $data['tabs'] = $this->getTabs($data['ticketType']->getFieldLayout(), $ticket);
 
         return $this->renderTemplate('eventsky/tickets/edit', $data);
     }
-
 
     public function actionSwitchTicketType(): Response
     {
@@ -256,16 +256,41 @@ class TicketsController extends Controller
         return $this->redirectToPostedUrl($ticket);
     }
 
-    private function getTabs($fieldLayout) {
+    public function actionDelete(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        $ticketId = Craft::$app->getRequest()->getRequiredBodyParam('id');
+        Eventsky::$plugin->ticket->deleteTicketById($ticketId);
+
+        return $this->asJson(['success' => true]);
+    }
+
+    private function getTabs($fieldLayout, $ticket) {
         $tabs = [
             [
                 'label' => Craft::t('eventsky', 'translate.ticket.tab.ticketData'),
                 'url' => '#' . StringHelper::camelCase('tab' . Craft::t('eventsky', 'translate.ticket.tab.ticketData')),
             ],
         ];
+//            dump('getting here');
 
         foreach ($fieldLayout->getTabs() as $index => $tab) {
-            $hasErrors = null;
+            // Do any of the fields on this tab have errors?
+            $hasErrors = false;
+//            dump('getting here too');
+//            dump($ticket->hasErrors());
+//            die();
+
+            if ($ticket->hasErrors()) {
+                foreach ($tab->getFields() as $field) {
+                    /** @var Field $field */
+                    if ($hasErrors = $ticket->hasErrors($field->handle . '.*')) {
+                        break;
+                    }
+                }
+            }
 
             $tabs[] = [
                 'label' => $tab->name,
@@ -274,6 +299,7 @@ class TicketsController extends Controller
             ];
         }
 
+//        die();
         return $tabs;
     }
 
@@ -330,7 +356,7 @@ class TicketsController extends Controller
     {
         $ticketType = $data['ticket']->getType();
         $data['ticketType'] = $ticketType;
-        $data['tabs'] = $this->getTabs($data['ticketType']->getFieldLayout());
+        $data['tabs'] = $this->getTabs($data['ticketType']->getFieldLayout(), $data['ticket']);
 
         $data['ticketEventOptions'] = array_map(function($event) {
             return [

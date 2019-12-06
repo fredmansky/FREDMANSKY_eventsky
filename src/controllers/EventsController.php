@@ -43,7 +43,7 @@ class EventsController extends Controller
         return $this->renderTemplate('eventsky/events/index', $data);
     }
 
-    public function actionEdit(int $eventId = null, string $site = null): Response
+    public function actionEdit(int $eventId = null, string $site = null, Event $event = null): Response
     {
         $data = [];
 
@@ -52,12 +52,12 @@ class EventsController extends Controller
         $this->getView()->registerAssetBundle(EditEventAsset::class);
         $this->getView()->registerAssetBundle(EventTicketTypeMappingAsset::class);
 
-        /** @var Event $event */
-        $event = null;
+        $site = $this->getSiteForNewEvent($site);
 
-//        $site = $this->getSiteForNewEvent($site);
-
-        if ($eventId !== null) {
+        if ($event) {
+          $eventType = $event->getType();
+          $data['title'] = trim($event->title) ?: Craft::t('eventsky', 'translate.event.edit');
+        } else if ($eventId !== null) {
             $event = Eventsky::$plugin->event->getEventById($eventId);
 
             if (!$event) {
@@ -110,7 +110,7 @@ class EventsController extends Controller
         $data['isMultiSiteElement'] = Craft::$app->isMultiSite && count(Craft::$app->getSites()->allSiteIds) > 1;
         $data['canUpdateSource'] = true;
 
-        $data['tabs'] = $this->getTabs($data['eventType']->getFieldLayout());
+        $data['tabs'] = $this->getTabs($data['eventType']->getFieldLayout(), $event);
 
         $this->prepTicketTypeMappingVariables($data);
 
@@ -249,7 +249,7 @@ class EventsController extends Controller
         }
     }
 
-    private function getTabs($fieldLayout) {
+    private function getTabs($fieldLayout, $event) {
         $tabs = [
             [
                 'label' => Craft::t('eventsky', 'translate.events.tab.eventData'),
@@ -265,16 +265,21 @@ class EventsController extends Controller
 
         foreach ($fieldLayout->getTabs() as $index => $tab) {
             // Do any of the fields on this tab have errors?
-//            $hasErrors = false;
-//            if ($event->hasErrors()) {
-//                foreach ($tab->getFields() as $field) {
-//                    /** @var Field $field */
-//                    if ($hasErrors = $event->hasErrors($field->handle . '.*')) {
-//                        break;
-//                    }
-//                }
-//            }
-            $hasErrors = null;
+            $hasErrors = false;
+
+            dump($event->hasErrors());
+            die();
+
+            if ($event->hasErrors()) {
+                foreach ($tab->getFields() as $field) {
+                    /** @var Field $field */
+                    if ($hasErrors = $event->hasErrors($field->handle . '.*')) {
+                        break;
+                    }
+                }
+            }
+
+//            $hasErrors = null;
 
             $tabs[] = [
                 'label' => $tab->name,
@@ -355,7 +360,7 @@ class EventsController extends Controller
 
         // Define the content tabs
         // ---------------------------------------------------------------------
-        $data['tabs'] = $this->getTabs($data['eventType']->getFieldLayout());
+        $data['tabs'] = $this->getTabs($data['eventType']->getFieldLayout(), $data['event']);
 
         return null;
     }

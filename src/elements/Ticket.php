@@ -14,6 +14,7 @@ use craft\elements\actions\SetStatus;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\User;
 use craft\helpers\UrlHelper;
+use craft\validators\DateTimeValidator;
 use fredmansky\eventsky\elements\db\TicketQuery;
 use fredmansky\eventsky\Eventsky;
 use fredmansky\eventsky\models\TicketType;
@@ -189,6 +190,18 @@ class Ticket extends Element
 //    {
 //        return ['name', 'typeId'];
 //    }
+
+    public function rules()
+    {
+        $rules = parent::rules();
+        $rules[] = [['eventId', 'typeId', 'statusId'], 'number', 'integerOnly' => true];
+//        $rules[] = [['eventId', 'typeId', 'statusId'], 'required', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_LIVE]];
+
+//        echo 'getting here';
+//        dump($rules);
+//        die();
+        return $rules;
+    }
 
     public function getIsEditable(): bool
     {

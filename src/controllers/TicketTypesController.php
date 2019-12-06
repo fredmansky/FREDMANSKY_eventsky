@@ -32,14 +32,29 @@ class TicketTypesController extends Controller
         return $this->renderTemplate('eventsky/ticketTypes/index', $data);
     }
 
-    public function actionEdit(int $ticketTypeId = null): Response
+    public function actionEdit(int $ticketTypeId = null, TicketType $ticketType = null): Response
     {
         $data = [
             'ticketTypeId' => $ticketTypeId,
             'brandNewTicketType' => false,
         ];
 
-        if ($ticketTypeId !== null) {
+        if ($ticketType) {
+          if ($ticketType->fieldLayoutId) {
+            $fieldlayout = Craft::$app->fields->getLayoutById($ticketType->fieldLayoutId);
+
+            if (!$fieldlayout) {
+              throw new NotFoundHttpException(Craft::t('eventsky', 'translate.fieldlayout.notFound'));
+            }
+
+            $data['title'] = trim($ticketType->name) ?: Craft::t('eventsky', 'translate.ticketTypes.edit');
+            $data['fieldlayout'] = $fieldlayout;
+          } else {
+            $data['brandNewTicketType'] = true;
+            $data['title'] = Craft::t('eventsky', 'translate.ticketTypes.new');
+            $data['fieldlayout'] = new FieldLayout();
+          }
+        } else if ($ticketTypeId !== null) {
             $ticketType = Eventsky::$plugin->ticketType->getTicketTypeById($ticketTypeId);
 
             if (!$ticketType) {
@@ -84,7 +99,7 @@ class TicketTypesController extends Controller
         return $this->renderTemplate('eventsky/ticketTypes/edit', $data);
     }
 
-    public function actionSave(): Response
+    public function actionSave()
     {
         $this->requirePostRequest();
 
