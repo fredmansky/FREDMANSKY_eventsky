@@ -183,9 +183,7 @@ class EventsController extends Controller
         // Populate the event with post data
         $this->populateEventModel($event);
 
-        $this->saveEventTicketTypesMappings($event);
-
-        if (!Craft::$app->getElements()->saveElement($event)) {
+        if (!Craft::$app->getElements()->saveElement($event) || !$this->saveEventTicketTypesMappings($event)) {
             if ($request->getAcceptsJson()) {
                 return $this->asJson([
                     'success' => false,
@@ -231,7 +229,7 @@ class EventsController extends Controller
 
         $this->deleteOldTicketTypeMappings($oldTicketTypeMappings);
         $this->saveTicketTypeMappings($event, $newTicketTypeMappings);
-
+        return true;
     }
 
     private function deleteOldTicketTypeMappings($ticketTypeMappings) {
@@ -244,6 +242,7 @@ class EventsController extends Controller
         foreach ($ticketTypeMappings as $ticketTypeMappingData) {
             $ticketTypeId = $ticketTypeMappingData['typeId'];
             $ticketTypeMapping = $this->getTicketTypeMappingModel($event->id, $ticketTypeId);
+            $ticketTypeMappingData['eventId'] = $event->id;
             $this->populateTicketTypeMappingModel($ticketTypeMapping, $ticketTypeMappingData);
             Eventsky::$plugin->event->saveEventTicketTypeMapping($ticketTypeMapping);
         }
@@ -442,6 +441,7 @@ class EventsController extends Controller
     private function populateTicketTypeMappingModel(EventTicketTypeMapping $mapping, array $data)
     {
         $mapping->limit = $data['limit'];
+        $mapping->eventId = $data['eventId'];
 
         if (($registrationStartDate = $data['registrationStart']) !== null) {
             $mapping->registrationStartDate = DateTimeHelper::toDateTime($registrationStartDate) ?: null;
