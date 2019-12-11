@@ -118,10 +118,11 @@ class EventTypeService extends Component
 
         $eventTypeRecord->name = $eventType->name;
         $eventTypeRecord->handle = $eventType->handle;
-//        $eventTypeRecord->fieldLayoutId = (int) $fieldLayout->id;
         $eventTypeRecord->setFieldLayout($fieldLayout);
         $eventTypeRecord->isRegistrationEnabled = $eventType->isRegistrationEnabled;
         $eventTypeRecord->isWaitingListEnabled = $eventType->isWaitingListEnabled;
+        $eventTypeRecord->emailNotificationIdAdmin = $eventType->emailNotificationIdAdmin;
+        $eventTypeRecord->emailNotificationAdminEmails = $eventType->emailNotificationAdminEmails;
         $eventTypeRecord->uid = $eventType->uid;
         $eventTypeRecord->save();
 

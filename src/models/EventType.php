@@ -35,6 +35,8 @@ class EventType extends Model
     public $dateUpdated;
     public $dateDeleted;
     public $uid;
+    public $emailNotificationIdAdmin;
+    public $emailNotificationAdminEmails;
 
     private $eventTypeSites;
 

@@ -90,6 +90,9 @@ return [
     'translate.eventType.tab.settings' => 'Settings',
     'translate.eventType.tab.fieldlayout' => 'Field Layout',
     'translate.eventTypes.deleteMessage' => 'Are you sure you want to delete “{name}“ and all its events?',
+    'translate.eventTypes.fields.details.emailNotificationIdAdmin' => 'Email Notification for Admin',
+    'translate.eventTypes.fields.details.adminEmail' => 'Admin Notification Email(s)',
+    'translate.eventTypes.noEmailNotifications' => 'No Email Notifications',
 
     // --------------------
     // ----- Tickets ------
