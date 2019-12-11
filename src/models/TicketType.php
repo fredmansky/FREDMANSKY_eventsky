@@ -36,6 +36,7 @@ class TicketType extends Model
     public $dateCreated;
     public $dateUpdated;
     public $dateDeleted;
+    public $emailNotificationIdUser;
 
   /**
      * @inheritdoc

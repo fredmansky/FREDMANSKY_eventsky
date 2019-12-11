@@ -150,7 +150,6 @@ return [
     'translate.ticketType.fieldLayout.headline' => 'Field layout of event type “{name}”',
     'translate.ticketType.fields.details.emailNotificationIdUser' => 'Email Notification for User',
     'translate.ticketTypes.noEmailNotifications' => 'No Email Notifications',
-
     'translate.fieldlayout.notFound' => 'Field layout not found.',
 
     // -------------------------------
