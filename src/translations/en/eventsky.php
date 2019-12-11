@@ -71,6 +71,9 @@ return [
     'translate.elements.Event.pluralDisplayName' => 'Events',
     'translate.elements.Event.sideBar.allEvents' => 'All Events',
     'translate.elements.Event.sideBar.eventTypeHeading' => 'Event Types',
+    'translate.events.fields.details.emailNotificationIdAdmin' => 'Email Notification for Admin',
+    'translate.events.fields.details.adminEmail' => 'Admin Notification Email(s)',
+    'translate.events.defaultEmailNotifications' => 'Default to Event Type Setting',
 
     // ------------------------
     // ----- Event Types ------

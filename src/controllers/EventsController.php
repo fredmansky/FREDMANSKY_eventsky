@@ -35,7 +35,7 @@ use yii\web\Response;
  */
 class EventsController extends Controller
 {
-    public function actionIndex(array $data = []): Response
+    public function actionIndex(): Response
     {
         $data = [
             'eventTypes' => Eventsky::$plugin->eventType->getAllEventTypes(),
@@ -84,6 +84,20 @@ class EventsController extends Controller
 
         $data['eventId'] = $eventId;
         $data['eventType'] = $eventType;
+
+        $emailNotifications = Eventsky::$plugin->emailNotification->getAllEmailNotifications();
+        $emailNotificationDefaultOption = [[
+            'label' => Craft::t('eventsky', 'translate.events.defaultEmailNotifications'),
+            'value' => null,
+        ]];
+        $emailNotificationOptions = array_map(function($emailNotification) {
+            return [
+                'label' => $emailNotification->name,
+                'value' => $emailNotification->id,
+            ];
+        }, $emailNotifications);
+
+        $data['emailNotificationOptions'] = array_merge($emailNotificationDefaultOption, $emailNotificationOptions);
 
         $data['eventTypeOptions'] = array_map(function($eventType) {
             return [
@@ -408,6 +422,8 @@ class EventsController extends Controller
         $event->totalTickets = $request->getBodyParam('totalTickets', $event->totalTickets);
         $event->hasWaitingList = $request->getBodyParam('hasWaitingList', $event->hasWaitingList);
         $event->waitingListSize = $request->getBodyParam('waitingListSize', $event->waitingListSize);
+        $event->emailNotificationIdAdmin = $request->getBodyParam('emailNotificationIdAdmin');
+        $event->emailNotificationAdminEmails = $request->getBodyParam('emailNotificationAdminEmails');
 
         if (($postDate = $request->getBodyParam('postDate')) !== null) {
             $event->postDate = DateTimeHelper::toDateTime($postDate) ?: null;

@@ -43,6 +43,8 @@ class Event extends Element
     public $totalTickets;
     public $hasWaitingList;
     public $waitingListSize;
+    public $emailNotificationIdAdmin;
+    public $emailNotificationAdminEmails;
 
     public static function displayName(): string
     {
@@ -246,6 +248,8 @@ class Event extends Element
         $record->totalTickets = $this->totalTickets;
         $record->hasWaitingList = $this->hasWaitingList;
         $record->waitingListSize = $this->waitingListSize;
+        $record->emailNotificationIdAdmin = $this->emailNotificationIdAdmin;
+        $record->emailNotificationAdminEmails = $this->emailNotificationAdminEmails;
 
         $record->save(false);
 
