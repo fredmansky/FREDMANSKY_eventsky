@@ -19,6 +19,7 @@ use craft\services\Fields;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
 use fredmansky\eventsky\fields\EventField;
+use fredmansky\eventsky\services\EmailNotificationService;
 use fredmansky\eventsky\services\EventService;
 use fredmansky\eventsky\services\EventTicketTypeMappingService;
 use fredmansky\eventsky\services\EventTypeService;
@@ -54,6 +55,7 @@ class Eventsky extends Plugin
             'ticketType' => TicketTypeService::class,
             'ticketStatus' => TicketStatusService::class,
             'fieldService' => FieldService::class,
+            'emailNotification' => EmailNotificationService::class,
         ]);
     }
 
@@ -67,6 +69,7 @@ class Eventsky extends Plugin
             'tickets' => ['label' => Craft::t('eventsky', 'translate.tickets.cpTitle'), 'url' => 'eventsky/tickets'],
             'eventTypes' => ['label' => Craft::t('eventsky', 'translate.eventTypes.cpTitle'), 'url' => 'eventsky/eventtypes'],
             'ticketTypes' => ['label' => Craft::t('eventsky', 'translate.ticketTypes.cpTitle'), 'url' => 'eventsky/tickettypes'],
+            'emailNotifications' => ['label' => Craft::t('eventsky', 'translate.emailNotifications.cpTitle'), 'url' => 'eventsky/emailnotifications'],
             'settings' => ['label' => Craft::t('eventsky', 'translate.settings.cpTitle'), 'url' => 'eventsky/settings'],
         ];
         return $item;

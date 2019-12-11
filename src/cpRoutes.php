@@ -19,4 +19,9 @@ return [
     'eventsky/tickettype/new' => 'eventsky/ticket-types/edit',
     'eventsky/tickettype/delete/<ticketTypeId:\d+>' => 'eventsky/ticket-types/delete',
     'eventsky/tickettype/<ticketTypeId:\d+>' => 'eventsky/ticket-types/edit',
+
+    'eventsky/emailnotifications' => 'eventsky/email-notifications/index',
+    'eventsky/emailnotifications/new' => 'eventsky/email-notifications/edit',
+    'eventsky/emailnotifications/<emailNotificationId:\d+>' => 'eventsky/email-notifications/edit',
+    'eventsky/emailnotifications/delete/<emailNotificationId:\d+>' => 'eventsky/email-notifications/delete',
 ];

@@ -38,7 +38,10 @@ return [
 
     'translate.settings.title' => 'Settings',
     'translate.settings.cpTitle' => 'Settings',
-    
+
+    'translate.emailNotifications.title' => 'Email Notifications',
+    'translate.emailNotifications.cpTitle' => 'Email Notifications',
+
     // -------------------
     // ----- Events ------
     // -------------------
@@ -145,8 +148,26 @@ return [
     'translate.ticketType.tab.settings' => 'Settings',
     'translate.ticketType.tab.fieldlayout' => 'Field Layout',
     'translate.ticketType.fieldLayout.headline' => 'Field layout of event type “{name}”',
-    
+    'translate.ticketType.fields.details.emailNotificationIdUser' => 'Email Notification for User',
+    'translate.ticketTypes.noEmailNotifications' => 'No Email Notifications',
+
     'translate.fieldlayout.notFound' => 'Field layout not found.',
+
+    // -------------------------------
+    // ----- Email Notifications -----
+    // -------------------------------
+
+    'translate.emailNotifications.new' => 'Create a new email notification',
+    'translate.emailNotifications.name' => 'Name',
+    'translate.emailNotifications.handle' => 'Handle',
+    'translate.emailNotifications.none' => 'No email notifications exist yet.',
+    'translate.emailNotifications.notFound' => 'Email notification not found.',
+    'translate.emailNotifications.edit' => 'Edit email notification',
+    'translate.emailNotifications.new' => 'Create a new email notification',
+    'translate.emailNotifications.save.error' => 'Couldn’t save email notification.',
+    'translate.emailNotifications.save.success' => 'Email notification saved.',
+    'translate.emailNotifications.delete' => 'Delete',
+    'translate.emailNotifications.deleteMessage' => 'Are you sure you want to delete email notification “{name}”?',
 
     // ------------------
     // ----- Fields -----
