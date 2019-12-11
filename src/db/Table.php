@@ -11,4 +11,5 @@ abstract class Table extends \craft\db\Table
     const TICKETS = '{{%eventsky_tickets}}';
     const TICKET_STATUSES = '{{%eventsky_ticketstatuses}}';
     const TICKET_TYPES = '{{%eventsky_tickettypes}}';
+    const EMAIL_NOTIFICATIONS = '{{%eventsky_emailnotifications}}';
 }
