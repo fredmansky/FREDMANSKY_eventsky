@@ -78,7 +78,7 @@
 
         {{ forms.textareaField({
             label: "Email Content (no HTML)",
-            instructions: "The message you want to write in your email body.",
+            instructions: "The message you want to write in your email body.\nEmails for the event admins will contain a {{ ticket }} and an {{ event }} variable.\nEmails goint to the user directly contain an array {{ tickets }} with all tickets the user currently registered for.",
             id: 'textContent',
             name: 'textContent',
             autocorrect: false,
