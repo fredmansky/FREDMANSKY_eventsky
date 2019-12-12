@@ -15,6 +15,7 @@ class TicketQuery extends ElementQuery
     public $typeId;
     public $eventId;
     public $statusId;
+    public $email;
 
     public function __construct(string $elementType, array $config = [])
     {
@@ -52,6 +53,7 @@ class TicketQuery extends ElementQuery
           'eventsky_tickets.typeId',
           'eventsky_tickets.eventId',
           'eventsky_tickets.statusId',
+          'eventsky_tickets.email',
         ]);
 
         if ($this->typeId) {

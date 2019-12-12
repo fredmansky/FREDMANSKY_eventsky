@@ -16,6 +16,7 @@ use craft\validators\HandleValidator;
 use craft\validators\UniqueValidator;
 use fredmansky\eventsky\elements\Ticket;
 use fredmansky\eventsky\Eventsky;
+use yii\base\InvalidConfigException;
 
 /**
  * TicketType model class.
@@ -89,5 +90,20 @@ class TicketType extends Model
     public function getCpEditUrl(): string
     {
         return UrlHelper::cpUrl('eventsky/tickettype/' . $this->id);
+    }
+
+    public function getEmailNotification(): ?EmailNotification
+    {
+        if ($this->emailNotificationIdUser === null) {
+            return null;
+        }
+
+        $emailNotification = Eventsky::$plugin->emailNotification->getEmailNotificationById($this->emailNotificationIdUser);
+
+        if (!$emailNotification) {
+            throw new InvalidConfigException('Invalid email notification ID: ' . $this->emailNotificationIdUser);
+        }
+
+        return $emailNotification;
     }
 }

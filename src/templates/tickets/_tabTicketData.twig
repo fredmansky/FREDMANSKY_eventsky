@@ -9,3 +9,12 @@
     required: true,
     options: ticketEventOptions
 }) }}
+
+{{ forms.textField({
+    label: 'translate.ticket.fields.details.email' | t('eventsky'),
+    id: 'email',
+    name: 'email',
+    value: ticket.email,
+    errors: ticket.getErrors('email'),
+    required: true,
+}) }}

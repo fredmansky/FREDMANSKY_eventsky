@@ -130,7 +130,6 @@ class TicketsController extends Controller
         return $this->renderTemplate('eventsky/tickets/edit', $data);
     }
 
-
     public function actionSwitchTicketType(): Response
     {
         $this->requirePostRequest();
@@ -193,6 +192,7 @@ class TicketsController extends Controller
         $errors = [];
         $eventIds = array_unique($eventIds);
         $allEventIds = Eventsky::$plugin->event->getAllEventIds();
+        $tickets = [];
 
         foreach ($eventIds as $eventId) {
             if (!in_array($eventId, $allEventIds)) {
@@ -212,6 +212,8 @@ class TicketsController extends Controller
                 throw new HttpException(404, Craft::t('eventsky', 'translate.ticket.notSaved'));
             }
 
+            $tickets[] = $ticket;
+
             if ($this->hasEventHandlers(self::EVENT_SAVE_TICKET)) {
                 $this->trigger(self::EVENT_SAVE_TICKET, new TicketSaveEvent([
                     'ticket' => $ticket,
@@ -221,6 +223,7 @@ class TicketsController extends Controller
             }
         }
 
+        $this->sendMails($tickets);
         return true;
     }
 
@@ -252,8 +255,40 @@ class TicketsController extends Controller
             ]));
         }
 
+        if($isNew) {
+            $this->sendMails([$ticket]);
+        }
+
         Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'translate.ticket.saved'));
         return $this->redirectToPostedUrl($ticket);
+    }
+
+    private function sendMails(array $tickets) {
+        $this->sendAdminMails($tickets);
+        $this->sendUserMail($tickets);
+    }
+
+    private function sendUserMail(array $tickets) {
+        $ticket = $tickets[0];
+
+        if (!$tickets) {
+            return;
+        }
+
+        $emailNotification = $ticket->getType()->getEmailNotification();
+
+        if($emailNotification && $ticket->email) {
+            $from = $emailNotification->fromEmail;
+            $to = $ticket->email;
+            $replyTo = $emailNotification->replyToEmail;
+            $subject = $emailNotification->subject;
+
+            $bodyData = [];
+            $bodyData['tickets'] = $tickets;
+            $body = Craft::$app->getView()->renderString($emailNotification->textContent, $bodyData);
+
+            Eventsky::$plugin->mail->sendMail($from, $to, $replyTo, $subject, $body);
+        }
     }
 
     private function getTabs($fieldLayout) {
@@ -305,6 +340,7 @@ class TicketsController extends Controller
         $ticket->typeId = $request->getBodyParam('typeId', $ticket->typeId);
         $ticket->eventId = $request->getBodyParam('eventId', $ticket->eventId);
         $ticket->statusId = $request->getBodyParam('statusId', $ticket->statusId);
+        $ticket->email = $request->getBodyParam('email', $ticket->email);
 
         if (!$ticket->typeId) {
             // Default to the first ticket type
