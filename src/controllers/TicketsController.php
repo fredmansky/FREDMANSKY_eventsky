@@ -291,6 +291,32 @@ class TicketsController extends Controller
         }
     }
 
+    private function sendAdminMails(array $tickets) {
+        foreach ($tickets as $ticket) {
+
+            $event = $ticket->getEvent();
+            $eventType = $event->getType();
+            $emailNotification = $event->getEmailNotification() ?? $eventType->getEmailNotification() ?? null;
+            $emailString = $event->emailNotificationAdminEmails ?? $eventType->emailNotificationAdminEmails ?? '';
+            $emails = preg_split('/\r\n|\r|\n/', $emailString);
+
+            if ($emailNotification && $emailString) {
+                $from = $emailNotification->fromEmail;
+                $replyTo = $emailNotification->replyToEmail;
+                $subject = $emailNotification->subject;
+                $bodyData = [];
+                $bodyData['ticket'] = $ticket;
+                $bodyData['event'] = $event;
+                $body = Craft::$app->getView()->renderString($emailNotification->textContent, $bodyData);
+
+                foreach ($emails as $email) {
+                    $to = $email;
+                    Eventsky::$plugin->mail->sendMail($from, $to, $replyTo, $subject, $body);
+                }
+            }
+        }
+    }
+
     private function getTabs($fieldLayout) {
         $tabs = [
             [
