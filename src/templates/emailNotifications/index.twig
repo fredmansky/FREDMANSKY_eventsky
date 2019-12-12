@@ -1,0 +1,50 @@
+{% extends "_layouts/cp" %}
+
+{% set selectedSubnavItem = 'emailNotifications' %}
+{% set title = "translate.emailNotifications.title" | t('eventsky') %}
+
+{% block actionButton %}
+    <a href="{{ url('eventsky/emailnotifications/new') }}" class="btn submit add icon">{{ "translate.emailNotifications.new" | t('eventsky') }}</a>
+{% endblock %}
+
+{% block content %}
+    <div id="noEmailNotifications"{% if emailNotifications %} class="hidden"{% endif %}>
+        <p>{{ "translate.emailNotifications.none" | t('eventsky') }}</p>
+    </div>
+
+    {% if emailNotifications | length %}
+        <table id="emailNotifications" class="data fullwidth collapsible">
+            <thead>
+                <th scope="col">{{ "translate.emailNotifications.name" | t('eventsky') }}</th>
+                <th scope="col">{{ "translate.emailNotifications.handle" | t('eventsky') }}</th>
+                <td class="thin"></td>
+            </thead>
+            <tbody>
+            {% for emailNotification in emailNotifications %}
+                <tr data-id="{{ emailNotification.id }}" data-name="{{ emailNotification.name }}">
+                    <th scope="row" data-title="{{ 'translate.emailNotifications.name' | t('eventsky') }}"><a href="{{ emailNotification.getCpEditUrl() }}">{{ emailNotification.name }}</a></th>
+                    <td data-title="{{ 'translate.emailNotifications.handle' | t('eventsky') }}"><code>{{ emailNotification.handle }}</code></td>
+                    <td class="thin"><a class="delete icon" title="{{ 'translate.emailNotifications.delete' | t('eventsky') }}" role="button"></a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
+
+{% js %}
+    var adminTable = new Craft.AdminTable({
+    tableSelector: '#emailNotifications',
+    noItemsSelector: '#noEmailNotifications',
+    deleteAction: 'eventsky/email-notifications/delete',
+    confirmDeleteMessage: '{{ "translate.emailNotifications.deleteMessage" | t('eventsky') }}',
+    onDeleteItem: function()
+    {
+    // Hide the Entries tab if that was the last one
+    if (adminTable.totalItems == 0)
+    {
+    $('#nav-entries').remove();
+    }
+    }
+    });
+{% endjs %}

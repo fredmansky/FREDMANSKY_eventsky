@@ -19,10 +19,12 @@ use craft\services\Fields;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
 use fredmansky\eventsky\fields\EventField;
+use fredmansky\eventsky\services\EmailNotificationService;
 use fredmansky\eventsky\services\EventService;
 use fredmansky\eventsky\services\EventTicketTypeMappingService;
 use fredmansky\eventsky\services\EventTypeService;
 use fredmansky\eventsky\services\FieldService;
+use fredmansky\eventsky\services\MailService;
 use fredmansky\eventsky\services\TicketService;
 use fredmansky\eventsky\services\TicketStatusService;
 use fredmansky\eventsky\services\TicketTypeService;
@@ -34,7 +36,7 @@ class Eventsky extends Plugin
 {
     public static $plugin;
 
-    public $schemaVersion = '1.4.1';
+    public $schemaVersion = '1.6.0';
 
     public function init()
     {
@@ -54,6 +56,8 @@ class Eventsky extends Plugin
             'ticketType' => TicketTypeService::class,
             'ticketStatus' => TicketStatusService::class,
             'fieldService' => FieldService::class,
+            'emailNotification' => EmailNotificationService::class,
+            'mail' => MailService::class,
         ]);
     }
 
@@ -67,6 +71,7 @@ class Eventsky extends Plugin
             'tickets' => ['label' => Craft::t('eventsky', 'translate.tickets.cpTitle'), 'url' => 'eventsky/tickets'],
             'eventTypes' => ['label' => Craft::t('eventsky', 'translate.eventTypes.cpTitle'), 'url' => 'eventsky/eventtypes'],
             'ticketTypes' => ['label' => Craft::t('eventsky', 'translate.ticketTypes.cpTitle'), 'url' => 'eventsky/tickettypes'],
+            'emailNotifications' => ['label' => Craft::t('eventsky', 'translate.emailNotifications.cpTitle'), 'url' => 'eventsky/emailnotifications'],
             'settings' => ['label' => Craft::t('eventsky', 'translate.settings.cpTitle'), 'url' => 'eventsky/settings'],
         ];
         return $item;

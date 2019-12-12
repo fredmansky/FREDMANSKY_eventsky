@@ -71,6 +71,20 @@ class EventTypesController extends Controller
 
         $data['eventType'] = $eventType;
 
+        $emailNotifications = Eventsky::$plugin->emailNotification->getAllEmailNotifications();
+        $emailNotificationDefaultOption = [[
+            'label' => Craft::t('eventsky', 'translate.eventTypes.noEmailNotifications'),
+            'value' => null,
+        ]];
+        $emailNotificationOptions = array_map(function($emailNotification) {
+            return [
+                'label' => $emailNotification->name,
+                'value' => $emailNotification->id,
+            ];
+        }, $emailNotifications);
+
+        $data['emailNotificationOptions'] = array_merge($emailNotificationDefaultOption, $emailNotificationOptions);
+
         $data['crumbs'] = [
             [
                 'label' => Craft::t('eventsky', 'translate.eventTypes.cpTitle'),
@@ -114,6 +128,8 @@ class EventTypesController extends Controller
         $eventType->handle = $request->getBodyParam('handle');
         $eventType->isRegistrationEnabled = $request->getBodyParam('isRegistrationEnabled');
         $eventType->isWaitingListEnabled = $request->getBodyParam('isWaitingListEnabled');
+        $eventType->emailNotificationIdAdmin = $request->getBodyParam('emailNotificationIdAdmin');
+        $eventType->emailNotificationAdminEmails = $request->getBodyParam('emailNotificationAdminEmails');
 
         $allEventTypeSites = [];
         foreach (Craft::$app->getSites()->getAllSites() as $site) {

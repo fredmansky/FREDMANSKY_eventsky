@@ -27,7 +27,9 @@ class EventQuery extends ElementQuery
     public $totalTickets;
     public $hasWaitingList;
     public $waitingListSize;
-    
+    public $emailNotificationIdAdmin;
+    public $emailNotificationAdminEmails;
+
     public function __construct($elementType, array $config = [])
     {
         // Default status
@@ -119,6 +121,8 @@ class EventQuery extends ElementQuery
             'eventsky_events.totalTickets',
             'eventsky_events.hasWaitingList',
             'eventsky_events.waitingListSize',
+            'eventsky_events.emailNotificationIdAdmin',
+            'eventsky_events.emailNotificationAdminEmails',
         ]);
 
         if ($this->typeId) {

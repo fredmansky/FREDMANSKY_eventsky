@@ -38,7 +38,10 @@ return [
 
     'translate.settings.title' => 'Settings',
     'translate.settings.cpTitle' => 'Settings',
-    
+
+    'translate.emailNotifications.title' => 'Email Notifications',
+    'translate.emailNotifications.cpTitle' => 'Email Notifications',
+
     // -------------------
     // ----- Events ------
     // -------------------
@@ -68,6 +71,9 @@ return [
     'translate.elements.Event.pluralDisplayName' => 'Events',
     'translate.elements.Event.sideBar.allEvents' => 'All Events',
     'translate.elements.Event.sideBar.eventTypeHeading' => 'Event Types',
+    'translate.events.fields.details.emailNotificationIdAdmin' => 'Email Notification for Admin',
+    'translate.events.fields.details.adminEmail' => 'Admin Notification Email(s)',
+    'translate.events.defaultEmailNotifications' => 'Default to Event Type Setting',
 
     // ------------------------
     // ----- Event Types ------
@@ -87,6 +93,9 @@ return [
     'translate.eventType.tab.settings' => 'Settings',
     'translate.eventType.tab.fieldlayout' => 'Field Layout',
     'translate.eventTypes.deleteMessage' => 'Are you sure you want to delete “{name}“ and all its events?',
+    'translate.eventTypes.fields.details.emailNotificationIdAdmin' => 'Email Notification for Admin',
+    'translate.eventTypes.fields.details.adminEmail' => 'Admin Notification Email(s)',
+    'translate.eventTypes.noEmailNotifications' => 'No Email Notifications',
 
     // --------------------
     // ----- Tickets ------
@@ -125,6 +134,7 @@ return [
     'translate.ticket.fields.details.slug' => 'Slug',
     'translate.ticket.fields.details.tickettype' => 'Ticket Type',
     'translate.ticket.fields.details.event' => 'Event',
+    'translate.ticket.fields.details.email' => 'Email',
     'translate.ticket.fields.details.status' => 'Status',
 
     // ------------------------
@@ -145,8 +155,25 @@ return [
     'translate.ticketType.tab.settings' => 'Settings',
     'translate.ticketType.tab.fieldlayout' => 'Field Layout',
     'translate.ticketType.fieldLayout.headline' => 'Field layout of event type “{name}”',
-    
+    'translate.ticketType.fields.details.emailNotificationIdUser' => 'Email Notification for User',
+    'translate.ticketTypes.noEmailNotifications' => 'No Email Notifications',
     'translate.fieldlayout.notFound' => 'Field layout not found.',
+
+    // -------------------------------
+    // ----- Email Notifications -----
+    // -------------------------------
+
+    'translate.emailNotifications.new' => 'Create a new email notification',
+    'translate.emailNotifications.name' => 'Name',
+    'translate.emailNotifications.handle' => 'Handle',
+    'translate.emailNotifications.none' => 'No email notifications exist yet.',
+    'translate.emailNotifications.notFound' => 'Email notification not found.',
+    'translate.emailNotifications.edit' => 'Edit email notification',
+    'translate.emailNotifications.new' => 'Create a new email notification',
+    'translate.emailNotifications.save.error' => 'Couldn’t save email notification.',
+    'translate.emailNotifications.save.success' => 'Email notification saved.',
+    'translate.emailNotifications.delete' => 'Delete',
+    'translate.emailNotifications.deleteMessage' => 'Are you sure you want to delete email notification “{name}”?',
 
     // ------------------
     // ----- Fields -----

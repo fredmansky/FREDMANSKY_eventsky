@@ -34,6 +34,7 @@ class Ticket extends Element
     public $typeId;
     public $eventId;
     public $statusId;
+    public $email;
     public $uid;
 
     public static function displayName(): string
@@ -223,6 +224,7 @@ class Ticket extends Element
         $record->typeId = $this->typeId;
         $record->eventId = $this->eventId;
         $record->statusId = $this->statusId;
+        $record->email = $this->email;
 
         $record->save(false);
 

@@ -63,6 +63,20 @@ class TicketTypesController extends Controller
 
         $data['ticketType'] = $ticketType;
 
+        $emailNotifications = Eventsky::$plugin->emailNotification->getAllEmailNotifications();
+        $emailNotificationDefaultOption = [[
+            'label' => Craft::t('eventsky', 'translate.ticketTypes.noEmailNotifications'),
+            'value' => null,
+        ]];
+        $emailNotificationOptions = array_map(function($emailNotification) {
+            return [
+                'label' => $emailNotification->name,
+                'value' => $emailNotification->id,
+            ];
+        }, $emailNotifications);
+
+        $data['emailNotificationOptions'] = array_merge($emailNotificationDefaultOption, $emailNotificationOptions);
+
         $data['crumbs'] = [
             [
                 'label' => Craft::t('eventsky', 'translate.ticketTypes.cpTitle'),
@@ -104,6 +118,7 @@ class TicketTypesController extends Controller
         $ticketType->id = $request->getBodyParam('ticketTypeId');
         $ticketType->name = $request->getBodyParam('name');
         $ticketType->handle = $request->getBodyParam('handle');
+        $ticketType->emailNotificationIdUser = $request->getBodyParam('emailNotificationIdUser');
 
         $fieldLayout = \Craft::$app->fields->assembleLayoutFromPost();
         $fieldLayout->type = Ticket::class;

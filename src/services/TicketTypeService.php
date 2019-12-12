@@ -102,10 +102,9 @@ class TicketTypeService extends Component
         $fieldLayout = $ticketType->getFieldLayout();
         \Craft::$app->getFields()->saveLayout($fieldLayout);
 
-//        $ticketTypeRecord->fieldLayoutId = (int) $fieldLayout->id;
         $ticketTypeRecord->name = $ticketType->name;
         $ticketTypeRecord->handle = $ticketType->handle;
-//        $ticketTypeRecord->fieldLayoutId = $ticketType->fieldLayoutId;
+        $ticketTypeRecord->emailNotificationIdUser = $ticketType->emailNotificationIdUser;
         $ticketTypeRecord->setFieldLayout($fieldLayout);
         $ticketTypeRecord->uid = $ticketType->uid;
         $ticketTypeRecord->save();

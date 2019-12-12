@@ -13,6 +13,7 @@ use craft\helpers\ArrayHelper;
 use craft\helpers\UrlHelper;
 use fredmansky\eventsky\elements\Event;
 use fredmansky\eventsky\Eventsky;
+use yii\base\InvalidConfigException;
 
 /**
  * EntryType model class.
@@ -35,6 +36,8 @@ class EventType extends Model
     public $dateUpdated;
     public $dateDeleted;
     public $uid;
+    public $emailNotificationIdAdmin;
+    public $emailNotificationAdminEmails;
 
     private $eventTypeSites;
 
@@ -100,5 +103,20 @@ class EventType extends Model
         foreach ($this->eventTypeSites as $eventTypeSite) {
             $eventTypeSite->setEventType($this);
         }
+    }
+
+    public function getEmailNotification(): ?EmailNotification
+    {
+        if ($this->emailNotificationIdAdmin === null) {
+            return null;
+        }
+
+        $emailNotification = Eventsky::$plugin->emailNotification->getEmailNotificationById($this->emailNotificationIdAdmin);
+
+        if (!$emailNotification) {
+            throw new InvalidConfigException('Invalid email notification ID: ' . $this->emailNotificationIdAdmin);
+        }
+
+        return $emailNotification;
     }
 }

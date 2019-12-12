@@ -17,3 +17,27 @@
         errors: event.getErrors('endDate')
     }) }}
 </div>
+
+<hr>
+
+{{ forms.selectField({
+    label: 'translate.events.fields.details.emailNotificationIdAdmin' | t('eventsky'),
+    instructions: "Choose the email notifications the admin of the event should get when registering for a ticket.",
+    id: 'emailNotificationIdAdmin',
+    name: 'emailNotificationIdAdmin',
+    value: event.emailNotificationIdAdmin,
+    errors: event.getErrors('emailNotificationIdAdmin'),
+    required: false,
+    options: emailNotificationOptions,
+}) }}
+
+{{ forms.textareaField({
+    label: 'translate.events.fields.details.adminEmail' | t('eventsky'),
+    instructions: "The email address the admin notification should be sent to.\nMultiple addresses are possible, each one should be on a new line.",
+    id: 'emailNotificationAdminEmails',
+    name: 'emailNotificationAdminEmails',
+    value: event.emailNotificationAdminEmails,
+    errors: event.getErrors('emailNotificationAdminEmails'),
+    required: false,
+    rows: 10,
+}) }}

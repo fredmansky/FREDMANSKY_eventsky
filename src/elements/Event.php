@@ -16,6 +16,7 @@ use craft\helpers\UrlHelper;
 use DateTime;
 use fredmansky\eventsky\elements\db\EventQuery;
 use fredmansky\eventsky\Eventsky;
+use fredmansky\eventsky\models\EmailNotification;
 use fredmansky\eventsky\models\EventType;
 use fredmansky\eventsky\records\EventRecord;
 use yii\base\InvalidConfigException;
@@ -43,6 +44,8 @@ class Event extends Element
     public $totalTickets;
     public $hasWaitingList;
     public $waitingListSize;
+    public $emailNotificationIdAdmin;
+    public $emailNotificationAdminEmails;
 
     public static function displayName(): string
     {
@@ -114,6 +117,21 @@ class Event extends Element
         }
 
         return $eventType;
+    }
+
+    public function getEmailNotification(): ?EmailNotification
+    {
+        if ($this->emailNotificationIdAdmin === null) {
+            return null;
+        }
+
+        $emailNotification = Eventsky::$plugin->emailNotification->getEmailNotificationById($this->emailNotificationIdAdmin);
+
+        if (!$emailNotification) {
+            throw new InvalidConfigException('Invalid email notification ID: ' . $this->emailNotificationIdAdmin);
+        }
+
+        return $emailNotification;
     }
 
     protected static function defineSources(string $context = null): array
@@ -246,6 +264,8 @@ class Event extends Element
         $record->totalTickets = $this->totalTickets;
         $record->hasWaitingList = $this->hasWaitingList;
         $record->waitingListSize = $this->waitingListSize;
+        $record->emailNotificationIdAdmin = $this->emailNotificationIdAdmin;
+        $record->emailNotificationAdminEmails = $this->emailNotificationAdminEmails;
 
         $record->save(false);
 
