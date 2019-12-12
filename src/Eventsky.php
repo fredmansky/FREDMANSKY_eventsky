@@ -94,12 +94,12 @@ class Eventsky extends Plugin
     {
       $request = Craft::$app->getRequest();
       $this->installCpEventListeners();
+      $this->installSiteEventListeners();
       $this->installFieldTypesEventListener();
     }
 
     protected function installCpEventListeners()
     {
-        // Handler: UrlManager::EVENT_REGISTER_CP_URL_RULES
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
@@ -112,6 +112,21 @@ class Eventsky extends Plugin
                 $event->rules = array_merge(
                     $event->rules,
                     $this->customAdminCpRoutes()
+                );
+            }
+        );
+    }
+
+    protected function installSiteEventListeners()
+    {
+        Event::on(
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+            function(RegisterUrlRulesEvent $event) {
+                // Register our Site routes
+                $event->rules = array_merge(
+                    $event->rules,
+                    $this->customSiteRoutes()
                 );
             }
         );
@@ -141,5 +156,10 @@ class Eventsky extends Plugin
     protected function customAdminCpRoutes(): array
     {
         return include __DIR__ . '/cpRoutes.php';
+    }
+
+    protected function customSiteRoutes(): array
+    {
+        return include __DIR__ . '/siteRoutes.php';
     }
 }

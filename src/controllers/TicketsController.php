@@ -31,6 +31,8 @@ class TicketsController extends Controller
 {
     const EVENT_SAVE_TICKET = 'saveEventskyTicket';
 
+    protected $allowAnonymous = ['save'];
+
     public function actionIndex(array $variables = []): Response
     {
         $data = [
@@ -170,7 +172,7 @@ class TicketsController extends Controller
             $ticket->id = null;
             $this->saveMultipleTickets($ticket, $eventIds);
         } else if ($eventId) {
-            $this->saveSingleTicket($ticket);
+            return $this->saveSingleTicket($ticket, $request);
         } else {
             throw new HttpException(404, Craft::t('eventsky', 'translate.event.notFound'));
         }
@@ -227,7 +229,7 @@ class TicketsController extends Controller
         return true;
     }
 
-    private function saveSingleTicket($ticket) {
+    private function saveSingleTicket($ticket, $request) {
         $isNew = !(bool) $ticket->id;
 
         if (!Craft::$app->getElements()->saveElement($ticket)) {
@@ -257,6 +259,12 @@ class TicketsController extends Controller
 
         if($isNew) {
             $this->sendMails([$ticket]);
+        }
+
+        if (!$request->isCpRequest) {
+            return $this->asJson([
+                'success' => true,
+            ]);
         }
 
         Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'translate.ticket.saved'));
@@ -292,8 +300,8 @@ class TicketsController extends Controller
     }
 
     private function sendAdminMails(array $tickets) {
-        foreach ($tickets as $ticket) {
 
+        foreach ($tickets as $ticket) {
             $event = $ticket->getEvent();
             $eventType = $event->getType();
             $emailNotification = $event->getEmailNotification() ?? $eventType->getEmailNotification() ?? null;
