@@ -67,19 +67,10 @@ class EventTicketTypeMappingField extends Field
 //        }
 //
 //        return $serialized;
-        echo 'GETTING HERE';
-        die();
     }
 
     public function getInputHtml($value, ElementInterface $element = null): string
     {
-
-
-
-//        dump($value);
-//        die();
-//        dump($element);
-//        die();
         $data = [];
         $data['allTicketTypes'] = Eventsky::$plugin->ticketType->getAllTicketTypes();
         $data['mappedTicketTypes'] = $value;
