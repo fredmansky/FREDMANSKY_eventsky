@@ -1,20 +1,23 @@
 {% import "_includes/forms" as forms %}
 
 <div id="fields">
-    {{ forms.textField({
-        first: true,
-        label: "Title" | t('commerce'),
-        site: event.site,
-        id: 'title',
-        name: 'title',
-        value: event.title,
-        placeholder: 'Enter title' | t('commerce'),
-        errors: event.getErrors('title'),
-        first: true,
-        autofocus: true,
-        required: true,
-        maxlength: 255
-    }) }}
+
+    {% if not eventType.titleFormat %}
+        {{ forms.textField({
+            first: true,
+            label: "Title" | t('commerce'),
+            site: event.site,
+            id: 'title',
+            name: 'title',
+            value: event.title,
+            placeholder: 'Enter title' | t('commerce'),
+            errors: event.getErrors('title'),
+            first: true,
+            autofocus: true,
+            required: true,
+            maxlength: 255
+        }) }}
+    {% endif %}
 
     <div>
         {% set tabs = eventType.getFieldLayout().getTabs() %}

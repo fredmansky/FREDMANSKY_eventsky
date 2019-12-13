@@ -126,6 +126,7 @@ class EventTypesController extends Controller
         $eventType->id = $request->getBodyParam('eventTypeId');
         $eventType->name = $request->getBodyParam('name');
         $eventType->handle = $request->getBodyParam('handle');
+        $eventType->titleFormat= $request->getBodyParam('titleFormat');
         $eventType->isRegistrationEnabled = $request->getBodyParam('isRegistrationEnabled');
         $eventType->isWaitingListEnabled = $request->getBodyParam('isWaitingListEnabled');
         $eventType->emailNotificationIdAdmin = $request->getBodyParam('emailNotificationIdAdmin');

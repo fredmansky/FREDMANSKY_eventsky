@@ -13,7 +13,7 @@
     <div id="eventtype-settings">
         {{ forms.textField({
             first: true,
-            label: "Name"|t('app'),
+            label: "Name",
             instructions: "What this eventType will be called in the CP."|t('app'),
             id: 'name',
             name: 'name',
@@ -24,7 +24,7 @@
         }) }}
 
         {{ forms.textField({
-            label: "Handle"|t('app'),
+            label: "Handle",
             instructions: "How you’ll refer to this event type in the templates."|t('app'),
             id: 'handle',
             name: 'handle',
@@ -35,6 +35,21 @@
             errors: eventType.getErrors('handle'),
             required: true
         }) }}
+
+        {{ forms.textField({
+            label: "Title Format",
+            instructions: "Set a format to automatically create titles.",
+            id: 'titleFormat',
+            name: 'titleFormat',
+            class: 'code',
+            autocorrect: false,
+            autocapitalize: false,
+            value: eventType.titleFormat,
+            errors: eventType.getErrors('titleFormat'),
+            required: false,
+        }) }}
+
+        <hr>
 
         {{ forms.lightswitchField({
             label: 'isWaitingListEnabled?',

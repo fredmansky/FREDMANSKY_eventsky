@@ -228,6 +228,11 @@ class Event extends Element
 
     public function beforeSave(bool $isNew): bool
     {
+        $titleFormat = $this->getType()->titleFormat;
+        if ($titleFormat) {
+            $this->title = Craft::$app->getView()->renderObjectTemplate($titleFormat, $this);
+        }
+
         // Make sure the field layout is set correctly
         $this->fieldLayoutId = $this->getType()->fieldLayoutId;
 
