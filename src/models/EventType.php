@@ -29,6 +29,7 @@ class EventType extends Model
     public $id;
     public $name;
     public $handle;
+    public $titleFormat;
     public $fieldLayoutId;
     public $isRegistrationEnabled;
     public $isWaitingListEnabled;
