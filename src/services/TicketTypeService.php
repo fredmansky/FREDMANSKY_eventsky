@@ -104,6 +104,7 @@ class TicketTypeService extends Component
 
         $ticketTypeRecord->name = $ticketType->name;
         $ticketTypeRecord->handle = $ticketType->handle;
+        $ticketTypeRecord->titleFormat = $ticketType->titleFormat;
         $ticketTypeRecord->emailNotificationIdUser = $ticketType->emailNotificationIdUser;
         $ticketTypeRecord->setFieldLayout($fieldLayout);
         $ticketTypeRecord->uid = $ticketType->uid;

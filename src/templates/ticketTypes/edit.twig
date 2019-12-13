@@ -38,6 +38,21 @@
             required: true
         }) }}
 
+        {{ forms.textField({
+            label: "Title Format",
+            instructions: "Set a format to automatically create titles.",
+            id: 'titleFormat',
+            name: 'titleFormat',
+            class: 'code',
+            autocorrect: false,
+            autocapitalize: false,
+            value: ticketType.titleFormat,
+            errors: ticketType.getErrors('titleFormat'),
+            required: false,
+        }) }}
+
+        <hr>
+
         {{ forms.selectField({
             label: 'translate.ticketType.fields.details.emailNotificationIdUser' | t('eventsky'),
             instructions: "Choose the email notifications the user should get when registering for a ticket.",
