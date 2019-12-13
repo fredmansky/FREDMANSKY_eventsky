@@ -118,6 +118,7 @@ class TicketTypesController extends Controller
         $ticketType->id = $request->getBodyParam('ticketTypeId');
         $ticketType->name = $request->getBodyParam('name');
         $ticketType->handle = $request->getBodyParam('handle');
+        $ticketType->titleFormat = $request->getBodyParam('titleFormat');
         $ticketType->emailNotificationIdUser = $request->getBodyParam('emailNotificationIdUser');
 
         $fieldLayout = \Craft::$app->fields->assembleLayoutFromPost();

@@ -1,18 +1,21 @@
 {% import "_includes/forms" as forms %}
 
 <div id="fields">
-    {{ forms.textField({
-        first: true,
-        label: "Title"|t('app'),
-        instructions: "What this ticket will be called in the CP."|t('app'),
-        id: 'title',
-        name: 'title',
-        value: ticket.title,
-        errors: ticket.getErrors('title'),
-        autofocus: true,
-        maxlength: 250,
-        required: true,
-    }) }}
+
+    {% if not ticketType.titleFormat %}
+        {{ forms.textField({
+            first: true,
+            label: "Title"|t('app'),
+            instructions: "What this ticket will be called in the CP."|t('app'),
+            id: 'title',
+            name: 'title',
+            value: ticket.title,
+            errors: ticket.getErrors('title'),
+            autofocus: true,
+            maxlength: 250,
+            required: true,
+        }) }}
+    {% endif %}
 
     <div>
         {% set tabs = ticketType.getFieldLayout().getTabs() %}
