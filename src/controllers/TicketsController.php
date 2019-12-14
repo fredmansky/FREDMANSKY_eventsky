@@ -261,13 +261,16 @@ class TicketsController extends Controller
             $this->sendMails([$ticket]);
         }
 
-        if (!$request->isCpRequest) {
+        if (!$request->isCpRequest && $request->getAcceptsJson()) {
             return $this->asJson([
                 'success' => true,
             ]);
         }
 
-        Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'translate.ticket.saved'));
+        if ($request->isCpRequest) {
+            Craft::$app->getSession()->setNotice(Craft::t('eventsky', 'translate.ticket.saved'));
+        }
+
         return $this->redirectToPostedUrl($ticket);
     }
 
