@@ -122,6 +122,8 @@ class EventService extends Component
         $eventTicketTypeMappingRecord->tickettypeId = $eventTicketTypeMapping->tickettypeId;
         $eventTicketTypeMappingRecord->eventId = $eventTicketTypeMapping->eventId;
         $eventTicketTypeMappingRecord->limit = $eventTicketTypeMapping->limit;
+        $eventTicketTypeMappingRecord->isFree = $eventTicketTypeMapping->isFree;
+        $eventTicketTypeMappingRecord->price = $eventTicketTypeMapping->price;
         $eventTicketTypeMappingRecord->registrationStartDate = $eventTicketTypeMapping->registrationStartDate;
         $eventTicketTypeMappingRecord->registrationEndDate = $eventTicketTypeMapping->registrationEndDate;
         $eventTicketTypeMappingRecord->uid = $eventTicketTypeMapping->uid;

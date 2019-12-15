@@ -457,6 +457,8 @@ class EventsController extends Controller
     private function populateTicketTypeMappingModel(EventTicketTypeMapping $mapping, array $data)
     {
         $mapping->limit = $data['limit'];
+        $mapping->isFree = $data['isFree'];
+        $mapping->price = $data['price'];
         $mapping->eventId = $data['eventId'];
 
         if (($registrationStartDate = $data['registrationStart']) !== null) {

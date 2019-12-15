@@ -24,6 +24,8 @@ class EventTicketTypeMapping extends Model
     public $tickettypeId;
     public $eventId;
     public $limit;
+    public $isFree;
+    public $price;
     public $registrationStartDate;
     public $registrationEndDate;
     public $dateCreated;

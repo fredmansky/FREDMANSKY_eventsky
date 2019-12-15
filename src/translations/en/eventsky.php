@@ -65,6 +65,8 @@ return [
     'translate.events.fields.ticketType.registrationStart' => 'Registration Start Date',
     'translate.events.fields.ticketType.registrationEnd' => 'Registration End Date',
     'translate.events.fields.ticketType.limit' => 'Ticket Limit',
+    'translate.events.fields.ticketType.isFree' => 'Ticket is Free of Charge',
+    'translate.events.fields.ticketType.price' => 'Ticket Price',
     'translate.events.tab.eventData' => 'Event Data',
     'translate.events.tab.tickets' => 'Tickets',
     'translate.elements.Event.displayName' => 'Event',
