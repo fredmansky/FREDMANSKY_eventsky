@@ -119,7 +119,7 @@ class Event extends Element
         return $eventType;
     }
 
-    public function getAvailableTickets(): array
+    public function getEventTicketTypes(): array
     {
         $availableTickets = Eventsky::$plugin->event->getAllTicketTypeMappingsByEventId($this->id);
         return $availableTickets;
