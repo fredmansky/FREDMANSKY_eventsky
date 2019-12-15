@@ -51,5 +51,20 @@
             name: 'availableTicketTypes[' ~ ticketTypeId ~ '][limit]',
             value: ticketTypeMapping.limit,
         }) }}
+
+        <div class="flexContainer">
+            {{ forms.lightswitchField({
+                label: 'translate.events.fields.ticketType.isFree' | t('eventsky'),
+                id: 'availableTicketTypes_' ~ ticketTypeHandle ~ '_isFree',
+                name: 'availableTicketTypes[' ~ ticketTypeId ~ '][isFree]',
+                on: ticketTypeMapping.isFree,
+            }) }}
+            {{ forms.textField({
+                label: 'translate.events.fields.ticketType.price' | t('eventsky'),
+                id: 'availableTicketTypes_' ~ ticketTypeHandle ~ '_price',
+                name: 'availableTicketTypes[' ~ ticketTypeId ~ '][price]',
+                value: ticketTypeMapping.price,
+            }) }}
+        </div>
     </div>
 </div>
