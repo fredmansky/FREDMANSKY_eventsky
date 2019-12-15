@@ -36,7 +36,7 @@ class Eventsky extends Plugin
 {
     public static $plugin;
 
-    public $schemaVersion = '1.7.0';
+    public $schemaVersion = '1.8.0';
 
     public function init()
     {
