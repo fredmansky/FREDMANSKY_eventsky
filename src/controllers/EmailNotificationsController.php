@@ -26,7 +26,7 @@ class EmailNotificationsController extends Controller
             'emailNotifications' => Eventsky::$plugin->emailNotification->getAllEmailNotifications(),
         ];
 
-        return $this->renderTemplate('eventsky/emailnotifications/index', $data);
+        return $this->renderTemplate('eventsky/emailNotifications/index', $data);
     }
 
     public function actionEdit(int $emailNotificationId = null): Response
