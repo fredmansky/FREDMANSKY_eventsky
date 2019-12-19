@@ -210,11 +210,12 @@ class TicketsController extends Controller
             $ticket->id = null;
             $ticket->eventId = $eventId;
 
-            if (!Craft::$app->getElements()->saveElement(clone $ticket)) {
+            $newTicket = clone $ticket;
+            if (!Craft::$app->getElements()->saveElement($newTicket)) {
                 throw new HttpException(404, Craft::t('eventsky', 'translate.ticket.notSaved'));
             }
 
-            $tickets[] = $ticket;
+            $tickets[] = $newTicket;
 
             if ($this->hasEventHandlers(self::EVENT_SAVE_TICKET)) {
                 $this->trigger(self::EVENT_SAVE_TICKET, new TicketSaveEvent([
