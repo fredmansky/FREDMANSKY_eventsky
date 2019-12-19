@@ -308,7 +308,14 @@ class TicketsController extends Controller
             $event = $ticket->getEvent();
             $eventType = $event->getType();
             $emailNotification = $event->getEmailNotification() ?? $eventType->getEmailNotification() ?? null;
-            $emailString = $event->emailNotificationAdminEmails ?? $eventType->emailNotificationAdminEmails ?? '';
+            $emailString = '';
+
+            if ($event->emailNotificationAdminEmails) {
+                $emailString = $event->emailNotificationAdminEmails;
+            } else if ($eventType->emailNotificationAdminEmails) {
+                $emailString = $eventType->emailNotificationAdminEmails;
+            }
+
             $emails = preg_split('/\r\n|\r|\n/', $emailString);
 
             if ($emailNotification && $emailString) {
