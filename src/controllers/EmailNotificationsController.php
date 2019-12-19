@@ -55,11 +55,11 @@ class EmailNotificationsController extends Controller
         $data['crumbs'] = [
             [
                 'label' => Craft::t('eventsky', 'translate.emailNotifications.cpTitle'),
-                'url' => UrlHelper::url('eventsky/emailnotifications')
+                'url' => UrlHelper::url('eventsky/emailNotifications')
             ],
         ];
 
-        return $this->renderTemplate('eventsky/emailnotifications/edit', $data);
+        return $this->renderTemplate('eventsky/emailNotifications/edit', $data);
     }
 
     public function actionSave(): Response
