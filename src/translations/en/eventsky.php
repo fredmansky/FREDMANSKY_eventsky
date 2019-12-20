@@ -122,6 +122,8 @@ return [
     'translate.tickets.table.handle' => 'Handle',
     'translate.tickets.table.eventId' => 'Event ID',
     'translate.tickets.table.typeId' => 'Ticket Type ID',
+    'translate.tickets.table.numberOfRegistrations' => 'Number of Registrations',
+    'translate.tickets.table.totalTickets' => 'Total Tickets',
 
     'translate.ticket.tab.settings' => 'Settings',
     'translate.ticket.tab.fieldlayout' => 'Field Layout',

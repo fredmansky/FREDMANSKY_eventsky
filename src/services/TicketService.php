@@ -5,8 +5,11 @@ namespace fredmansky\eventsky\services;
 use Craft;
 use craft\base\Component;
 use craft\base\ElementInterface;
+use fredmansky\eventsky\elements\Event;
 use fredmansky\eventsky\elements\Ticket;
 use fredmansky\eventsky\models\TicketType;
+use fredmansky\eventsky\records\TicketRecord;
+use yii\db\ActiveQuery;
 
 class TicketService extends Component
 {
@@ -33,6 +36,19 @@ class TicketService extends Component
     {
         $results = Ticket::find()
             ->typeId($ticketType->id)
+            ->all();
+
+        $tickets = array_map(function($result) {
+            return new Ticket($result);
+        }, $results);
+
+        return $tickets;
+    }
+
+    public function getTicketsByEvent(Event $event): array
+    {
+        $results = $this->createTicketQuery()
+            ->where(['=', 'eventId', $event->id])
             ->all();
 
         $tickets = array_map(function($result) {
@@ -74,5 +90,11 @@ class TicketService extends Component
         $this->tickets = null;
 
         return true;
+    }
+
+    private function createTicketQuery(): ActiveQuery
+    {
+        return TicketRecord::find()
+            ->orderBy(['dateCreated' => SORT_ASC]);
     }
 }

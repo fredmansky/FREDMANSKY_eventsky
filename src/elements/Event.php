@@ -46,6 +46,13 @@ class Event extends Element
     public $waitingListSize;
     public $emailNotificationIdAdmin;
     public $emailNotificationAdminEmails;
+    public $numberOfRegistrations;
+
+    public function __construct(array $config)
+    {
+        parent::__construct($config);
+        $this->numberOfRegistrations = count(Eventsky::$plugin->ticket->getTicketsByEvent($this));
+    }
 
     public static function displayName(): string
     {
@@ -202,6 +209,8 @@ class Event extends Element
         return [
             'title' => \Craft::t('app', 'Title'),
             'typeId' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.typeId')),
+            'numberOfRegistrations' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.numberOfRegistrations')),
+            'totalTickets' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.totalTickets')),
         ];
     }
 
