@@ -45,7 +45,7 @@ return [
     // -------------------
     // ----- Events ------
     // -------------------
-    
+
     'translate.event.new' => 'Create a new event',
     'translate.event.saved' => 'Event saved.',
     'translate.event.notSaved' => 'Couldn’t save event.',
@@ -108,6 +108,7 @@ return [
     'translate.tickets.sideBar.allTickets' => 'All Tickets',
     'translate.tickets.sideBar.ticketTypeHeading' => 'Ticket Types',
     'translate.tickets.search.ticketType' => 'Ticket Type',
+    'translate.tickets.search.registrationTime' => 'Registration Date',
     'translate.tickets.name' => 'Name',
     'translate.tickets.handle' => 'Handle',
     'translate.tickets.new' => 'Create a new Ticket',
@@ -122,6 +123,7 @@ return [
     'translate.tickets.table.handle' => 'Handle',
     'translate.tickets.table.eventId' => 'Event ID',
     'translate.tickets.table.typeId' => 'Ticket Type ID',
+    'translate.tickets.table.registrationTime' => 'Registration Date',
     'translate.tickets.table.numberOfRegistrations' => 'Number of Registrations',
     'translate.tickets.table.totalTickets' => 'Total Tickets',
 

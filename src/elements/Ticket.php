@@ -174,6 +174,7 @@ class Ticket extends Element
         return [
             'title'  => \Craft::t('app', 'Title'),
             'typeId' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.search.ticketType')),
+            'dateCreated' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.search.registrationTime')),
         ];
     }
 
@@ -182,6 +183,7 @@ class Ticket extends Element
         return [
             'id' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.name')),
             'typeId' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.typeId')),
+            'dateCreated' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.registrationTime')),
             'eventId' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.eventId')),
         ];
     }
