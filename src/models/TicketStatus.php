@@ -38,4 +38,9 @@ class TicketStatus extends Model
     {
         return (string)$this->handle ?: static::class;
     }
+
+    public function getTicketCountForEvent($eventId)
+    {
+        return Eventsky::$plugin->ticket->getTicketCountByEventAndStatus($eventId, $this->id);
+    }
 }

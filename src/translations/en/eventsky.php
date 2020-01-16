@@ -25,6 +25,7 @@ return [
     // ----- Templates ------
     // ----------------------
     'translate.events.title' => 'Events',
+    'translate.events.tickets.title' => 'Tickets for {eventTitle} Event',
     'translate.events.cpTitle' => 'Events',
 
     'translate.tickets.title' => 'Tickets',
@@ -76,6 +77,7 @@ return [
     'translate.events.fields.details.emailNotificationIdAdmin' => 'Email Notification for Admin',
     'translate.events.fields.details.adminEmail' => 'Admin Notification Email(s)',
     'translate.events.defaultEmailNotifications' => 'Default to Event Type Setting',
+    'translate.events.tickets.statusHeadline' => 'Status',
 
     // ------------------------
     // ----- Event Types ------

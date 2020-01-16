@@ -231,6 +231,24 @@ class EventsController extends Controller
         return $this->asJson(['success' => true]);
     }
 
+    public function actionTickets(int $eventId = null): Response
+    {
+        $data = [
+            'eventTypes' => Eventsky::$plugin->eventType->getAllEventTypes(),
+            'ticketStatuses' => Eventsky::$plugin->ticketStatus->getAllTicketStatuses(),
+        ];
+
+        $event = Eventsky::$plugin->event->getEventById($eventId);
+
+        if (!$event) {
+            throw new HttpException(404, Craft::t('eventsky', 'translate.event.notFound'));
+        }
+
+        $data['event'] = $event;
+
+        return $this->renderTemplate('eventsky/events/tickets', $data);
+    }
+
     private function saveEventTicketTypesMappings($event) {
         $request = Craft::$app->getRequest();
 

@@ -1,0 +1,18 @@
+{% spaceless %}
+    <ul>
+        <li class="heading"><span>{{ 'translate.events.tickets.statusHeadline' | t('eventsky') }}</span></li>
+
+        {% for status in ticketStatuses %}
+            <li>{% spaceless %}
+                    <a data-status-id="{{ status.id }}">
+                        <span class="label">{{ status.name }}</span>
+                        {% set number = status.getTicketCountForEvent(event.id) %}
+                        {% if number > 0 %}
+                            <span class="badge">{{ number | number(decimals=0) }}</span>
+                        {% endif %}
+                    </a>
+                {% endspaceless %}</li>
+        {% endfor %}
+
+    </ul>
+{% endspaceless %}
