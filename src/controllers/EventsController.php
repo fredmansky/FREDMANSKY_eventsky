@@ -255,6 +255,17 @@ class EventsController extends Controller
         $tickets = Eventsky::$plugin->ticket->getTicketByEventAndStatus($eventId, $ticketStatus->id);
         $data['tickets'] = $tickets;
 
+        $data['crumbs'] = [
+            [
+                'label' => Craft::t('eventsky', 'translate.events.cpTitle'),
+                'url' => UrlHelper::url('eventsky/events')
+            ],
+            [
+                'label' => $event->title,
+                'url' => $event->getCpEditUrl(),
+            ],
+        ];
+
         $this->getView()->registerAssetBundle(EventTicketsIndexAsset::class);
         return $this->renderTemplate('eventsky/events/tickets', $data);
     }

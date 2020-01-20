@@ -25,7 +25,8 @@ return [
     // ----- Templates ------
     // ----------------------
     'translate.events.title' => 'Events',
-    'translate.events.tickets.title' => 'Tickets for {eventTitle} Event',
+//    'translate.events.tickets.title' => 'Tickets for {eventTitle} Event',
+    'translate.events.tickets.title' => 'Registered Tickets',
     'translate.events.cpTitle' => 'Events',
 
     'translate.tickets.title' => 'Tickets',
