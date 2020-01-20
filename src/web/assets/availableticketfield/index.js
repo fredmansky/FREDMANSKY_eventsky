@@ -202,7 +202,6 @@
       var html = response.fieldHtml;
       var node = $(html)[0];
       var button = node.querySelector('.deleteMappingLink');
-      console.log('button', button);
       window.eventTicketTypeMappingRemover.initDeleteButton(button);
       this.$blockContainer.append(node);
       Craft.initUiElements($(this.$blockContainer));

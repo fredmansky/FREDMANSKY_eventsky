@@ -4,7 +4,7 @@
 
         {% for status in ticketStatuses %}
             <li>{% spaceless %}
-                    <a data-status-id="{{ status.id }}">
+                    <a data-status-id="{{ status.id }}" data-event-id="{{ event.id }}">
                         <span class="label">{{ status.name }}</span>
                         {% set number = status.getTicketCountForEvent(event.id) %}
                         {% if number > 0 %}

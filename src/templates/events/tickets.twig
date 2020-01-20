@@ -14,11 +14,14 @@
 
 {% block content %}
     <div class="elementindex">
-        {% include "eventsky/events/_ticketList" %}
+        {% set status = ticketStatuses[0] %}
+        {% include "eventsky/events/_ticketListing" %}
     </div>
 {% endblock %}
 
-{#{% block initJs %}#}
+{% block initJs %}
+    window.eventTicketsIndex = new Craft.EventTicketsIndex($('#main'), {});
+
 {#    Craft.elementIndex = Craft.createElementIndex('{{ elementType|e("js") }}', $('#main'), {#}
 {#    elementTypeName: '{{ elementInstance.displayName()|e("js") }}',#}
 {#    elementTypePluralName: '{{ elementInstance.pluralDisplayName()|e("js") }}',#}
@@ -26,6 +29,6 @@
 {#    storageKey: 'elementindex.{{ elementType|e("js") }}',#}
 {#    criteria: Craft.defaultIndexCriteria#}
 {#    });#}
-{#{% endblock %}#}
+{% endblock %}
 
-{#{% js block('initJs') %}#}
+{% js block('initJs') %}

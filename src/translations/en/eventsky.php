@@ -78,6 +78,7 @@ return [
     'translate.events.fields.details.adminEmail' => 'Admin Notification Email(s)',
     'translate.events.defaultEmailNotifications' => 'Default to Event Type Setting',
     'translate.events.tickets.statusHeadline' => 'Status',
+    'translate.events.tickets.noneForStatus' => 'No tickets.',
 
     // ------------------------
     // ----- Event Types ------

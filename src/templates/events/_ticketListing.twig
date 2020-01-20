@@ -1,0 +1,39 @@
+<div class="main">
+    <div class="elements">
+        {% if tickets | length > 0 %}
+            <div class="tableview">
+                <table class="data fullwidth">
+                    <thead>
+                        <tr>
+                            <td>Id</td>
+                            <td>Title</td>
+                            <td>Registration Date</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ ticket.id }}</td>
+                            <td>
+                                <a class="move icon"></a>
+                                <div class="element small hasstatus">
+                                    <div class="label">
+                                        <span class="title">
+                                            <a href="{{ ticket.getCpEditUrl() }}">
+                                                {{ ticket.title }}
+                                            </a>
+                                        </span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ ticket.dateCreated | datetime('short') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            {{ "translate.events.tickets.noneForStatus" | t('eventsky') }}
+        {% endif %}
+    </div>
+</div>

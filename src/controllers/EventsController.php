@@ -20,6 +20,7 @@ use fredmansky\eventsky\web\assets\availableticketfield\EventTicketTypeMappingAs
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 
+use fredmansky\eventsky\web\assets\eventtickets\EventTicketsIndexAsset;
 use yii\web\BadRequestHttpException;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
@@ -233,9 +234,11 @@ class EventsController extends Controller
 
     public function actionTickets(int $eventId = null): Response
     {
+        $ticketStatuses = Eventsky::$plugin->ticketStatus->getAllTicketStatuses();
+
         $data = [
             'eventTypes' => Eventsky::$plugin->eventType->getAllEventTypes(),
-            'ticketStatuses' => Eventsky::$plugin->ticketStatus->getAllTicketStatuses(),
+            'ticketStatuses' => $ticketStatuses,
         ];
 
         $event = Eventsky::$plugin->event->getEventById($eventId);
@@ -246,7 +249,37 @@ class EventsController extends Controller
 
         $data['event'] = $event;
 
+        $ticketStatus = $ticketStatuses[0];
+        $data['status'] = $ticketStatus;
+
+        $tickets = Eventsky::$plugin->ticket->getTicketByEventAndStatus($eventId, $ticketStatus->id);
+        $data['tickets'] = $tickets;
+
+        $this->getView()->registerAssetBundle(EventTicketsIndexAsset::class);
         return $this->renderTemplate('eventsky/events/tickets', $data);
+    }
+
+    public function actionTicketIndexByType(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        $request = Craft::$app->getRequest();
+
+        $eventId = $request->getBodyParam('eventId');
+        $statusId = $request->getBodyParam('statusId');
+        $tickets = Eventsky::$plugin->ticket->getTicketByEventAndStatus($eventId, $statusId);
+
+        $data = [
+            'tickets' => $tickets,
+        ];
+
+        $view = $this->getView();
+        $html = $view->renderTemplate('eventsky/events/_ticketListing', $data);
+
+        return $this->asJson(compact(
+            'html'
+        ));
     }
 
     private function saveEventTicketTypesMappings($event) {
