@@ -5,15 +5,13 @@
         {
             $container: null,
             $main: null,
-            $mainSpinner: null,
             isIndexBusy: false,
 
             $elements: null,
             $sourceLinks: null,
             page: 1,
 
-            init: function($container, settings) {
-                // this.setSettings(settings, Craft.BaseElementIndex.defaults);
+            init: function($container) {
                 this.initElements($container);
                 this.initStatusLinks();
             },
@@ -21,7 +19,6 @@
             initElements($container) {
                 this.$container = $container;
                 this.$main = this.$container.find('.main');
-                // this.$mainSpinner = this.$toolbarFlexContainer.find('.spinner:first');
                 this.$elements = this.$container.find('.elements:first');
             },
 
@@ -32,18 +29,33 @@
                     link.addEventListener('click', (evt) => {
                         const { statusId, eventId } = evt.currentTarget.dataset;
                         this.getElementList(statusId, eventId);
+                        this.updateActiveState(statusId);
                     })
                 });
             },
 
             getElementList(statusId, eventId) {
                 Craft.postActionRequest('eventsky/events/ticket-index-by-type', { 'statusId': statusId, 'eventId': eventId }, $.proxy(function(response, textStatus) {
-                    // this.$spinner.addClass('hidden');
-                    //
                     if (textStatus === 'success') {
                         this.renderElementListing(response.html);
                     }
                 }, this));
+            },
+
+            clearActiveState() {
+                Array.from(this.$sourceLinks).forEach((link) => {
+                    link.classList.remove('sel');
+                });
+            },
+
+            setActiveState(statusId) {
+                const activeLink = this.$container.find(`a[data-status-id="${statusId}"]`)[0];
+                activeLink.classList.add('sel');
+            },
+
+            updateActiveState(statusId) {
+                this.clearActiveState();
+                this.setActiveState(statusId);
             },
 
             renderElementListing(html) {

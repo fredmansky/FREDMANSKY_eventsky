@@ -100,20 +100,17 @@
   Craft.EventTicketsIndex = Garnish.Base.extend({
     $container: null,
     $main: null,
-    $mainSpinner: null,
     isIndexBusy: false,
     $elements: null,
     $sourceLinks: null,
     page: 1,
-    init: function init($container, settings) {
-      // this.setSettings(settings, Craft.BaseElementIndex.defaults);
+    init: function init($container) {
       this.initElements($container);
       this.initStatusLinks();
     },
     initElements: function initElements($container) {
       this.$container = $container;
-      this.$main = this.$container.find('.main'); // this.$mainSpinner = this.$toolbarFlexContainer.find('.spinner:first');
-
+      this.$main = this.$container.find('.main');
       this.$elements = this.$container.find('.elements:first');
     },
     initStatusLinks: function initStatusLinks() {
@@ -127,6 +124,8 @@
               eventId = _evt$currentTarget$da.eventId;
 
           _this.getElementList(statusId, eventId);
+
+          _this.updateActiveState(statusId);
         });
       });
     },
@@ -135,12 +134,23 @@
         'statusId': statusId,
         'eventId': eventId
       }, $.proxy(function (response, textStatus) {
-        // this.$spinner.addClass('hidden');
-        //
         if (textStatus === 'success') {
           this.renderElementListing(response.html);
         }
       }, this));
+    },
+    clearActiveState: function clearActiveState() {
+      Array.from(this.$sourceLinks).forEach(function (link) {
+        link.classList.remove('sel');
+      });
+    },
+    setActiveState: function setActiveState(statusId) {
+      var activeLink = this.$container.find("a[data-status-id=\"".concat(statusId, "\"]"))[0];
+      activeLink.classList.add('sel');
+    },
+    updateActiveState: function updateActiveState(statusId) {
+      this.clearActiveState();
+      this.setActiveState(statusId);
     },
     renderElementListing: function renderElementListing(html) {
       this.$elements[0].innerHTML = html;

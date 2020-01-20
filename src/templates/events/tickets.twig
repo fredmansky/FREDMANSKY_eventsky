@@ -14,7 +14,7 @@
 
 {% block content %}
     <div class="elementindex">
-        {% set status = ticketStatuses[0] %}
+        {% set status = selectedStatus %}
         {% include "eventsky/events/_ticketListing" %}
     </div>
 {% endblock %}

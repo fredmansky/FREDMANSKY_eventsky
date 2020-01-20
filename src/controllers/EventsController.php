@@ -250,7 +250,7 @@ class EventsController extends Controller
         $data['event'] = $event;
 
         $ticketStatus = $ticketStatuses[0];
-        $data['status'] = $ticketStatus;
+        $data['selectedStatus'] = $ticketStatus;
 
         $tickets = Eventsky::$plugin->ticket->getTicketByEventAndStatus($eventId, $ticketStatus->id);
         $data['tickets'] = $tickets;
