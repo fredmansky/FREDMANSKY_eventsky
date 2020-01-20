@@ -80,6 +80,8 @@ return [
     'translate.events.defaultEmailNotifications' => 'Default to Event Type Setting',
     'translate.events.tickets.statusHeadline' => 'Status',
     'translate.events.tickets.noneForStatus' => 'No tickets.',
+    'translate.events.tickets.ticketOverview' => 'Ticket Overview',
+    'translate.events.tickets.ticketLink' => 'Show registered tickets',
 
     // ------------------------
     // ----- Event Types ------

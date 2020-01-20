@@ -12,6 +12,7 @@ use craft\elements\actions\Delete;
 use craft\elements\actions\Edit;
 use craft\elements\actions\SetStatus;
 use craft\elements\db\ElementQueryInterface;
+use craft\helpers\Html;
 use craft\helpers\UrlHelper;
 use DateTime;
 use fredmansky\eventsky\elements\db\EventQuery;
@@ -211,7 +212,24 @@ class Event extends Element
             'typeId' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.typeId')),
             'numberOfRegistrations' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.numberOfRegistrations')),
             'totalTickets' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.tickets.table.totalTickets')),
+            'ticketOverviewUrl' => \Craft::t('eventsky', Craft::t('eventsky', 'translate.events.tickets.ticketOverview')),
         ];
+    }
+
+    protected function tableAttributeHtml(string $attribute): string
+    {
+        if($attribute == 'ticketOverviewUrl') {
+
+            $url = $this->getTicketOverviewUrl();
+
+            if ($url !== null) {
+                return Html::a(Craft::t('eventsky', 'translate.events.tickets.ticketLink'), $url);
+            }
+
+            return '';
+        }
+
+        return parent::tableAttributeHtml($attribute);
     }
 
     public function datetimeAttributes(): array
@@ -240,6 +258,15 @@ class Event extends Element
         return UrlHelper::cpUrl($path, $params);
     }
 
+    public function getTicketOverviewUrl()
+    {
+        $path = 'eventsky/event/' . $this->id .
+            ($this->slug && strpos($this->slug, '__') !== 0 ? '-' . $this->slug : '')
+            . '/tickets';
+
+        $params = [];
+        return UrlHelper::cpUrl($path, $params);
+    }
 
     public function beforeSave(bool $isNew): bool
     {
