@@ -100,6 +100,7 @@
   Craft.EventTicketsIndex = Garnish.Base.extend({
     $container: null,
     $main: null,
+    $mainSpinner: null,
     isIndexBusy: false,
     $elements: null,
     $sourceLinks: null,
@@ -112,6 +113,15 @@
       this.$container = $container;
       this.$main = this.$container.find('.main');
       this.$elements = this.$container.find('.elements:first');
+      this.$mainSpinner = this.$container.find('.spinner:first');
+    },
+    startLoading: function startLoading() {
+      this.$mainSpinner[0].classList.remove('invisible');
+      this.$main[0].classList.add('invisible');
+    },
+    stopLoading: function stopLoading() {
+      this.$mainSpinner[0].classList.add('invisible');
+      this.$main[0].classList.remove('invisible');
     },
     initStatusLinks: function initStatusLinks() {
       var _this = this;
@@ -130,12 +140,14 @@
       });
     },
     getElementList: function getElementList(statusId, eventId) {
+      this.startLoading();
       Craft.postActionRequest('eventsky/events/ticket-index-by-type', {
         'statusId': statusId,
         'eventId': eventId
       }, $.proxy(function (response, textStatus) {
         if (textStatus === 'success') {
           this.renderElementListing(response.html);
+          this.stopLoading();
         }
       }, this));
     },
