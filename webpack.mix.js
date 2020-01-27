@@ -26,6 +26,9 @@ mix.js('src/web/assets/editticket/src/index.js', 'src/web/assets/editticket/inde
 mix.js('src/web/assets/availableticketfield/src/index.js', 'src/web/assets/availableticketfield/index.js')
   .sass('src/web/assets/availableticketfield/src/style.scss', 'src/web/assets/availableticketfield/style.css');
 
+mix.js('src/web/assets/eventtickets/src/index.js', 'src/web/assets/eventtickets/index.js')
+  .sass('src/web/assets/eventtickets/src/style.scss', 'src/web/assets/eventtickets/style.css');
+
 // Full API
 // mix.js(src, output);
 // mix.react(src, output); <-- Identical to mix.js(), but registers React Babel compilation.

@@ -20,6 +20,7 @@ use fredmansky\eventsky\web\assets\availableticketfield\EventTicketTypeMappingAs
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 
+use fredmansky\eventsky\web\assets\eventtickets\EventTicketsIndexAsset;
 use yii\web\BadRequestHttpException;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
@@ -229,6 +230,67 @@ class EventsController extends Controller
         Eventsky::$plugin->event->deleteEventById($eventId);
 
         return $this->asJson(['success' => true]);
+    }
+
+    public function actionTickets(int $eventId = null): Response
+    {
+        $ticketStatuses = Eventsky::$plugin->ticketStatus->getAllTicketStatuses();
+
+        $data = [
+            'eventTypes' => Eventsky::$plugin->eventType->getAllEventTypes(),
+            'ticketStatuses' => $ticketStatuses,
+        ];
+
+        $event = Eventsky::$plugin->event->getEventById($eventId);
+
+        if (!$event) {
+            throw new HttpException(404, Craft::t('eventsky', 'translate.event.notFound'));
+        }
+
+        $data['event'] = $event;
+
+        $ticketStatus = $ticketStatuses[0];
+        $data['selectedStatus'] = $ticketStatus;
+
+        $tickets = Eventsky::$plugin->ticket->getTicketByEventAndStatus($eventId, $ticketStatus->id);
+        $data['tickets'] = $tickets;
+
+        $data['crumbs'] = [
+            [
+                'label' => Craft::t('eventsky', 'translate.events.cpTitle'),
+                'url' => UrlHelper::url('eventsky/events')
+            ],
+            [
+                'label' => $event->title,
+                'url' => $event->getCpEditUrl(),
+            ],
+        ];
+
+        $this->getView()->registerAssetBundle(EventTicketsIndexAsset::class);
+        return $this->renderTemplate('eventsky/events/tickets', $data);
+    }
+
+    public function actionTicketIndexByType(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        $request = Craft::$app->getRequest();
+
+        $eventId = $request->getBodyParam('eventId');
+        $statusId = $request->getBodyParam('statusId');
+        $tickets = Eventsky::$plugin->ticket->getTicketByEventAndStatus($eventId, $statusId);
+
+        $data = [
+            'tickets' => $tickets,
+        ];
+
+        $view = $this->getView();
+        $html = $view->renderTemplate('eventsky/events/_ticketListing', $data);
+
+        return $this->asJson(compact(
+            'html'
+        ));
     }
 
     private function saveEventTicketTypesMappings($event) {

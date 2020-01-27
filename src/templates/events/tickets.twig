@@ -1,0 +1,35 @@
+{% extends "_layouts/cp" %}
+
+{% set selectedSubnavItem = 'events' %}
+{% set title = "translate.events.tickets.title" | t('eventsky', {'eventTitle': event.title }) %}
+
+{% block sidebar %}
+    {% if ticketStatuses is not empty %}
+        <nav>
+            {% include "eventsky/events/_statuses" %}
+        </nav>
+    {% endif %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="elementindex">
+        <div class="spinner invisible"></div>
+        {% set status = selectedStatus %}
+        {% include "eventsky/events/_ticketListing" %}
+    </div>
+{% endblock %}
+
+{% block initJs %}
+    window.eventTicketsIndex = new Craft.EventTicketsIndex($('#main'), {});
+
+{#    Craft.elementIndex = Craft.createElementIndex('{{ elementType|e("js") }}', $('#main'), {#}
+{#    elementTypeName: '{{ elementInstance.displayName()|e("js") }}',#}
+{#    elementTypePluralName: '{{ elementInstance.pluralDisplayName()|e("js") }}',#}
+{#    context: '{{ context }}',#}
+{#    storageKey: 'elementindex.{{ elementType|e("js") }}',#}
+{#    criteria: Craft.defaultIndexCriteria#}
+{#    });#}
+{% endblock %}
+
+{% js block('initJs') %}

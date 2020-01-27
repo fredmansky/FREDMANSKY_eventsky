@@ -259,17 +259,29 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/web/assets/eventtickets/src/style.scss":
+/*!****************************************************!*\
+  !*** ./src/web/assets/eventtickets/src/style.scss ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
 /***/ 0:
-/*!***********************************************************************************************************************************************************************************************!*\
-  !*** multi ./src/web/assets/editevent/src/index.js ./src/web/assets/editevent/src/style.scss ./src/web/assets/editticket/src/style.scss ./src/web/assets/availableticketfield/src/style.scss ***!
-  \***********************************************************************************************************************************************************************************************/
+/*!********************************************************************************************************************************************************************************************************************************************!*\
+  !*** multi ./src/web/assets/editevent/src/index.js ./src/web/assets/editevent/src/style.scss ./src/web/assets/editticket/src/style.scss ./src/web/assets/availableticketfield/src/style.scss ./src/web/assets/eventtickets/src/style.scss ***!
+  \********************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editevent/src/index.js */"./src/web/assets/editevent/src/index.js");
 __webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editevent/src/style.scss */"./src/web/assets/editevent/src/style.scss");
 __webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/editticket/src/style.scss */"./src/web/assets/editticket/src/style.scss");
-module.exports = __webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/availableticketfield/src/style.scss */"./src/web/assets/availableticketfield/src/style.scss");
+__webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/availableticketfield/src/style.scss */"./src/web/assets/availableticketfield/src/style.scss");
+module.exports = __webpack_require__(/*! /Users/sarah/Projects/CraftPlugins/EventPlugin/FREDMANSKY_eventplugin/src/web/assets/eventtickets/src/style.scss */"./src/web/assets/eventtickets/src/style.scss");
 
 
 /***/ })

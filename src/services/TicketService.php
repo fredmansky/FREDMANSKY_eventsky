@@ -92,6 +92,22 @@ class TicketService extends Component
         return true;
     }
 
+    public function getTicketByEventAndStatus($eventId, $statusId): array
+    {
+        $tickets = Ticket::find()
+            ->eventId($eventId)
+            ->statusId($statusId)
+            ->all();
+
+        return $tickets;
+    }
+
+    public function getTicketCountByEventAndStatus($eventId, $statusId): int
+    {
+        $tickets = $this->getTicketByEventAndStatus($eventId, $statusId);
+        return count($tickets);
+    }
+
     private function createTicketQuery(): ActiveQuery
     {
         return TicketRecord::find()
