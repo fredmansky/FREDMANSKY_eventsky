@@ -47,15 +47,9 @@ class TicketService extends Component
 
     public function getTicketsByEvent(Event $event): array
     {
-        $results = $this->createTicketQuery()
-            ->where(['=', 'eventId', $event->id])
+        return Ticket::find()
+            ->eventId($event->id)
             ->all();
-
-        $tickets = array_map(function($result) {
-            return new Ticket($result);
-        }, $results);
-
-        return $tickets;
     }
 
     public function deleteTicketById(int $id): bool

@@ -47,12 +47,10 @@ class Event extends Element
     public $waitingListSize;
     public $emailNotificationIdAdmin;
     public $emailNotificationAdminEmails;
-    public $numberOfRegistrations;
 
     public function __construct(array $config)
     {
         parent::__construct($config);
-        $this->numberOfRegistrations = count(Eventsky::$plugin->ticket->getTicketsByEvent($this));
     }
 
     public static function displayName(): string
@@ -227,6 +225,10 @@ class Event extends Element
             }
 
             return '';
+        }
+
+        if($attribute == 'numberOfRegistrations') {
+            return count(Eventsky::$plugin->ticket->getTicketsByEvent($this));
         }
 
         return parent::tableAttributeHtml($attribute);
