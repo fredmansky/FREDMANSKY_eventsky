@@ -131,6 +131,18 @@ class Event extends Element
         return $availableTickets;
     }
 
+    public function getRegisteredTickets(): array
+    {
+        $registeredTickets = Eventsky::$plugin->ticket->getTicketsByEvent($this);
+        return $registeredTickets;
+    }
+
+    public function getRegisteredTicketsByStatusId($statusId): array
+    {
+        $registeredTickets = Eventsky::$plugin->ticket->getTicketByEventAndStatus($this->id, $statusId);
+        return $registeredTickets;
+    }
+
     public function getEmailNotification(): ?EmailNotification
     {
         if ($this->emailNotificationIdAdmin === null) {
