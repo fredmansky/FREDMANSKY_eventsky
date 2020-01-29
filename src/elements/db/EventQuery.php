@@ -63,6 +63,18 @@ class EventQuery extends ElementQuery
         return $this;
     }
 
+    public function startDate($value)
+    {
+        $this->startDate = $value;
+        return $this;
+    }
+
+    public function endDate($value)
+    {
+        $this->endDate = $value;
+        return $this;
+    }
+
     protected function statusCondition(string $status)
     {
         $currentTimeDb = Db::prepareDateForDb(new \DateTime());
@@ -127,6 +139,14 @@ class EventQuery extends ElementQuery
 
         if ($this->typeId) {
             $this->subQuery->andWhere(Db::parseParam('eventsky_events.typeId', $this->typeId));
+        }
+
+        if ($this->startDate) {
+            $this->subQuery->andWhere(Db::parseParam('eventsky_events.startDate', $this->startDate));
+        }
+
+        if ($this->endDate) {
+            $this->subQuery->andWhere(Db::parseParam('eventsky_events.endDate', $this->endDate));
         }
 
         return parent::beforePrepare();
