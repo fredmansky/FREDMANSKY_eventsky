@@ -105,6 +105,8 @@
     $elements: null,
     $sourceLinks: null,
     page: 1,
+    drag: null,
+    drop: null,
     init: function init($container) {
       this.initElements($container);
       this.initStatusLinks();
@@ -150,6 +152,23 @@
           this.stopLoading();
         }
       }, this));
+    },
+    initDragAndDrop: function initDragAndDrop() {
+      var dropTargets = [];
+      console.log('');
+
+      var onDropTargetChange = function onDropTargetChange() {
+        console.log('dropped item');
+      };
+
+      this.drag = new Garnish.DragDrop({
+        dropTargets: dropTargets,
+        onDropTargetChange: onDropTargetChange
+      });
+      this.drop = new Garnish.DragDrop({
+        dropTargets: dropTargets,
+        onDropTargetChange: onDropTargetChange
+      });
     },
     clearActiveState: function clearActiveState() {
       Array.from(this.$sourceLinks).forEach(function (link) {

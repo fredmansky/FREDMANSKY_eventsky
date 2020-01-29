@@ -12,6 +12,9 @@
             $sourceLinks: null,
             page: 1,
 
+            drag: null,
+            drop: null,
+
             init: function($container) {
                 this.initElements($container);
                 this.initStatusLinks();
@@ -54,6 +57,26 @@
                         this.stopLoading();
                     }
                 }, this));
+            },
+
+            initDragAndDrop() {
+                const dropTargets = [];
+
+                console.log('');
+
+                const onDropTargetChange = () => {
+                    console.log('dropped item');
+                };
+
+                this.drag = new Garnish.DragDrop({
+                    dropTargets,
+                    onDropTargetChange,
+                });
+
+                this.drop = new Garnish.DragDrop({
+                    dropTargets,
+                    onDropTargetChange,
+                });
             },
 
             clearActiveState() {
