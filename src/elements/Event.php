@@ -48,11 +48,6 @@ class Event extends Element
     public $emailNotificationIdAdmin;
     public $emailNotificationAdminEmails;
 
-    public function __construct(array $config)
-    {
-        parent::__construct($config);
-    }
-
     public static function displayName(): string
     {
         return Craft::t('eventsky', 'translate.elements.Event.displayName');
