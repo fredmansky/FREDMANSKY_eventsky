@@ -36,7 +36,7 @@ class Eventsky extends Plugin
 {
     public static $plugin;
 
-    public $schemaVersion = '1.8.0';
+    public $schemaVersion = '1.9.5';
 
     public function init()
     {
@@ -88,7 +88,6 @@ class Eventsky extends Plugin
             'settings' => $this->getSettings()
         ]);
     }
-
 
     protected function installEventListeners()
     {
