@@ -29,8 +29,8 @@
                             $(response.tabsHtml).insertBefore($('#content'))
                         }
 
-                        $('#fields').html(response.fieldsHtml);
-                        Craft.initUiElements($('#fields'));
+                        $('#fields__inner').html(response.fieldsHtml);
+                        Craft.initUiElements($('#fields__inner'));
                         Craft.appendHeadHtml(response.headHtml);
                         Craft.appendFootHtml(response.bodyHtml);
 
