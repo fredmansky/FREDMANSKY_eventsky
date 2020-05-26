@@ -148,9 +148,11 @@ class EventsController extends Controller
             return $response;
         }
 
+        $this->prepTicketTypeMappingVariables($data);
+
         $view = $this->getView();
         $tabsHtml = !empty($data['tabs']) ? $view->renderTemplate('_includes/tabs', $data) : null;
-        $fieldsHtml = $view->renderTemplate('eventsky/events/_fields', $data);
+        $fieldsHtml = $view->renderTemplate('eventsky/events/_tabsCustom', $data);
         $headHtml = $view->getHeadHtml();
         $bodyHtml = $view->getBodyHtml();
 
