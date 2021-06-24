@@ -147,6 +147,10 @@ class EventService extends Component
         return $eventTicketTypeMappingRecord->delete();
     }
 
+    public function getEventHashBy($eventId) {
+        return substr(hash('sha256', $eventId), 0, 10);
+    }
+
     private function createEventTicketTypeMappingQuery(): ActiveQuery
     {
         return EventTicketTypeMappingRecord::find();

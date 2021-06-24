@@ -32,6 +32,12 @@ use fredmansky\eventsky\services\TwigTemplateService;
 use fredmansky\vidsky\services\Video;
 use yii\base\Event;
 
+/**
+ * Class Eventsky
+ * @package fredmansky\eventsky
+ *
+ *  * @property EventService $event
+ */
 class Eventsky extends Plugin
 {
     public static $plugin;
