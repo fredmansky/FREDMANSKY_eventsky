@@ -36,12 +36,20 @@ use yii\web\Response;
  */
 class EventsController extends Controller
 {
+    protected $allowAnonymous = ['get-event-hash'];
+
     public function actionIndex(): Response
     {
         $data = [
             'eventTypes' => Eventsky::$plugin->eventType->getAllEventTypes(),
         ];
         return $this->renderTemplate('eventsky/events/index', $data);
+    }
+
+    public function actionGetEventHash($eventId)
+    {
+        $hashValue = Eventsky::getInstance()->event->getEventHashBy($eventId);
+        return $this->asJson(['hash' => $hashValue]);
     }
 
     public function actionEdit(int $eventId = null, string $site = null): Response
