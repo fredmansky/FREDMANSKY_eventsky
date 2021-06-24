@@ -170,13 +170,16 @@ class TicketsController extends Controller
 
         $eventIds = $request->getBodyParam('eventIds');
         $eventId = $request->getBodyParam('eventId');
-        $hash = $request->getBodyParam('eventHash');
 
-        $eventIdForSpamProtection = is_array($eventIds) ? $eventIds[0] : $eventId;
-        $eventHash = Eventsky::getInstance()->event->getEventHashBy($eventIdForSpamProtection);
+        if (!$request->isCpRequest) {
+            $hash = $request->getBodyParam('eventHash');
 
-        if ($eventHash !== $hash) {
-            throw new BadRequestHttpException();
+            $eventIdForSpamProtection = is_array($eventIds) ? $eventIds[0] : $eventId;
+            $eventHash = Eventsky::getInstance()->event->getEventHashBy($eventIdForSpamProtection);
+
+            if ($eventHash !== $hash) {
+                throw new BadRequestHttpException();
+            }
         }
 
         $ticket = $this->getTicketModel();
