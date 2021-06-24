@@ -168,9 +168,18 @@ class TicketsController extends Controller
             throw new BadRequestHttpException();
         }
 
-        $ticket = $this->getTicketModel();
         $eventIds = $request->getBodyParam('eventIds');
         $eventId = $request->getBodyParam('eventId');
+        $hash = $request->getBodyParam('eventHash');
+
+        $eventIdForSpamProtection = is_array($eventIds) ? $eventIds[0] : $eventId;
+        $eventHash = Eventsky::getInstance()->event->getEventHashBy($eventIdForSpamProtection);
+
+        if ($eventHash !== $hash) {
+            throw new BadRequestHttpException();
+        }
+
+        $ticket = $this->getTicketModel();
 
         // Populate the ticket with post data
         $this->populateTicketModel($ticket);
