@@ -16,6 +16,7 @@ use fredmansky\eventsky\web\assets\editticket\EditTicketAsset;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 
+use yii\web\BadRequestHttpException;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -161,6 +162,12 @@ class TicketsController extends Controller
         $this->requirePostRequest();
 
         $request = Craft::$app->getRequest();
+        $honeypot = $request->getBodyParam('eventsky');;
+
+        if ($honeypot != '') {
+            throw new BadRequestHttpException();
+        }
+
         $ticket = $this->getTicketModel();
         $eventIds = $request->getBodyParam('eventIds');
         $eventId = $request->getBodyParam('eventId');
@@ -177,7 +184,6 @@ class TicketsController extends Controller
             throw new HttpException(404, Craft::t('eventsky', 'translate.event.notFound'));
         }
     }
-
 
     public function actionDelete(): Response
     {
