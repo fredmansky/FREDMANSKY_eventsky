@@ -162,10 +162,11 @@ class TicketsController extends Controller
         $this->requirePostRequest();
 
         $request = Craft::$app->getRequest();
-        $honeypot = $request->getBodyParam('eventsky');;
+        $markedAsSpam = false;
+        $honeypot = $request->getBodyParam('eventsky');
 
         if ($honeypot != '') {
-            throw new BadRequestHttpException();
+            $markedAsSpam = true;
         }
 
         $eventIds = $request->getBodyParam('eventIds');
@@ -178,20 +179,20 @@ class TicketsController extends Controller
             $eventHash = Eventsky::getInstance()->event->getEventHashBy($eventIdForSpamProtection);
 
             if ($eventHash !== $hash) {
-                throw new BadRequestHttpException();
+                $markedAsSpam = true;
             }
         }
 
         $ticket = $this->getTicketModel();
 
         // Populate the ticket with post data
-        $this->populateTicketModel($ticket);
+        $this->populateTicketModel($ticket, $markedAsSpam);
 
         if (is_array($eventIds)) {
             $ticket->id = null;
-            $this->saveMultipleTickets($ticket, $eventIds);
+            $this->saveMultipleTickets($ticket, $eventIds, $markedAsSpam);
         } else if ($eventId) {
-            return $this->saveSingleTicket($ticket, $request);
+            return $this->saveSingleTicket($ticket, $request, $markedAsSpam);
         } else {
             throw new HttpException(404, Craft::t('eventsky', 'translate.event.notFound'));
         }
@@ -208,7 +209,7 @@ class TicketsController extends Controller
         return $this->asJson(['success' => true]);
     }
 
-    private function saveMultipleTickets($ticket, $eventIds) {
+    private function saveMultipleTickets($ticket, $eventIds, $markedAsSpam) {
         $errors = [];
         $eventIds = array_unique($eventIds);
         $allEventIds = Eventsky::$plugin->event->getAllEventIds();
@@ -244,11 +245,13 @@ class TicketsController extends Controller
             }
         }
 
-        $this->sendMails($tickets);
+        if(!$markedAsSpam) {
+            $this->sendMails($tickets);
+        }
         return true;
     }
 
-    private function saveSingleTicket($ticket, $request) {
+    private function saveSingleTicket($ticket, $request, $markedAsSpam) {
         $isNew = !(bool) $ticket->id;
 
         if (!Craft::$app->getElements()->saveElement($ticket)) {
@@ -276,7 +279,7 @@ class TicketsController extends Controller
             ]));
         }
 
-        if($isNew) {
+        if($isNew && !$markedAsSpam) {
             $this->sendMails([$ticket]);
         }
 
@@ -393,7 +396,7 @@ class TicketsController extends Controller
         return $ticket;
     }
 
-    private function populateTicketModel(Ticket $ticket)
+    private function populateTicketModel(Ticket $ticket, bool $markedAsSpam)
     {
         $request = Craft::$app->getRequest();
 
@@ -416,6 +419,10 @@ class TicketsController extends Controller
         if (!$ticket->statusId) {
             // Default to the first status
             $ticket->statusId = Eventsky::$plugin->ticketStatus->getAllTicketStatuses()[0]->id;
+        }
+
+        if ($markedAsSpam) {
+            $ticket->enabled = false;
         }
 
         // Prevent the last entry type's field layout from being used
