@@ -10,9 +10,15 @@
 
 namespace fredmansky\eventsky;
 
+use craft\helpers\App;
+use craft\web\twig\variables\CraftVariable;
+use fredmansky\eventsky\assetbundles\eventsky\EventskyAsset;
 use fredmansky\eventsky\services\EventskyService as EventskyServiceService;
 use fredmansky\eventsky\models\Settings;
 use fredmansky\eventsky\fields\EventskyField as EventskyFieldField;
+
+use fredmanskyeventsky\eventsky\variables\EventskyVariable;
+use nystudio107\pluginvite\services\VitePluginService;
 
 use Craft;
 use craft\base\Plugin;
@@ -84,6 +90,25 @@ class Eventsky extends Plugin
     // Public Methods
     // =========================================================================
 
+    public function __construct($id, $parent = null, array $config = [])
+    {
+        $config['components'] = [
+            'eventsky' => Eventsky::class,
+            'vite' => [
+                'class' => VitePluginService::class,
+                'assetClass' => EventskyAsset::class,
+                'useDevServer' => true,
+                'devServerPublic' => 'http://localhost:3001',
+                'serverPublic' => App::env('PRIMARY_SITE_URL'),
+                'errorEntry' => 'src/js/app.ts',
+                'devServerInternal' => 'http://localhost:3001',
+                'checkDevServer' => true,
+            ]
+        ];
+
+        parent::__construct($id, $parent, $config);
+    }
+
     /**
      * Set our $plugin static property to this class so that it can be accessed via
      * Eventsky::$plugin
@@ -99,6 +124,18 @@ class Eventsky extends Plugin
     {
         parent::init();
         self::$plugin = $this;
+
+        Event::on(
+            CraftVariable::class,
+            CraftVariable::EVENT_INIT,
+            function(Event $event) {
+                $variable = $event->sender;
+                $variable->set('eventsky', [
+                    'class' => EventskyVariable::class,
+                    'viteService' => $this->vite,
+                ]);
+            }
+        );
 
         // Register our site routes
         Event::on(
