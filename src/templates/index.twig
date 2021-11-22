@@ -16,8 +16,8 @@
 {% extends "_layouts/cp" %}
 {% import "_includes/forms" as forms %}
 
-{% do view.registerAssetBundle("fredmanskyeventsky\\eventsky\\assetbundles\\eventsky\\EventskyAsset") %}
-{% do view.registerAssetBundle("fredmanskyeventsky\\eventsky\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+{% do view.registerAssetBundle("fredmansky\\eventsky\\assetbundles\\eventsky\\EventskyAsset") %}
+{% do view.registerAssetBundle("fredmansky\\eventsky\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
 
 {# Link for the ? icon at the bottom of the page #}
 {% set docsUrl = "https://github.com/fredmansky/eventsky/blob/master/README.md" %}
@@ -29,7 +29,7 @@
 {% set pluginCpUrl = url('eventsky') %}
 
 {# Get a URL to an image in our AssetBundle #}
-{% set iconUrl = view.getAssetManager().getPublishedUrl('@fredmanskyeventsky/eventsky/assetbundles/indexcpsection/dist', true) ~ '/img/Index-icon.svg' %}
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@fredmansky/eventsky/assetbundles/indexcpsection/dist', true) ~ '/img/Index-icon.svg' %}
 
 {# Content that should appear in the page header#}
 {% set extraPageHeaderHtml %}

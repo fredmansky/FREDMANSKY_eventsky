@@ -1,5 +1,5 @@
 {
-    "name": "fredmanskyeventsky/eventsky",
+    "name": "fredmansky/eventsky",
     "description": "Craft plugin for event management and attendee registration",
     "type": "craft-plugin",
     "version": "1.0.0",
@@ -31,7 +31,7 @@
     },
     "autoload": {
         "psr-4": {
-          "fredmanskyeventsky\\eventsky\\": "src/"
+          "fredmansky\\eventsky\\": "src/"
         }
     },
     "extra": {
@@ -42,8 +42,8 @@
         "documentationUrl": "https://github.com/fredmansky/eventsky/blob/master/README.md",
         "changelogUrl": "https://raw.githubusercontent.com/fredmansky/eventsky/master/CHANGELOG.md",
         "components": {
-            "eventskyService": "fredmanskyeventsky\\eventsky\\services\\EventskyService"
+            "eventskyService": "fredmansky\\eventsky\\services\\EventskyService"
         },
-        "class": "fredmanskyeventsky\\eventsky\\Eventsky"
+        "class": "fredmansky\\eventsky\\Eventsky"
     }
 }

@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2021 Fredmansky
  */
 
-namespace fredmanskyeventsky\eventsky\assetbundles\eventsky;
+namespace fredmansky\eventsky\assetbundles\eventsky;
 
 use Craft;
 use craft\web\AssetBundle;
@@ -43,7 +43,7 @@ class EventskyAsset extends AssetBundle
     public function init()
     {
         // define the path that your publishable resources live
-        $this->sourcePath = "@fredmanskyeventsky/eventsky/assetbundles/eventsky/dist";
+        $this->sourcePath = "@fredmansky/eventsky/assetbundles/eventsky/dist";
 
         // define the dependencies
         $this->depends = [

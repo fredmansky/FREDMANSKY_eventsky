@@ -8,11 +8,11 @@
  * @copyright Copyright (c) 2021 Fredmansky
  */
 
-namespace fredmanskyeventsky\eventsky;
+namespace fredmansky\eventsky;
 
-use fredmanskyeventsky\eventsky\services\EventskyService as EventskyServiceService;
-use fredmanskyeventsky\eventsky\models\Settings;
-use fredmanskyeventsky\eventsky\fields\EventskyField as EventskyFieldField;
+use fredmansky\eventsky\services\EventskyService as EventskyServiceService;
+use fredmansky\eventsky\models\Settings;
+use fredmansky\eventsky\fields\EventskyField as EventskyFieldField;
 
 use Craft;
 use craft\base\Plugin;

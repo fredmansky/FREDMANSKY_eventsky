@@ -8,9 +8,9 @@
  * @copyright Copyright (c) 2021 Fredmansky
  */
 
-namespace fredmanskyeventsky\eventsky\migrations;
+namespace fredmansky\eventsky\migrations;
 
-use fredmanskyeventsky\eventsky\Eventsky;
+use fredmansky\eventsky\Eventsky;
 
 use Craft;
 use craft\config\DbConfig;

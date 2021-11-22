@@ -8,9 +8,9 @@
  * @copyright Copyright (c) 2021 Fredmansky
  */
 
-namespace fredmanskyeventsky\eventsky\controllers;
+namespace fredmansky\eventsky\controllers;
 
-use fredmanskyeventsky\eventsky\Eventsky;
+use fredmansky\eventsky\Eventsky;
 
 use Craft;
 use craft\web\Controller;

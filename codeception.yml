@@ -32,7 +32,7 @@ modules:
       migrations: []
       plugins:
         eventsky:
-          class: '\fredmanskyeventsky\eventsky\Eventsky'
+          class: '\fredmansky\eventsky\Eventsky'
           handle: eventsky
       cleanup: true
       transaction: true

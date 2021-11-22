@@ -8,12 +8,12 @@
  * @copyright Copyright (c) 2021 Fredmansky
  */
 
-namespace fredmanskyeventsky\eventskytests\unit;
+namespace fredmansky\eventskytests\unit;
 
 use Codeception\Test\Unit;
 use UnitTester;
 use Craft;
-use fredmanskyeventsky\eventsky\Eventsky;
+use fredmansky\eventsky\Eventsky;
 
 /**
  * ExampleUnitTest

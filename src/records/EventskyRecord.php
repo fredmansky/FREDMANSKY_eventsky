@@ -8,9 +8,9 @@
  * @copyright Copyright (c) 2021 Fredmansky
  */
 
-namespace fredmanskyeventsky\eventsky\records;
+namespace fredmansky\eventsky\records;
 
-use fredmanskyeventsky\eventsky\Eventsky;
+use fredmansky\eventsky\Eventsky;
 
 use Craft;
 use craft\db\ActiveRecord;

@@ -8,10 +8,10 @@
  * @copyright Copyright (c) 2021 Fredmansky
  */
 
-namespace fredmanskyeventsky\eventsky\fields;
+namespace fredmansky\eventsky\fields;
 
-use fredmanskyeventsky\eventsky\Eventsky;
-use fredmanskyeventsky\eventsky\assetbundles\eventskyfieldfield\EventskyFieldFieldAsset;
+use fredmansky\eventsky\Eventsky;
+use fredmansky\eventsky\assetbundles\eventskyfieldfield\EventskyFieldFieldAsset;
 
 use Craft;
 use craft\base\ElementInterface;

@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2021 Fredmansky
  */
 
-namespace fredmanskyeventsky\eventsky\assetbundles\indexcpsection;
+namespace fredmansky\eventsky\assetbundles\indexcpsection;
 
 use Craft;
 use craft\web\AssetBundle;
@@ -43,7 +43,7 @@ class IndexCPSectionAsset extends AssetBundle
     public function init()
     {
         // define the path that your publishable resources live
-        $this->sourcePath = "@fredmanskyeventsky/eventsky/assetbundles/indexcpsection/dist";
+        $this->sourcePath = "@fredmansky/eventsky/assetbundles/indexcpsection/dist";
 
         // define the dependencies
         $this->depends = [

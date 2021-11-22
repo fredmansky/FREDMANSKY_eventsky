@@ -1,6 +1,6 @@
 <?php
 
-namespace fredmanskyeventsky\eventskytests\acceptance;
+namespace fredmansky\eventskytests\acceptance;
 
 use Craft;
 use FunctionalTester;
