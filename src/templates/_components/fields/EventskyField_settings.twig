@@ -1,0 +1,26 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Eventsky plugin for Craft CMS
+ *
+ * EventskyField Field Settings
+ *
+ * @author    Fredmansky
+ * @copyright Copyright (c) 2021 Fredmansky
+ * @link      https://fredmansky.at
+ * @package   Eventsky
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("fredmanskyeventsky\\eventsky\\assetbundles\\eventsky\\EventskyAsset") %}
+
+{{ forms.textField({
+    label: 'Some Attribute',
+    instructions: 'Enter some attribute here.',
+    id: 'someAttribute',
+    name: 'someAttribute',
+    value: field['someAttribute']})
+}}
