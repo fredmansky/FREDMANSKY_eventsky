@@ -22,13 +22,13 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^3.0.0",
+        "craftcms/cms": "^3.7.14",
         "nystudio107/craft-plugin-vite": "^1.0"
     },
     "require-dev": {
-      "craftcms/cms": "^3.2.0",
-      "codeception/codeception": "^3.0",
-      "vlucas/phpdotenv": "^3.0"
+        "codeception/codeception": "^4.1",
+        "vlucas/phpdotenv": "^5.4",
+        "roave/security-advisories": "dev-latest"
     },
     "autoload": {
         "psr-4": {
