@@ -29,7 +29,14 @@ return [
 
     'translate.events.cpTitle' => 'Events',
 
-  
+    // -------------------
+    // ----- Models ------
+    // -------------------
+
+    'translate.elements.Event.pluralDisplayName' => 'Events',
+    'translate.elements.Event.pluralDisplayName' => 'Events',
+
+
     // --------------------------------------
     // ----- TEMPLATES ----------------------
     // --------------------------------------
