@@ -22,4 +22,30 @@
  */
 return [
     'Eventsky plugin loaded' => 'Eventsky plugin loaded',
+
+    // -------------------
+    // ----- Menu --------
+    // -------------------
+
+    'translate.events.cpTitle' => 'Events',
+
+    // -------------------
+    // ----- Models ------
+    // -------------------
+
+    'translate.elements.Event.pluralDisplayName' => 'Events',
+    'translate.elements.Event.pluralDisplayName' => 'Events',
+
+
+    // --------------------------------------
+    // ----- TEMPLATES ----------------------
+    // --------------------------------------
+
+    // -------------------
+    // ----- Events ------
+    // -------------------
+
+    'translate.events.title' => 'Events',
+
+
 ];

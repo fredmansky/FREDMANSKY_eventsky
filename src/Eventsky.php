@@ -13,21 +13,14 @@ namespace fredmansky\eventsky;
 use craft\helpers\App;
 use craft\web\twig\variables\CraftVariable;
 use fredmansky\eventsky\assetbundles\eventsky\EventskyAsset;
-use fredmansky\eventsky\services\EventskyService as EventskyServiceService;
 use fredmansky\eventsky\models\Settings;
-use fredmansky\eventsky\fields\EventskyField as EventskyFieldField;
 
 use fredmanskyeventsky\eventsky\variables\EventskyVariable;
 use nystudio107\pluginvite\services\VitePluginService;
 
 use Craft;
 use craft\base\Plugin;
-use craft\services\Plugins;
-use craft\events\PluginEvent;
 use craft\web\UrlManager;
-use craft\services\Elements;
-use craft\services\Fields;
-use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
 
 use yii\base\Event;
@@ -46,7 +39,6 @@ use yii\base\Event;
  * @package   Eventsky
  * @since     1.0.0
  *
- * @property  EventskyServiceService $eventskyService
  * @property  Settings $settings
  * @method    Settings getSettings()
  */
@@ -78,7 +70,7 @@ class Eventsky extends Plugin
      *
      * @var bool
      */
-    public $hasCpSettings = true;
+    public $hasCpSettings = false;
 
     /**
      * Set to `true` if the plugin should have its own section (main nav item) in the control panel.
@@ -125,6 +117,35 @@ class Eventsky extends Plugin
         parent::init();
         self::$plugin = $this;
 
+        $this->initEventskyVariable();
+        $this->registerSiteRoutes();
+        $this->registerCPRoutes();
+        $this->registerFields();
+        $this->initLogging();
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getCpNavItem()
+    {
+        $item = parent::getCpNavItem();
+
+        $item['subnav'] = [
+            'events' => ['label' => Craft::t('eventsky', 'translate.events.cpTitle'), 'url' => 'eventsky/events'],
+        ];
+        return $item;
+    }
+
+    // Protected Methods
+    // =========================================================================
+
+
+    // Private Methods
+    // =========================================================================
+
+    private function initEventskyVariable(): void
+    {
         Event::on(
             CraftVariable::class,
             CraftVariable::EVENT_INIT,
@@ -136,71 +157,67 @@ class Eventsky extends Plugin
                 ]);
             }
         );
+    }
 
-        // Register our site routes
+    private function registerSiteRoutes()
+    {
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
-                $event->rules['siteActionTrigger1'] = 'eventsky/default';
+                $event->rules = array_merge(
+                    $event->rules,
+                    include __DIR__ . '/siteRoutes.php',
+                );
             }
         );
+    }
 
-        // Register our CP routes
+    private function registerCPRoutes()
+    {
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
-                $event->rules['cpActionTrigger1'] = 'eventsky/default/do-something';
+                $event->rules = array_merge(
+                    $event->rules,
+                    include __DIR__ . '/cpRoutes.php',
+                );
             }
         );
+    }
 
-        // Register our elements
-        Event::on(
-            Elements::class,
-            Elements::EVENT_REGISTER_ELEMENT_TYPES,
-            function (RegisterComponentTypesEvent $event) {
-            }
-        );
+    private function registerFields()
+    {
+//        Event::on(
+//            Fields::class,
+//            Fields::EVENT_REGISTER_FIELD_TYPES,
+//            function (RegisterComponentTypesEvent $event) {
+//                $event->types[] = EventskyFieldField::class;
+//            }
+//        );
+    }
 
-        // Register our fields
-        Event::on(
-            Fields::class,
-            Fields::EVENT_REGISTER_FIELD_TYPES,
-            function (RegisterComponentTypesEvent $event) {
-                $event->types[] = EventskyFieldField::class;
-            }
-        );
-
-        // Do something after we're installed
-        Event::on(
-            Plugins::class,
-            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin === $this) {
-                    // We were just installed
-                }
-            }
-        );
-
-/**
- * Logging in Craft involves using one of the following methods:
- *
- * Craft::trace(): record a message to trace how a piece of code runs. This is mainly for development use.
- * Craft::info(): record a message that conveys some useful information.
- * Craft::warning(): record a warning message that indicates something unexpected has happened.
- * Craft::error(): record a fatal error that should be investigated as soon as possible.
- *
- * Unless `devMode` is on, only Craft::warning() & Craft::error() will log to `craft/storage/logs/web.log`
- *
- * It's recommended that you pass in the magic constant `__METHOD__` as the second parameter, which sets
- * the category to the method (prefixed with the fully qualified class name) where the constant appears.
- *
- * To enable the Yii debug toolbar, go to your user account in the AdminCP and check the
- * [] Show the debug toolbar on the front end & [] Show the debug toolbar on the Control Panel
- *
- * http://www.yiiframework.com/doc-2.0/guide-runtime-logging.html
- */
+    /**
+     * Logging in Craft involves using one of the following methods:
+     *
+     * Craft::trace(): record a message to trace how a piece of code runs. This is mainly for development use.
+     * Craft::info(): record a message that conveys some useful information.
+     * Craft::warning(): record a warning message that indicates something unexpected has happened.
+     * Craft::error(): record a fatal error that should be investigated as soon as possible.
+     *
+     * Unless `devMode` is on, only Craft::warning() & Craft::error() will log to `craft/storage/logs/web.log`
+     *
+     * It's recommended that you pass in the magic constant `__METHOD__` as the second parameter, which sets
+     * the category to the method (prefixed with the fully qualified class name) where the constant appears.
+     *
+     * To enable the Yii debug toolbar, go to your user account in the AdminCP and check the
+     * [] Show the debug toolbar on the front end & [] Show the debug toolbar on the Control Panel
+     *
+     * http://www.yiiframework.com/doc-2.0/guide-runtime-logging.html
+     */
+    private function initLogging()
+    {
         Craft::info(
             Craft::t(
                 'eventsky',
@@ -208,35 +225,6 @@ class Eventsky extends Plugin
                 ['name' => $this->name]
             ),
             __METHOD__
-        );
-    }
-
-    // Protected Methods
-    // =========================================================================
-
-    /**
-     * Creates and returns the model used to store the plugin’s settings.
-     *
-     * @return \craft\base\Model|null
-     */
-    protected function createSettingsModel()
-    {
-        return new Settings();
-    }
-
-    /**
-     * Returns the rendered settings HTML, which will be inserted into the content
-     * block on the settings page.
-     *
-     * @return string The rendered settings HTML
-     */
-    protected function settingsHtml(): string
-    {
-        return Craft::$app->view->renderTemplate(
-            'eventsky/settings',
-            [
-                'settings' => $this->getSettings()
-            ]
         );
     }
 }
