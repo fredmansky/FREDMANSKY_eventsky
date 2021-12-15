@@ -1,20 +1,15 @@
 <?php
 /**
- * Eventsky plugin for Craft CMS 3.x
- *
- * Craft plugin for event management and attendee registration
- *
- * @link      https://fredmansky.at
- * @copyright Copyright (c) 2021 Fredmansky
+ * @link https://fredmansky.at/
+ * @copyright Copyright (c) Fredmansky GmbH
  */
 
 namespace fredmansky\eventsky\migrations;
 
-use fredmansky\eventsky\Eventsky;
-
 use Craft;
-use craft\config\DbConfig;
 use craft\db\Migration;
+use fredmansky\eventsky\db\Table;
+use fredmansky\eventsky\errors\TableAlreadyExistsException;
 
 /**
  * Eventsky Install Migration
@@ -28,7 +23,7 @@ use craft\db\Migration;
  *
  * @author    Fredmansky
  * @package   Eventsky
- * @since     1.0.0
+ * @since     2.0.0
  */
 class Install extends Migration
 {
@@ -53,16 +48,12 @@ class Install extends Migration
      * @return boolean return a false value to indicate the migration fails
      * and should not proceed further. All other return values mean the migration succeeds.
      */
-    public function safeUp()
+    public function safeUp(): bool
     {
-        $this->driver = Craft::$app->getConfig()->getDb()->driver;
-        if ($this->createTables()) {
-            $this->createIndexes();
-            $this->addForeignKeys();
-            // Refresh the db schema caches
-            Craft::$app->db->schema->refresh();
-            $this->insertDefaultData();
-        }
+        $this->createTables();
+        $this->addForeignKeys();
+        $this->refreshDBSchemaCaches();
+        $this->insertDefaultData();
 
         return true;
     }
@@ -77,7 +68,7 @@ class Install extends Migration
      * @return boolean return a false value to indicate the migration fails
      * and should not proceed further. All other return values mean the migration succeeds.
      */
-    public function safeDown()
+    public function safeDown(): bool
     {
         $this->driver = Craft::$app->getConfig()->getDb()->driver;
         $this->removeTables();
@@ -93,29 +84,11 @@ class Install extends Migration
      *
      * @return bool
      */
-    protected function createTables()
+    protected function createTables(): bool
     {
-        $tablesCreated = false;
+        $this->createTableForEvents();
 
-    // eventsky_eventskyrecord table
-        $tableSchema = Craft::$app->db->schema->getTableSchema('{{%eventsky_eventskyrecord}}');
-        if ($tableSchema === null) {
-            $tablesCreated = true;
-            $this->createTable(
-                '{{%eventsky_eventskyrecord}}',
-                [
-                    'id' => $this->primaryKey(),
-                    'dateCreated' => $this->dateTime()->notNull(),
-                    'dateUpdated' => $this->dateTime()->notNull(),
-                    'uid' => $this->uid(),
-                // Custom columns in the table
-                    'siteId' => $this->integer()->notNull(),
-                    'some_field' => $this->string(255)->notNull()->defaultValue(''),
-                ]
-            );
-        }
-
-        return $tablesCreated;
+        return true;
     }
 
     /**
@@ -125,24 +98,6 @@ class Install extends Migration
      */
     protected function createIndexes()
     {
-    // eventsky_eventskyrecord table
-        $this->createIndex(
-            $this->db->getIndexName(
-                '{{%eventsky_eventskyrecord}}',
-                'some_field',
-                true
-            ),
-            '{{%eventsky_eventskyrecord}}',
-            'some_field',
-            true
-        );
-        // Additional commands depending on the db driver
-        switch ($this->driver) {
-            case DbConfig::DRIVER_MYSQL:
-                break;
-            case DbConfig::DRIVER_PGSQL:
-                break;
-        }
     }
 
     /**
@@ -152,16 +107,11 @@ class Install extends Migration
      */
     protected function addForeignKeys()
     {
-    // eventsky_eventskyrecord table
-        $this->addForeignKey(
-            $this->db->getForeignKeyName('{{%eventsky_eventskyrecord}}', 'siteId'),
-            '{{%eventsky_eventskyrecord}}',
-            'siteId',
-            '{{%sites}}',
-            'id',
-            'CASCADE',
-            'CASCADE'
-        );
+    }
+
+    protected function refreshDBSchemaCaches()
+    {
+        Craft::$app->db->schema->refresh();
     }
 
     /**
@@ -180,7 +130,40 @@ class Install extends Migration
      */
     protected function removeTables()
     {
-    // eventsky_eventskyrecord table
-        $this->dropTableIfExists('{{%eventsky_eventskyrecord}}');
+        $tables = [
+            Table::EVENTS,
+        ];
+
+        /** @var $table string */
+        foreach ($tables as $table) {
+            $this->dropTableIfExists($table);
+        }
+    }
+
+    // Private Methods
+    // =========================================================================
+
+    /**
+     * @throws TableAlreadyExistsException
+     */
+    private function createTableForEvents()
+    {
+        $tableSchema = $this->db->schema->getTableSchema(Table::EVENTS);
+        $tableExists = $this->db->tableExists(Table::EVENTS);
+
+        if ($tableSchema || $tableExists) {
+            throw new TableAlreadyExistsException('Table ' . Table::EVENTS . ' already exists.');
+        }
+
+        $this->createTable(Table::EVENTS, [
+            'id' => $this->primaryKey(),
+            'startDate' => $this->dateTime()->notNull(),
+            'endDate' => $this->dateTime()->null(),
+            'postDate' => $this->dateTime()->notNull(),
+            'expiryDate' => $this->dateTime()->null(),
+            'dateCreated' => $this->dateTime()->notNull(),
+            'dateUpdated' => $this->dateTime()->notNull(),
+            'uid' => $this->uid(),
+        ]);
     }
 }
