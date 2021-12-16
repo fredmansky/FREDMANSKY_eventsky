@@ -128,6 +128,22 @@ class Eventsky extends Plugin
         $this->initLogging();
     }
 
+    /**
+     * @return array|null
+     */
+    public function getCpNavItem(): ?array
+    {
+        $item = parent::getCpNavItem();
+        $item['subnav'] = [
+            'tickets' => [
+                'label' => Craft::t('eventsky', 'translate.tickets.cpTitle'),
+                'url' => 'eventsky/tickets',
+            ]
+        ];
+
+        return $item;
+    }
+
     // Protected Methods
     // =========================================================================
 
