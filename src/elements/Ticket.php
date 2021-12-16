@@ -18,6 +18,16 @@ class Ticket extends Element
     // Public Properties
     // =========================================================================
 
+    /**
+     * @var int EventId
+     */
+    public $eventId;
+
+    /**
+     * @var string Unique id for a ticket
+     */
+    public $ticketId;
+
     // Static Methods
     // =========================================================================
 

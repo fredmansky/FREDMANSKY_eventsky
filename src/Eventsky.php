@@ -22,6 +22,7 @@ use craft\services\Plugins;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
 use fredmansky\eventsky\assetbundles\eventsky\EventskyAsset;
+use fredmansky\eventsky\elements\Ticket;
 use fredmansky\eventsky\fields\EventskyField as EventskyFieldField;
 use fredmansky\eventsky\models\Settings;
 use fredmansky\eventsky\services\EventskyService as EventskyServiceService;
@@ -125,6 +126,7 @@ class Eventsky extends Plugin
         $this->registerSiteRoutes();
         $this->registerCPRoutes();
         $this->registerFields();
+        $this->registerElementTypes();
         $this->initLogging();
     }
 
@@ -203,6 +205,19 @@ class Eventsky extends Plugin
 //                $event->types[] = EventskyFieldField::class;
 //            }
 //        );
+    }
+
+    /**
+     * Register new Element Types
+     * @return void
+     */
+    private function registerElementTypes()
+    {
+        Event::on(Elements::class,
+            Elements::EVENT_REGISTER_ELEMENT_TYPES,
+            function(RegisterComponentTypesEvent $event) {
+                $event->types[] = Ticket::class,
+            });
     }
 
     /**
