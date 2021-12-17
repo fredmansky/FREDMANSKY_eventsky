@@ -216,7 +216,7 @@ class Eventsky extends Plugin
         Event::on(Elements::class,
             Elements::EVENT_REGISTER_ELEMENT_TYPES,
             function(RegisterComponentTypesEvent $event) {
-                $event->types[] = Ticket::class,
+                $event->types[] = Ticket::class;
             });
     }
 

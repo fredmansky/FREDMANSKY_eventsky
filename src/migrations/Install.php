@@ -10,6 +10,8 @@
 
 namespace fredmansky\eventsky\migrations;
 
+use craft\db\Table;
+use fredmansky\eventsky\elements\Ticket;
 use fredmansky\eventsky\Eventsky;
 
 use Craft;
@@ -95,27 +97,20 @@ class Install extends Migration
      */
     protected function createTables()
     {
-        $tablesCreated = false;
-
-    // eventsky_eventskyrecord table
-        $tableSchema = Craft::$app->db->schema->getTableSchema('{{%eventsky_eventskyrecord}}');
-        if ($tableSchema === null) {
-            $tablesCreated = true;
-            $this->createTable(
-                '{{%eventsky_eventskyrecord}}',
-                [
-                    'id' => $this->primaryKey(),
-                    'dateCreated' => $this->dateTime()->notNull(),
-                    'dateUpdated' => $this->dateTime()->notNull(),
-                    'uid' => $this->uid(),
-                // Custom columns in the table
-                    'siteId' => $this->integer()->notNull(),
-                    'some_field' => $this->string(255)->notNull()->defaultValue(''),
-                ]
-            );
+        if (!$this->db->tableExists('{{%eventsky_tickets}}')) {
+            $this->createTable('{{%eventsky_tickets}}', [
+                'id' => $this->primaryKey(),
+                'ticketType' => $this->integer()->notNull(),
+                'eventId' => $this->integer()->notNull(),
+                'statusId' => $this->integer()->notNull(),
+                'ticketId' => $this->uid()->notNull(),
+                'dateCreated' => $this->dateTime()->notNull(),
+                'dateUpdated' => $this->dateTime()->notNull(),
+                'uid' => $this->uid(),
+            ]);
         }
 
-        return $tablesCreated;
+        return true;
     }
 
     /**
@@ -125,17 +120,6 @@ class Install extends Migration
      */
     protected function createIndexes()
     {
-    // eventsky_eventskyrecord table
-        $this->createIndex(
-            $this->db->getIndexName(
-                '{{%eventsky_eventskyrecord}}',
-                'some_field',
-                true
-            ),
-            '{{%eventsky_eventskyrecord}}',
-            'some_field',
-            true
-        );
         // Additional commands depending on the db driver
         switch ($this->driver) {
             case DbConfig::DRIVER_MYSQL:
@@ -152,16 +136,8 @@ class Install extends Migration
      */
     protected function addForeignKeys()
     {
-    // eventsky_eventskyrecord table
-        $this->addForeignKey(
-            $this->db->getForeignKeyName('{{%eventsky_eventskyrecord}}', 'siteId'),
-            '{{%eventsky_eventskyrecord}}',
-            'siteId',
-            '{{%sites}}',
-            'id',
-            'CASCADE',
-            'CASCADE'
-        );
+        // eventsky_eventskyrecord table
+        $this->addForeignKey(null, '{{%eventsky_tickets}}', 'id', '{{%elements}}', 'id', 'CASCADE');
     }
 
     /**
@@ -180,7 +156,7 @@ class Install extends Migration
      */
     protected function removeTables()
     {
-    // eventsky_eventskyrecord table
-        $this->dropTableIfExists('{{%eventsky_eventskyrecord}}');
+        // eventsky_eventskyrecord table
+        $this->dropTableIfExists('{{%eventsky_tickets}}');
     }
 }
