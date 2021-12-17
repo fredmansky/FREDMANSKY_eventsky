@@ -52,6 +52,37 @@ class Ticket extends Element
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function hasContent(): bool
+    {
+        return true;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public static function hasTitles(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEditorHtml(): string
+    {
+        $html = Craft::$app->getView()->renderTemplate('eventsky/tickets/_includes/titleField', [
+            'ticket' => $this
+        ]);
+
+        $html .= parent::getEditorHtml();
+
+        return $html;
+    }
+
+    /**
      * @return ElementQueryInterface
      */
     public static function find(): ElementQueryInterface

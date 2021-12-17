@@ -1,0 +1,12 @@
+{% import '_includes/forms' as forms %}
+
+{{ forms.textField({
+    label: 'translates.tickets.edit.titleField' | t('eventsky'),
+    id: 'title',
+    name: 'title',
+    value: ticket.title,
+    errors: ticket.getErrors('title'),
+    first: true,
+    autofocus: true,
+    required: true,
+}) }}
