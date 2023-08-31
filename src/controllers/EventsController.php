@@ -36,7 +36,7 @@ use yii\web\Response;
  */
 class EventsController extends Controller
 {
-    protected $allowAnonymous = ['get-event-hash'];
+    protected array|int|bool $allowAnonymous = ['get-event-hash'];
 
     public function actionIndex(): Response
     {
@@ -363,7 +363,7 @@ class EventsController extends Controller
 
             $tabs[] = [
                 'label' => $tab->name,
-                'url' => '#' . StringHelper::camelCase('tab' . $tab->name),
+                'url' => '#tab' . StringHelper::toPascalCase($tab->name),
                 'class' => $hasErrors ? 'error' : null,
             ];
         }

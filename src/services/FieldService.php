@@ -19,7 +19,7 @@ class FieldService extends Fields
      * @param null $context
      * @return \craft\base\FieldInterface|mixed|null
      */
-    public function getFieldByHandle(string $handle, $context = null)
+    public function getFieldByHandle(string $handle, mixed $context = null): ?\craft\base\FieldInterface
     {
         return ArrayHelper::firstWhere($this->getAllFields(EventTicketTypeMappingField::FIELD_CONTEXT), 'handle', $handle, true);
     }

@@ -6,16 +6,13 @@
 
 namespace fredmansky\eventsky\migrations;
 
-use Craft;
 use craft\db\Migration;
 use craft\events\PluginEvent;
 use craft\records\Field;
-use craft\services\Fields;
 use craft\services\Plugins;
 use fredmansky\eventsky\db\Table;
 use fredmansky\eventsky\Eventsky;
 use fredmansky\eventsky\fields\EventField;
-use fredmansky\eventsky\fields\EventTicketTypeMappingField;
 use fredmansky\eventsky\records\TicketStatusRecord;
 use yii\base\Event;
 

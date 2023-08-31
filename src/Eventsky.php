@@ -21,7 +21,6 @@ use craft\web\UrlManager;
 use fredmansky\eventsky\fields\EventField;
 use fredmansky\eventsky\services\EmailNotificationService;
 use fredmansky\eventsky\services\EventService;
-use fredmansky\eventsky\services\EventTicketTypeMappingService;
 use fredmansky\eventsky\services\EventTypeService;
 use fredmansky\eventsky\services\FieldService;
 use fredmansky\eventsky\services\MailService;
@@ -29,20 +28,26 @@ use fredmansky\eventsky\services\TicketService;
 use fredmansky\eventsky\services\TicketStatusService;
 use fredmansky\eventsky\services\TicketTypeService;
 use fredmansky\eventsky\services\TwigTemplateService;
-use fredmansky\vidsky\services\Video;
 use yii\base\Event;
 
 /**
  * Class Eventsky
  * @package fredmansky\eventsky
  *
- *  * @property EventService $event
+ * @property EventService $event
+ * @property EventTypeService $eventType
+ * @property TicketService $ticket
+ * @property TicketTypeService $ticketType
+ * @property TicketStatusService $ticketStatus
+ * @property FieldService $fieldService
+ * @property EmailNotificationService $emailNotification
+ * @property MailService $mail
  */
 class Eventsky extends Plugin
 {
     public static $plugin;
 
-    public $schemaVersion = '1.9.5';
+    public string $schemaVersion = '1.9.5';
 
     public function init()
     {
@@ -67,7 +72,7 @@ class Eventsky extends Plugin
         ]);
     }
 
-    public function getCpNavItem()
+    public function getCpNavItem(): ?array
     {
         $item = parent::getCpNavItem();
         $item['label'] = 'Eventsky';
@@ -83,12 +88,12 @@ class Eventsky extends Plugin
         return $item;
     }
 
-    protected function createSettingsModel()
+    protected function createSettingsModel(): ?\craft\base\Model
     {
         return new \fredmansky\eventsky\models\Settings();
     }
 
-    protected function settingsHtml()
+    protected function settingsHtml(): ?string
     {
         return \Craft::$app->getView()->renderTemplate('eventsky/settings', [
             'settings' => $this->getSettings()

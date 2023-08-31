@@ -10,7 +10,6 @@ use Craft;
 use craft\base\Element;
 use craft\elements\actions\Delete;
 use craft\elements\actions\Edit;
-use craft\elements\actions\SetStatus;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\User;
 use craft\helpers\UrlHelper;
@@ -21,7 +20,6 @@ use fredmansky\eventsky\records\TicketRecord;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
 
-
 /**
  * Ticket represents a ticket element.
  *
@@ -30,12 +28,10 @@ use yii\db\Exception;
  */
 class Ticket extends Element
 {
-    public $id;
     public $typeId;
     public $eventId;
     public $statusId;
     public $email;
-    public $uid;
 
     public static function displayName(): string
     {
@@ -85,7 +81,7 @@ class Ticket extends Element
         return new TicketQuery(static::class);
     }
 
-    public function getFieldLayout()
+    public function getFieldLayout(): ?\craft\models\FieldLayout
     {
         return parent::getFieldLayout() ?? $this->getType()->getFieldLayout();
     }
@@ -161,11 +157,6 @@ class Ticket extends Element
             'successMessage' => Craft::t('app', 'Entries deleted.'),
         ]);
 
-        $actions[] = [
-            'type' => SetStatus::class,
-            'allowDisabledForSite' => true,
-        ];
-
         return $actions;
     }
 
@@ -188,12 +179,17 @@ class Ticket extends Element
         ];
     }
 
-//    protected static function defineSearchableAttributes(): array
-//    {
-//        return ['name', 'typeId'];
-//    }
+    public function canView(User $user): bool
+    {
+        return true;
+    }
 
-    public function getIsEditable(): bool
+    public function canSave(User $user): bool
+    {
+        return true;
+    }
+
+    public function canDelete(User $user): bool
     {
         return true;
     }
@@ -215,7 +211,7 @@ class Ticket extends Element
         return parent::beforeSave($isNew);
     }
 
-    public function afterSave(bool $isNew)
+    public function afterSave(bool $isNew): void
     {
         if (!$isNew) {
             $record = TicketRecord::findOne($this->id);

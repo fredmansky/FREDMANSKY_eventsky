@@ -19,7 +19,7 @@ class EventService extends Component
     /** @var array */
     private $events;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
     }
@@ -83,7 +83,7 @@ class EventService extends Component
             ->all();
 
         return array_map(function($result) {
-            return new EventTicketTypeMapping($result);
+            return $this->createEventTicketTypeMappingFromRecord($result);
         }, $results);
     }
 
@@ -95,7 +95,7 @@ class EventService extends Component
             ->one();
 
         if($result) {
-            return new EventTicketTypeMapping($result);
+            return $this->createEventTicketTypeMappingFromRecord($result);
         }
 
         return null;
@@ -154,5 +154,10 @@ class EventService extends Component
     private function createEventTicketTypeMappingQuery(): ActiveQuery
     {
         return EventTicketTypeMappingRecord::find();
+    }
+
+    private function createEventTicketTypeMappingFromRecord(EventTicketTypeMappingRecord $eventTicketTypeMappingRecord): EventTicketTypeMapping
+    {
+        return new EventTicketTypeMapping($eventTicketTypeMappingRecord->getAttributes());
     }
 }

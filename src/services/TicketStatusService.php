@@ -2,19 +2,8 @@
 
 namespace fredmansky\eventsky\services;
 
-use Craft;
 use craft\base\Component;
-use craft\helpers\Db;
-use craft\helpers\StringHelper;
-use fredmansky\eventsky\db\Table;
-use fredmansky\eventsky\events\EventTypeEvent;
-use fredmansky\eventsky\elements\Event;
-use fredmansky\eventsky\Eventsky;
-use fredmansky\eventsky\models\EventType;
-use fredmansky\eventsky\models\EventTypeSite;
 use fredmansky\eventsky\models\TicketStatus;
-use fredmansky\eventsky\records\EventTypeRecord;
-use fredmansky\eventsky\records\EventTypeSiteRecord;
 use fredmansky\eventsky\records\TicketStatusRecord;
 use yii\db\ActiveQuery;
 
@@ -25,7 +14,7 @@ class TicketStatusService extends Component
     /** @var array */
     private $statuses;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
     }
@@ -36,19 +25,25 @@ class TicketStatusService extends Component
             return $this->statuses;
         }
 
-        $results = $this->createEventTypeQuery()
+        $results = $this->createTicketStatusQuery()
             ->all();
 
-        $this->statuses = array_map(function($status) {
-            return new TicketStatus($status);
-        }, $results);
+        $this->statuses = [];
+        foreach ($results as $ticketStatusRecord) {
+            $this->statuses[] = $this->createTicketStatusFromRecord($ticketStatusRecord);
+        }
 
         return $this->statuses;
     }
 
-    private function createEventTypeQuery(): ActiveQuery
+    private function createTicketStatusQuery(): ActiveQuery
     {
         return TicketStatusRecord::find()
             ->orderBy(['name' => SORT_ASC]);
+    }
+
+    private function createTicketStatusFromRecord(TicketStatusRecord $ticketStatusRecord): TicketStatus
+    {
+        return new TicketStatus($ticketStatusRecord->getAttributes());
     }
 }

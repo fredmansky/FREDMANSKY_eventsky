@@ -2,10 +2,8 @@
 
 namespace fredmansky\eventsky\migrations;
 
-use Craft;
 use craft\db\Migration;
 use fredmansky\eventsky\db\Table;
-use fredmansky\eventsky\fields\EventTicketTypeMappingField;
 
 /**
  * m191211_094040_email_notifications migration.

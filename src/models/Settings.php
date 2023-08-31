@@ -8,7 +8,7 @@ class Settings extends Model
 {
     public $url = 'https://fredmansky.at/';
 
-    public function rules()
+    public function rules(): array
     {
         return [
             [['url'], 'required'],

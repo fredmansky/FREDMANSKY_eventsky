@@ -1,9 +1,21 @@
-{% set tabs = eventType.getFieldLayout().getTabs() %}
+{% set namespace = namespace is defined ? namespace : 'fields' %}
+
+{% set fieldLayout = eventType.getFieldLayout() %}
+{% set tabs = fieldLayout.getTabs() %}
+
 {% for tab in tabs %}
     <div id="{{ 'tab' ~ tab.name | pascal }}" class="hidden">
-        {% include "_includes/fields" with {
-            fields: tab.getFields(),
-            element: event,
-        } only %}
+        {% for customField in tab.getElements() %}
+            {% set field = customField.getField() %}
+
+            {% namespace namespace %}
+                {% include "_includes/field" with {
+                    field: field,
+                    required: field.required,
+                    element: event,
+                } only %}
+            {% endnamespace %}
+
+        {% endfor %}
     </div>
 {% endfor %}

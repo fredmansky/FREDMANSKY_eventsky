@@ -10,8 +10,8 @@ use Craft;
 use craft\base\Element;
 use craft\elements\actions\Delete;
 use craft\elements\actions\Edit;
-use craft\elements\actions\SetStatus;
 use craft\elements\db\ElementQueryInterface;
+use craft\elements\User;
 use craft\helpers\Html;
 use craft\helpers\UrlHelper;
 use DateTime;
@@ -30,7 +30,6 @@ use yii\db\Exception;
  */
 class Event extends Element
 {
-
     const STATUS_LIVE = 'live';
     const STATUS_PENDING = 'pending';
     const STATUS_EXPIRED = 'expired';
@@ -83,12 +82,12 @@ class Event extends Element
         return new EventQuery(static::class);
     }
 
-    public function getFieldLayout()
+    public function getFieldLayout(): ?\craft\models\FieldLayout
     {
         return parent::getFieldLayout() ?? $this->getType()->getFieldLayout();
     }
 
-    protected function normalizeFieldValue(string $fieldHandle)
+    protected function normalizeFieldValue(string $fieldHandle): void
     {
         if (strcmp('availableTickets', $fieldHandle) === 0) {
             $field = Eventsky::$plugin->fieldService->getFieldByHandle($fieldHandle);
@@ -194,11 +193,6 @@ class Event extends Element
             'successMessage' => Craft::t('app', 'Entries deleted.'),
         ]);
 
-        $actions[] = [
-            'type' => SetStatus::class,
-            'allowDisabledForSite' => true,
-        ];
-
         return $actions;
     }
 
@@ -252,12 +246,22 @@ class Event extends Element
         return $attributes;
     }
 
-    public function getIsEditable(): bool
+    public function canView(User $user): bool
     {
         return true;
     }
 
-    public function getCpEditUrl()
+    public function canSave(User $user): bool
+    {
+        return true;
+    }
+
+    public function canDelete(User $user): bool
+    {
+        return true;
+    }
+
+    public function getCpEditUrl(): ?string
     {
         // The slug *might* not be set if this is a Draft and they've deleted it for whatever reason
         $path = 'eventsky/event/' . $this->id .
@@ -297,7 +301,7 @@ class Event extends Element
         return parent::beforeSave($isNew);
     }
 
-    public function afterSave(bool $isNew)
+    public function afterSave(bool $isNew): void
     {
         if (!$isNew) {
             $record = EventRecord::findOne($this->id);

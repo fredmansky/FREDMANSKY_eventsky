@@ -53,7 +53,7 @@
                 this.$blockContainer.append(node);
 
                 Craft.initUiElements($(this.$blockContainer));
-                Craft.appendFootHtml(response.bodyHtml);
+                Craft.appendBodyHtml(response.bodyHtml);
             },
 
             hideBlockTypeFromMenu(evt) {

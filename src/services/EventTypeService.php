@@ -23,7 +23,7 @@ class EventTypeService extends Component
     /** @var array */
     private $eventTypes;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
     }
@@ -39,9 +39,11 @@ class EventTypeService extends Component
             ->where($condition)
             ->all();
 
-        $this->eventTypes = array_map(function($result) {
-            return new EventType($result);
-        }, $results);
+        $this->eventTypes = [];
+        foreach ($results as $eventTypeRecord) {
+            $this->eventTypes[] = $this->createEventTypeFromRecord($eventTypeRecord);
+        }
+
         return $this->eventTypes;
     }
 
@@ -53,7 +55,7 @@ class EventTypeService extends Component
             ->one();
 
         if ($result) {
-            return new EventType($result);
+            return $this->createEventTypeFromRecord($result);
         }
 
         return null;
@@ -66,7 +68,7 @@ class EventTypeService extends Component
             ->one();
 
         if ($result) {
-            return new EventType($result);
+            return $this->createEventTypeFromRecord($result);
         }
 
         return null;
@@ -74,13 +76,16 @@ class EventTypeService extends Component
 
     public function getEventTypeSites(int $eventTypeId): array
     {
-        $eventTypeSites = EventTypeSiteRecord::find()
+        $results = EventTypeSiteRecord::find()
             ->where(['=', 'eventtypeId', $eventTypeId])
             ->all();
 
-        return array_map(function($eventType) {
-            return new EventTypeSite($eventType);
-        }, $eventTypeSites);
+        $eventTypeSites = [];
+        foreach ($results as $eventTypeSite) {
+            $eventTypeSites[] = $this->createEventTypeSiteFromRecord($eventTypeSite);
+        }
+
+        return $eventTypeSites;
     }
 
     public function saveEventType(EventType $eventType, bool $runValidation = true)
@@ -216,5 +221,15 @@ class EventTypeService extends Component
     {
         return EventTypeRecord::find()
             ->orderBy(['name' => SORT_ASC]);
+    }
+
+    private function createEventTypeFromRecord(EventTypeRecord $eventTypeRecord): EventType
+    {
+        return new EventType($eventTypeRecord->getAttributes());
+    }
+
+    private function createEventTypeSiteFromRecord(EventTypeSiteRecord $eventTypeSiteRecord): EventTypeSite
+    {
+        return new EventTypeSite($eventTypeSiteRecord->getAttributes());
     }
 }

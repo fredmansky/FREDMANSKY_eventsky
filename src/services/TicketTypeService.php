@@ -20,7 +20,7 @@ class TicketTypeService extends Component
     /** @var array */
     private $ticketTypes;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
     }
@@ -36,9 +36,11 @@ class TicketTypeService extends Component
             ->where($condition)
             ->all();
 
-        $this->ticketTypes = array_map(function($result) {
-            return new TicketType($result);
-        }, $results);
+        $this->ticketTypes = [];
+        foreach ($results as $ticketTypeRecord) {
+            $this->ticketTypes[] = $this->createTicketTypeFromRecord($ticketTypeRecord);
+        }
+
         return $this->ticketTypes;
     }
 
@@ -50,7 +52,7 @@ class TicketTypeService extends Component
             ->one();
 
         if ($result) {
-            return new TicketType($result);
+            return $this->createTicketTypeFromRecord($result);
         }
 
         return null;
@@ -63,7 +65,7 @@ class TicketTypeService extends Component
             ->one();
 
         if ($result) {
-            return new TicketType($result);
+            return $this->createTicketTypeFromRecord($result);
         }
 
         return null;
@@ -162,5 +164,10 @@ class TicketTypeService extends Component
     {
         return TicketTypeRecord::find()
             ->orderBy(['name' => SORT_ASC]);
+    }
+
+    private function createTicketTypeFromRecord(TicketTypeRecord $ticketTypeRecord): TicketType
+    {
+        return new TicketType($ticketTypeRecord->getAttributes());
     }
 }
