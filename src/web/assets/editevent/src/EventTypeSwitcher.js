@@ -32,7 +32,7 @@
                         $('#fields__inner').html(response.fieldsHtml);
                         Craft.initUiElements($('#fields__inner'));
                         Craft.appendHeadHtml(response.headHtml);
-                        Craft.appendFootHtml(response.bodyHtml);
+                        Craft.appendBodyHtml(response.bodyHtml);
 
                         // Update the slug generator with the new title input
                         if (typeof slugGenerator !== 'undefined') {

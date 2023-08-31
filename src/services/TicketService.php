@@ -18,7 +18,7 @@ class TicketService extends Component
     /** @var array */
     private $tickets;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
     }
@@ -38,11 +38,12 @@ class TicketService extends Component
             ->typeId($ticketType->id)
             ->all();
 
-        $tickets = array_map(function($result) {
-            return new Ticket($result);
-        }, $results);
+        $this->tickets = [];
+        foreach ($results as $ticketStatusRecord) {
+            $this->tickets[] = $this->createTicketFromRecord($ticketStatusRecord);
+        }
 
-        return $tickets;
+        return $this->tickets;
     }
 
     public function getTicketsByEvent(Event $event): array
@@ -106,5 +107,10 @@ class TicketService extends Component
     {
         return TicketRecord::find()
             ->orderBy(['dateCreated' => SORT_ASC]);
+    }
+
+    private function createTicketFromRecord(TicketRecord $ticketRecord): Ticket
+    {
+        return new Ticket($ticketRecord->getAttributes());
     }
 }

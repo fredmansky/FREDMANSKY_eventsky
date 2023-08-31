@@ -67,7 +67,7 @@ class TicketType extends Model
     /**
      * @inheritdoc
      */
-    public function rules()
+    public function rules(): array
     {
         $rules = parent::rules();
         return $rules;

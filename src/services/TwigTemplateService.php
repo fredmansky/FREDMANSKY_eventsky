@@ -8,7 +8,7 @@ use fredmansky\eventsky\elements\Event;
 
 class TwigTemplateService extends Component
 {
-    public function init()
+    public function init(): void
     {
         parent::init();
     }

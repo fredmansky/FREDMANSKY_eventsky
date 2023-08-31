@@ -75,7 +75,7 @@ class EventQuery extends ElementQuery
         return $this;
     }
 
-    protected function statusCondition(string $status)
+    protected function statusCondition(string $status): mixed
     {
         $currentTimeDb = Db::prepareDateForDb(new \DateTime());
 

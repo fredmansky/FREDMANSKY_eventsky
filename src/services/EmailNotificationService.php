@@ -24,9 +24,11 @@ class EmailNotificationService extends Fields
         $results = $this->createEmailNotificationQuery()
             ->all();
 
-        $this->emailNotifications = array_map(function($result) {
-            return new EmailNotification($result);
-        }, $results);
+        $this->emailNotifications = [];
+        foreach ($results as $emailNotificationRecord) {
+            $this->emailNotifications[] = $this->createEmailNotificationFromRecord($emailNotificationRecord);
+        }
+
         return $this->emailNotifications;
     }
 
@@ -37,7 +39,7 @@ class EmailNotificationService extends Fields
             ->one();
 
         if ($result) {
-            return new EmailNotification($result);
+            return $this->createEmailNotificationFromRecord($result);
         }
 
         return null;
@@ -114,5 +116,10 @@ class EmailNotificationService extends Fields
     {
         return EmailNotificationRecord::find()
             ->orderBy(['name' => SORT_ASC]);
+    }
+
+    private function createEmailNotificationFromRecord(EmailNotificationRecord $emailNotificationRecord): EmailNotification
+    {
+        return new EmailNotification($emailNotificationRecord->getAttributes());
     }
 }

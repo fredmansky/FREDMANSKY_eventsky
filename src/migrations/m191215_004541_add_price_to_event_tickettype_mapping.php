@@ -2,7 +2,6 @@
 
 namespace fredmansky\eventsky\migrations;
 
-use Craft;
 use craft\db\Migration;
 use fredmansky\eventsky\db\Table;
 

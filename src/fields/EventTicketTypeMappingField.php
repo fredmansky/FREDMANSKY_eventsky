@@ -32,13 +32,13 @@ class EventTicketTypeMappingField extends Field
         return false;
     }
 
-    public function rules()
+    public function rules(): array
     {
         $rules = [];
         return $rules;
     }
 
-    public function normalizeValue($value, ElementInterface $element = null)
+    public function normalizeValue(mixed $value, ?\craft\base\ElementInterface $element = null): mixed
     {
         $mappedTicketTypes = [];
 
@@ -50,7 +50,7 @@ class EventTicketTypeMappingField extends Field
         return $mappedTicketTypes;
     }
 
-    public function serializeValue($value, ElementInterface $element = null)
+    public function serializeValue(mixed $value, ?\craft\base\ElementInterface $element = null): mixed
     {
 //        /** @var MatrixBlockQuery $value */
 //        $serialized = [];
@@ -69,7 +69,7 @@ class EventTicketTypeMappingField extends Field
 //        return $serialized;
     }
 
-    public function getInputHtml($value, ElementInterface $element = null): string
+    public function getInputHtml(mixed $value, ?\craft\base\ElementInterface $element = null): string
     {
         $data = [];
         $data['allTicketTypes'] = Eventsky::$plugin->ticketType->getAllTicketTypes();

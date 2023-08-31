@@ -1,5 +1,7 @@
 {% import "_includes/forms" as forms %}
 
+{% set namespace = namespace is defined ? namespace : 'fields' %}
+
 <div id="fields">
 
     {% if not ticketType.titleFormat %}
@@ -18,17 +20,29 @@
     {% endif %}
 
     <div>
-        {% set tabs = ticketType.getFieldLayout().getTabs() %}
+        {% set fieldLayout = ticketType.getFieldLayout() %}
+        {% set tabs = fieldLayout.getTabs() %}
+
         <div id="tabTicketData">
             {% include "eventsky/tickets/_tabTicketData" %}
         </div>
+
         {% for tab in tabs %}
-            <div id="{{ ('tab' ~ tab.name) | camel }}" class="hidden">
-                {% include "_includes/fields" with {
-                    fields: tab.getFields(),
-                    element: ticket,
-                } only %}
+            <div id="{{ 'tab' ~ tab.name | pascal }}" class="hidden">
+                {% for customField in tab.getElements() %}
+                    {% set field = customField.getField() %}
+
+                    {% namespace namespace %}
+                        {% include "_includes/field" with {
+                            field: field,
+                            required: field.required,
+                            element: ticket,
+                        } only %}
+                    {% endnamespace %}
+
+                {% endfor %}
             </div>
         {% endfor %}
+
     </div>
 </div>

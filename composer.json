@@ -22,7 +22,7 @@
     },
     "license": "proprietary",
     "require": {
-        "craftcms/cms": "^3.5.0"
+        "craftcms/cms": "^4.4"
     },
     "autoload": {
         "psr-4": {
@@ -35,5 +35,16 @@
         "hasCpSettings": true,
         "hasCpSection": true,
         "class": "fredmansky\\eventsky\\Eventsky"
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require-dev": {
+        "craftcms/rector": "dev-main"
     }
 }

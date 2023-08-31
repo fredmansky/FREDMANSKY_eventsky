@@ -21,7 +21,6 @@
 {% endblock %}
 
 {% block contextMenu %}
-{#    {% include "_includes/revisionmenu" %}#}
 {% endblock %}
 
 {% block actionButton %}
@@ -30,30 +29,15 @@
     </div>
 {% endblock %}
 
-{#{% block main %}#}
-{#        {{ actionInput(saveSourceAction) }}#}
-{#        {{ redirectInput(redirectUrl) }}#}
-
-{#        {% if craft.app.isMultiSite %}#}
-{#            {{ hiddenInput('siteId', element.siteId) }}#}
-{#        {% endif %}#}
-
-{#    {{ parent() }}#}
-{#{% endblock %}#}
-
 {% block content %}
     <div class="editEvent">
-    {{ actionInput('eventsky/events/save') }}
-    {{ redirectInput('eventsky/events') }}
-    {{ csrfInput() }}
+        {{ actionInput('eventsky/events/save') }}
+        {{ redirectInput('eventsky/events') }}
+        {{ csrfInput() }}
 
-    {% if event.id %}<input type="hidden" name="eventId" value="{{ event.id }}">{% endif %}
+        {% if event.id %}<input type="hidden" name="eventId" value="{{ event.id }}">{% endif %}
 
-    {#    {% if craft.app.getIsMultiSite() %}#}
-{#        <input type="hidden" name="siteId" value="{{ product.siteId }}">#}
-{#    {% endif %}#}
-
-    {% include "eventsky/events/_fields" %}
+        {% include "eventsky/events/_fields" %}
     </div>
 {% endblock %}
 

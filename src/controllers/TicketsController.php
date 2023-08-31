@@ -32,7 +32,7 @@ class TicketsController extends Controller
 {
     const EVENT_SAVE_TICKET = 'saveEventskyTicket';
 
-    protected $allowAnonymous = ['save'];
+    protected array|int|bool $allowAnonymous = ['save'];
 
     public function actionIndex(array $variables = []): Response
     {

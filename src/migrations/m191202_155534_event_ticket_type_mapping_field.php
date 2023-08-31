@@ -4,12 +4,8 @@ namespace fredmansky\eventsky\migrations;
 
 use Craft;
 use craft\db\Migration;
-use craft\events\PluginEvent;
 use craft\records\Field;
-use craft\services\Plugins;
-use fredmansky\eventsky\Eventsky;
 use fredmansky\eventsky\fields\EventTicketTypeMappingField;
-use yii\base\Event;
 
 class m191202_155534_event_ticket_type_mapping_field extends Migration
 {
