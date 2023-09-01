@@ -29,6 +29,7 @@ use fredmansky\eventsky\services\TicketStatusService;
 use fredmansky\eventsky\services\TicketTypeService;
 use fredmansky\eventsky\services\TwigTemplateService;
 use yii\base\Event;
+use yii\log\FileTarget;
 
 /**
  * Class Eventsky
@@ -70,6 +71,8 @@ class Eventsky extends Plugin
             'emailNotification' => EmailNotificationService::class,
             'mail' => MailService::class,
         ]);
+
+        $this->initLogger();
     }
 
     public function getCpNavItem(): ?array
@@ -161,6 +164,17 @@ class Eventsky extends Plugin
             // Attach a service:
             $variable->set('eventsky', TwigTemplateService::class);
         });
+    }
+
+    protected function initLogger() : void
+    {
+        $logFileTarget = new FileTarget([
+            'logFile' => '@storage/logs/eventsky.log',
+            'maxLogFiles' => 10,
+            'categories' => ['eventsky'],
+            'logVars' => [],
+        ]);
+        Craft::getLogger()->dispatcher->targets[] = $logFileTarget;
     }
 
     protected function customAdminCpRoutes(): array
